@@ -24,9 +24,10 @@ VERSION_MINOR		:= 12
 
 #-----------------------------------------------------------------------------
 
-BASE_PATH   = ../../rpi_control_frmwrk
-APP_PATH    = $(BASE_PATH)/src
-MAKE_PATH   = $(BASE_PATH)/make
+BASE_PATH   = ../..
+FRMWRK_PATH = $(BASE_PATH)/rpi_control_frmwrk
+APP_PATH    = $(FRMWRK_PATH)/src
+MAKE_PATH   = $(FRMWRK_PATH)/make
 
 #-----------------------------------------------------------------------------
 
