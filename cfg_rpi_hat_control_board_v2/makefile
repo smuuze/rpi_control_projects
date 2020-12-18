@@ -19,8 +19,8 @@ BOARD_ID = 180920
 
 #-----------------------------------------------------------------------------
 
-VERSION_MAJOR		:= 4
-VERSION_MINOR		:= 12
+VERSION_MAJOR		:= 5
+VERSION_MINOR		:= 0
 
 #-----------------------------------------------------------------------------
 
@@ -67,6 +67,11 @@ DRIVER_MODULE_CFG += SPI0
 
 #-----------------------------------------------------------------------------
 
+PROTOCOL_CFG = 
+PROTOCOL_CFG += RPI_PROTOCOL_CLIENT
+
+#-----------------------------------------------------------------------------
+
 SENSOR_MODULE_CFG =
 SENSOR_MODULE_CFG += LIGHT_SENSOR_GM5528
 
@@ -75,7 +80,6 @@ SENSOR_MODULE_CFG += LIGHT_SENSOR_GM5528
 MANAGEMENT_MODULE_CFG =
 MANAGEMENT_MODULE_CFG += POWER
 MANAGEMENT_MODULE_CFG += IO
-MANAGEMENT_MODULE_CFG += RPI_PROTOCOL
 
 #-----------------------------------------------------------------------------
 
