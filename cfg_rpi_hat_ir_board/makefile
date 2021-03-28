@@ -69,6 +69,11 @@ DRIVER_MODULE_CFG += I2C0
 
 #-----------------------------------------------------------------------------
 
+PROTOCOL_CFG =
+PROTOCOL_CFG += RPI_PROTOCOL_I2C
+
+#-----------------------------------------------------------------------------
+
 THIRD_PARTY_MODULES = 
 THIRD_PARTY_MODULES += IR_PROTOCOL_SAMSUNG
 THIRD_PARTY_MODULES += IR_PROTOCOL_JVC
