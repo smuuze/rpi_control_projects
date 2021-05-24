@@ -76,6 +76,11 @@ static void main_CFG_OBJECT_RECEIVED_SLOT_CALLBACK(const void* p_argument);
  */
 static void main_CLI_UNKNOWN_ARGUMENT_SLOT_CALLBACK(const void* p_argument);
 
+/*!
+ *
+ */
+static void main_CLI_NO_ARGUMENT_GIVEN_CALLBACK(const void* p_argument);
+
 // --------------------------------------------------------------------------------
 
 SIGNAL_SLOT_INTERFACE_CREATE_SLOT(RPI_HOST_RESPONSE_RECEIVED_SIGNAL, MAIN_RPI_HOST_RESPONSE_RECEIVED_SLOT, main_RPI_HOST_RESPONSE_RECEIVED_SLOT_CALLBACK)
@@ -85,6 +90,7 @@ SIGNAL_SLOT_INTERFACE_CREATE_SLOT(CLI_INVALID_PARAMETER_SIGNAL, MAIN_CLI_INVALID
 SIGNAL_SLOT_INTERFACE_CREATE_SLOT(CLI_LCD_ACTIVATED_SIGNAL, MAIN_CLI_LCD_ACTIVATED_SLOT, main_CLI_LCD_ACTIVATED_SLOT_CALLBACK)
 SIGNAL_SLOT_INTERFACE_CREATE_SLOT(CFG_PARSER_NEW_CFG_OBJECT_SIGNAL, MAIN_CFG_OBJECT_RECEIVED_SLOT, main_CFG_OBJECT_RECEIVED_SLOT_CALLBACK)
 SIGNAL_SLOT_INTERFACE_CREATE_SLOT(CLI_UNKNOWN_ARGUMENT_SIGNAL, MAIN_CLI_UNKNOWN_ARGUMENT_SLOT, main_CLI_UNKNOWN_ARGUMENT_SLOT_CALLBACK)
+SIGNAL_SLOT_INTERFACE_CREATE_SLOT(CLI_NO_ARGUMENT_GIVEN_SIGNAL, MAIN_CLI_NO_ARGUMENT_GIVEN_SLOT, main_CLI_NO_ARGUMENT_GIVEN_CALLBACK)
 
 // --------------------------------------------------------------------------------
 
@@ -122,6 +128,9 @@ int main(int argc, char* argv[]) {
 
 	DEBUG_PASS("main() - MAIN_CLI_UNKNOWN_ARGUMENT_SLOT_connect()");
 	MAIN_CLI_UNKNOWN_ARGUMENT_SLOT_connect();
+
+	DEBUG_PASS("main() - MAIN_CLI_NO_ARGUMENT_GIVEN_SLOT_connect()");
+	MAIN_CLI_NO_ARGUMENT_GIVEN_SLOT_connect();
 
 	printf("Welcome to the SHC CMD-Helper v%d.%d\n\n", VERSION_MAJOR, VERSION_MINOR);
 
@@ -256,7 +265,7 @@ static void main_CFG_OBJECT_RECEIVED_SLOT_CALLBACK(const void* p_argument) {
 
 static void main_CLI_UNKNOWN_ARGUMENT_SLOT_CALLBACK(const void* p_argument) {
 
-	DEBUG_PASS("main_CLI_UNKNOWN_ARGUMENT_SLOT_CALLBACK");
+	DEBUG_PASS("main_CLI_UNKNOWN_ARGUMENT_SLOT_CALLBACK()");
 	
 	lcd_write_line("CMD-Helper");
 	lcd_write_line("- inv parameter");
@@ -271,6 +280,15 @@ static void main_CLI_UNKNOWN_ARGUMENT_SLOT_CALLBACK(const void* p_argument) {
 		COMMAND_LINE_ARGUMENT_TYPE* p_unknown_argument = (COMMAND_LINE_ARGUMENT_TYPE*) p_argument;
 		console_write_string("Unknown argument given ", p_unknown_argument->argument);
 	}
+
+	exit_program = 1;
+}
+
+static void main_CLI_NO_ARGUMENT_GIVEN_CALLBACK(const void* p_argument) {
+
+	DEBUG_PASS("main_CLI_NO_ARGUMENT_GIVEN_CALLBACK()");
+	console_write_line("No argument was given !");
+	console_write_line("give -help to see a list of valid arguments");
 
 	exit_program = 1;
 }
