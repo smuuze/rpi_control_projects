@@ -71,6 +71,11 @@ static void main_CLI_LCD_ACTIVATED_SLOT_CALLBACK(const void* p_argument);
  */
 static void main_CFG_OBJECT_RECEIVED_SLOT_CALLBACK(const void* p_argument);
 
+/*!
+ *
+ */
+static void main_CLI_UNKNOWN_ARGUMENT_SLOT_CALLBACK(const void* p_argument);
+
 // --------------------------------------------------------------------------------
 
 SIGNAL_SLOT_INTERFACE_CREATE_SLOT(RPI_HOST_RESPONSE_RECEIVED_SIGNAL, MAIN_RPI_HOST_RESPONSE_RECEIVED_SLOT, main_RPI_HOST_RESPONSE_RECEIVED_SLOT_CALLBACK)
@@ -79,6 +84,7 @@ SIGNAL_SLOT_INTERFACE_CREATE_SLOT(CLI_HELP_REQUESTED_SIGNAL, MAIN_CLI_HELP_REQUE
 SIGNAL_SLOT_INTERFACE_CREATE_SLOT(CLI_INVALID_PARAMETER_SIGNAL, MAIN_CLI_INVALID_PARAMETER_SLOT, main_CLI_INVALID_PARAMETER_SLOT_CALLBACK)
 SIGNAL_SLOT_INTERFACE_CREATE_SLOT(CLI_LCD_ACTIVATED_SIGNAL, MAIN_CLI_LCD_ACTIVATED_SLOT, main_CLI_LCD_ACTIVATED_SLOT_CALLBACK)
 SIGNAL_SLOT_INTERFACE_CREATE_SLOT(CFG_PARSER_NEW_CFG_OBJECT_SIGNAL, MAIN_CFG_OBJECT_RECEIVED_SLOT, main_CFG_OBJECT_RECEIVED_SLOT_CALLBACK)
+SIGNAL_SLOT_INTERFACE_CREATE_SLOT(CLI_UNKNOWN_ARGUMENT_SIGNAL, MAIN_CLI_UNKNOWN_ARGUMENT_SLOT, main_CLI_UNKNOWN_ARGUMENT_SLOT_CALLBACK)
 
 // --------------------------------------------------------------------------------
 
@@ -113,6 +119,9 @@ int main(int argc, char* argv[]) {
 
 	DEBUG_PASS("main() - MAIN_CFG_OBJECT_RECEIVED_SLOT_connect()");
 	MAIN_CFG_OBJECT_RECEIVED_SLOT_connect();
+
+	DEBUG_PASS("main() - MAIN_CLI_UNKNOWN_ARGUMENT_SLOT_connect()");
+	MAIN_CLI_UNKNOWN_ARGUMENT_SLOT_connect();
 
 	printf("Welcome to the SHC CMD-Helper v%d.%d\n\n", VERSION_MAJOR, VERSION_MINOR);
 
@@ -243,4 +252,25 @@ static void main_CFG_OBJECT_RECEIVED_SLOT_CALLBACK(const void* p_argument) {
 	console_write_line("CONFIGURATIATION-OBJECT:");
 	console_write_string("- key: ", p_cfg_obj->key);
 	console_write_string("- value: ", p_cfg_obj->value);
+}
+
+static void main_CLI_UNKNOWN_ARGUMENT_SLOT_CALLBACK(const void* p_argument) {
+
+	DEBUG_PASS("main_CLI_UNKNOWN_ARGUMENT_SLOT_CALLBACK");
+	
+	lcd_write_line("CMD-Helper");
+	lcd_write_line("- inv parameter");
+
+	if (p_argument == NULL) {
+
+		DEBUG_PASS("main_CLI_UNKNOWN_ARGUMENT_SLOT_CALLBACK() - NULLPOINTER EXCEPTION");
+		console_write_line("Unknown argument given given!");
+
+	} else {
+
+		COMMAND_LINE_ARGUMENT_TYPE* p_unknown_argument = (COMMAND_LINE_ARGUMENT_TYPE*) p_argument;
+		console_write_string("Unknown argument given ", p_unknown_argument->argument);
+	}
+
+	exit_program = 1;
 }
