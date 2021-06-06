@@ -13,29 +13,33 @@
 # VERSION        = 0x107
 
 # PROJEKT Name des Hexfiles
-PROJECT = shcTracer
+PROJECT = UNITTEST_tracer
 
-BOARD_ID = RASPBERRYPI
+BOARD_ID = UNITTEST
+
+PLATTFORM = MACOS
 
 #-----------------------------------------------------------------------------
 
-VERSION_MAJOR		:= 2
+VERSION_MAJOR		:= 1
 VERSION_MINOR		:= 0
 
 #-----------------------------------------------------------------------------
 
-BASE_PATH   = ../..
+BASE_PATH   = ../../..
 FRMWRK_PATH = $(BASE_PATH)/rpi_control_frmwrk
 APP_PATH    = $(FRMWRK_PATH)/src
 MAKE_PATH   = $(FRMWRK_PATH)/make
 
 #-----------------------------------------------------------------------------
 
-MCU = RASPBERRY_PI
+MCU = UNITTEST
 
 #-----------------------------------------------------------------------------
 
-CSRCS += main_tracer.c
+CSRCS	 += ../main_tracer.c
+INC_PATH += ../
+INC_PATH += .
 
 #-----------------------------------------------------------------------------
 
@@ -57,6 +61,7 @@ APP_TASK_CFG =
 #APP_TASK_CFG += LED_MATRIX
 #APP_TASK_CFG += TEST_TRACER
 APP_TASK_CFG += THREAD_INTERFACE
+APP_TASK_CFG += THREAD_READ_TRACE_OBJECT
 APP_TASK_CFG += THREAD_PARSE_TRACE_OBJECT
 
 #-----------------------------------------------------------------------------
@@ -108,11 +113,11 @@ COPRO_INTERFACE_CFG =
 
 USER_INTERFACE_CFG =
 USER_INTERFACE_CFG += CLI_ARG_DEVICE
-#USER_INTERFACE_CFG += CLI_ARG_COMMAND
+USER_INTERFACE_CFG += CLI_ARG_COMMAND
 #USER_INTERFACE_CFG += CLI_ARG_REMOTE_CONTROL
 USER_INTERFACE_CFG += CONSOLE
 #USER_INTERFACE_CFG += LCD_16X2
-#USER_INTERFACE_CFG += CFG_FILE_PARSER
+USER_INTERFACE_CFG += CFG_FILE_PARSER
 USER_INTERFACE_CFG += FILE_INTERFACE
 
 #-----------------------------------------------------------------------------

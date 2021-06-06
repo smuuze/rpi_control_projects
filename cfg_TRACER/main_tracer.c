@@ -1,89 +1,130 @@
+/*! 
+ * --------------------------------------------------------------------------------
+ *
+ * \file	main_tracer.c
+ * \brief
+ * \author	sebastian lesse
+ *
+ * --------------------------------------------------------------------------------
+ */
 
-// -------- INCLUDES --------------------------------------------------------------------
+#define TRACER_OFF
 
-#include "shc_project_configuration.h"
-#include "shc_common_types.h"
-#include "shc_common_string.h"
-#include "shc_common_configuration.h"
+// --------------------------------------------------------------------------------
 
-#include "shc_timer.h"
-#include "shc_qeue_interface.h"
-#include "shc_file_interface.h"
-#include "shc_common_string.h"
-#include "shc_debug_interface.h"
-#include "shc_trace_object.h"
+#include "config.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <linux/spi/spidev.h>
+// --------------------------------------------------------------------------------
 
-#include "shc_thread_read_trace_object.h"
-#include "shc_thread_parse_trace_object.h"
-#include "shc_thread_print_trace_object.h"
+#include "tracer.h"
 
-#include <time.h>
+// --------------------------------------------------------------------------------
 
-// -------- DEBUGGING -------------------------------------------------------------------
+#include "cpu.h"
 
-#define MAIN_DEBUG_MSG					DEBUG_MSG
-#define MAIN_CFG_DEBUG_MSG				DEBUG_MSG
+#include <stdio.h>
 
-// -------- STATIC FUNCTION PROTOTYPES --------------------------------------------------
+// --------------------------------------------------------------------------------
+
+#include "initialization/initialization.h"
+
+#include "common/signal_slot_interface.h"
+#include "common/common_types.h"
+#include "common/qeue_interface.h"
+
+#include "mcu_task_management/mcu_task_controller.h"
+#include "mcu_task_management/thread_interface.h"
+
+#include "ui/command_line/command_line_interface.h"
+#include "ui/console/ui_console.h"
+#include "ui/lcd/ui_lcd_interface.h"
+#include "ui/cfg_file_parser/cfg_file_parser.h"
+
+#include "tracer/trace_object.h"
+#include "app_tasks/thread_read_trace_object.h"
+#include "app_tasks/thread_parse_trace_object.h"
+#include "app_tasks/thread_print_trace_object.h"
+
+// --------------------------------------------------------------------------------
+
+#ifndef TRACER_RAW_TRACE_OBJECT_QEUE_SIZE
+#define TRACER_RAW_TRACE_OBJECT_QEUE_SIZE		48
+#endif
+
+#ifndef TRACER_PARSED_TRACE_OBJECT_QEUE_SIZE
+#define TRACER_PARSED_TRACE_OBJECT_QEUE_SIZE		48
+#endif
+
+// --------------------------------------------------------------------------------
 
 /*!
  *
  */
-u8 command_line_parser(int argc, char* argv[], CFG_INTERFACE* p_cfg_interface);
+static void main_CLI_HELP_REQUESTED_SLOT_CALLBACK(const void* p_argument);
 
 /*!
  *
  */
-void command_line_usage(void);
-
-// -------- STATIC DATA -----------------------------------------------------------------
-
-TIME_MGMN_BUILD_TIMER(RESET_TIMER)
-TIME_MGMN_BUILD_TIMER(MQTT_CONNECT_TIMER)
-TIME_MGMN_BUILD_TIMER(BOARD_CONNECT_TIMER)
-TIME_MGMN_BUILD_TIMER(REPORT_TIMER)
-
-QEUE_INTERFACE_BUILD_QEUE(RAW_TRACE_OBJECT_QEUE, TRACE_OBJECT_RAW, 48)
-QEUE_INTERFACE_BUILD_QEUE(TRACE_OBJECT_QEUE, TRACE_OBJECT, 48)
+static void main_CLI_INVALID_PARAMETER_SLOT_CALLBACK(const void* p_argument);
 
 /*!
  *
  */
-MSG_QEUE myCommandQeue;
+static void main_CLI_UNKNOWN_ARGUMENT_SLOT_CALLBACK(const void* p_argument);
 
 /*!
  *
  */
-CFG_INTERFACE myCfgInterface;
+static void main_CLI_NO_ARGUMENT_GIVEN_CALLBACK(const void* p_argument);
 
+// --------------------------------------------------------------------------------
 
-// -------- MAIN ------------------------------------------------------------------------
+SIGNAL_SLOT_INTERFACE_CREATE_SLOT(CLI_HELP_REQUESTED_SIGNAL, MAIN_CLI_HELP_REQUESTED_SLOT, main_CLI_HELP_REQUESTED_SLOT_CALLBACK)
+SIGNAL_SLOT_INTERFACE_CREATE_SLOT(CLI_INVALID_PARAMETER_SIGNAL, MAIN_CLI_INVALID_PARAMETER_SLOT, main_CLI_INVALID_PARAMETER_SLOT_CALLBACK)
+SIGNAL_SLOT_INTERFACE_CREATE_SLOT(CLI_UNKNOWN_ARGUMENT_SIGNAL, MAIN_CLI_UNKNOWN_ARGUMENT_SLOT, main_CLI_UNKNOWN_ARGUMENT_SLOT_CALLBACK)
+SIGNAL_SLOT_INTERFACE_CREATE_SLOT(CLI_NO_ARGUMENT_GIVEN_SIGNAL, MAIN_CLI_NO_ARGUMENT_GIVEN_SLOT, main_CLI_NO_ARGUMENT_GIVEN_CALLBACK)
 
+// --------------------------------------------------------------------------------
+
+QEUE_INTERFACE_BUILD_QEUE(RAW_TRACE_OBJECT_QEUE, TRACE_OBJECT_RAW, sizeof(TRACE_OBJECT_RAW), TRACER_RAW_TRACE_OBJECT_QEUE_SIZE)
+QEUE_INTERFACE_BUILD_QEUE(TRACE_OBJECT_QEUE, TRACE_OBJECT, sizeof(TRACE_OBJECT), TRACER_PARSED_TRACE_OBJECT_QEUE_SIZE)
+
+// --------------------------------------------------------------------------------
+
+/*!
+ *
+ */
+static u8 exit_program = 0;
+
+// --------------------------------------------------------------------------------
 
 int main(int argc, char* argv[]) {
 
-	MAIN_DEBUG_MSG("Welcome to the SHC-Tracer v%d.%d\n", VERSION_MAJOR, VERSION_MINOR);
+	ATOMIC_OPERATION
+	(
+		initialization();
+	)
 
-	qeue_init(&myCommandQeue);
+	DEBUG_PASS("main() - MAIN_CLI_HELP_REQUESTED_SLOT_connect()");
+	MAIN_CLI_HELP_REQUESTED_SLOT_connect();
 
-	MAIN_DEBUG_MSG("main() - LOADING CONFIGURATION\n");
+	DEBUG_PASS("main() - MAIN_CLI_INVALID_PARAMETER_SLOT_connect()");
+	MAIN_CLI_INVALID_PARAMETER_SLOT_connect();
 
-	// --- Parsing Command-Line Arguments
-	u8 err_code = command_line_parser(argc, argv, &myCfgInterface);
-	if (err_code != NO_ERR) {
-		command_line_usage();
-		return err_code;
+	DEBUG_PASS("main() - MAIN_CLI_UNKNOWN_ARGUMENT_SLOT_connect()");
+	MAIN_CLI_UNKNOWN_ARGUMENT_SLOT_connect();
+
+	DEBUG_PASS("main() - MAIN_CLI_NO_ARGUMENT_GIVEN_SLOT_connect()");
+	MAIN_CLI_NO_ARGUMENT_GIVEN_SLOT_connect();
+
+	printf("Welcome to the SHC TRACER v%d.%d\n\n", VERSION_MAJOR, VERSION_MINOR);
+
+	command_line_interface(argc, argv);
+
+	if (exit_program) {
+		DEBUG_PASS("main() - PROGRAM EXIT REQUESTED !!! ---");
+		return 1;
 	}
-
-	char welcome_message[128];
-	sprintf(welcome_message, "Welcome to Tracer v%d.%d", VERSION_MAJOR, VERSION_MINOR);
-	MAIN_DEBUG_MSG("main() - Welcome message: \"%s\"\n", welcome_message);
-	
-	LOG_MSG(NO_ERR, &myCfgInterface.log_file, "Starting SmartHomeClient Deamon v%d.%d", VERSION_MAJOR, VERSION_MINOR);
 	
 	RAW_TRACE_OBJECT_QEUE_init();
 	TRACE_OBJECT_QEUE_init();
@@ -92,96 +133,71 @@ int main(int argc, char* argv[]) {
 	PARSE_TRACE_OBJECT_THREAD_start();
 	PRINT_TRACE_OBJECT_THREAD_start();
 
-	while (1) {
+	for (;;) {
 
-		usleep(500000); // reduce cpu-load
-
+		if (exit_program) {
+			break;
+		}
+		
+		mcu_task_controller_schedule();
+		mcu_task_controller_background_run();
+		watchdog();
 	}
 
 	return 0;
 }
 
+// --------------------------------------------------------------------------------
 
-// -------- COMMAND-LINE PARSING --------------------------------------------------------
+static void main_CLI_INVALID_PARAMETER_SLOT_CALLBACK(const void* p_argument) {
 
+	DEBUG_PASS("main_CLI_INVALID_PARAMETER_SLOT_CALLBACK");
 
-u8 command_line_parser(int argc, char* argv[], CFG_INTERFACE* p_cfg_interface) {
-
-	p_cfg_interface->log_file.act_file_pointer = 0;
-
-	memset(p_cfg_interface->cfg_file.path, 0x00, FILE_PATH_MAX_STRING_LENGTH);
-	memcpy(p_cfg_interface->cfg_file.path, CONFIGURATION_FILE_PATH, string_length(CONFIGURATION_FILE_PATH));
-	memcpy(p_cfg_interface->trace_file.path, TRACE_FILE_DEFAULT_PATH, string_length(TRACE_FILE_DEFAULT_PATH));
-	memcpy(p_cfg_interface->trace_file.path, TRACE_DEFAULT_BASE_PATH, string_length(TRACE_DEFAULT_BASE_PATH));
-
-	p_cfg_interface->output.console = 0;
-	p_cfg_interface->output.file = 0;
-	p_cfg_interface->output.mqtt = 0;
-
-	u8 i = 0;
-	for ( ; i < argc; i++) {
-
-		MAIN_CFG_DEBUG_MSG("command_line_parser() - Parsing cli-argument: %s\n", argv[i]);
-
-		if (memcmp(argv[i], COMMAND_LINE_ARGUMENT_CFG_FILE, string_length(COMMAND_LINE_ARGUMENT_CFG_FILE)) == 0) {
-
-			if (i + 1 >= argc) {
-				break;
-			}
-
-			memset(p_cfg_interface->cfg_file.path, 0x00, FILE_PATH_MAX_STRING_LENGTH);
-			memcpy(p_cfg_interface->cfg_file.path, argv[i + 1], string_length(argv[i + 1]));
-
-			MAIN_CFG_DEBUG_MSG("command_line_parser() - Using Config-File: %s\n", p_cfg_interface->cfg_file.path);
-			
-			// do not process the parameter as a new argument
-			i += 1;
-
-		} else if (memcmp(argv[i], COMMAND_LINE_ARGUMENT_FILE, string_length(COMMAND_LINE_ARGUMENT_FILE)) == 0) {
-
-			if (i + 1 >= argc) {
-				break;
-			}
-
-			memset(p_cfg_interface->trace_file.path, 0x00, FILE_PATH_MAX_STRING_LENGTH);
-			memcpy(p_cfg_interface->trace_file.path, argv[i + 1], string_length(argv[i + 1]));
-			p_cfg_interface->output.file = 1;
-
-			MAIN_CFG_DEBUG_MSG("command_line_parser() - Using Trace-File: %s\n", p_cfg_interface->trace_file.path);
-			
-
-		} else if (memcmp(argv[i], COMMAND_LINE_ARGUMENT_MQTT, string_length(COMMAND_LINE_ARGUMENT_MQTT)) == 0) {
-
-		} else if (memcmp(argv[i], COMMAND_LINE_ARGUMENT_CONSOLE, string_length(COMMAND_LINE_ARGUMENT_CONSOLE)) == 0) {
-			p_cfg_interface->output.console = 1;
-
-		} else if (memcmp(argv[i], COMMAND_LINE_ARGUMENT_PATH, string_length(COMMAND_LINE_ARGUMENT_PATH)) == 0) {
-
-			if (i + 1 >= argc) {
-				break;
-			}
-
-			memset(p_cfg_interface->base_path.path, 0x00, FILE_PATH_MAX_STRING_LENGTH);
-			memcpy(p_cfg_interface->base_path.path, argv[i + 1], string_length(argv[i + 1]));
-
-			MAIN_CFG_DEBUG_MSG("command_line_parser() - Using Trace-Path: %s\n", p_cfg_interface->base_path.path);
-
-		} else if (memcmp(argv[i], COMMAND_LINE_ARGUMENT_HELP, string_length(COMMAND_LINE_ARGUMENT_HELP)) == 0) {
-			return ERR_INVALID_ARGUMENT;
-		} 
-
-		
+	if (p_argument != NULL) {
+		printf("Invalid parameter for arguemnt %s given!\n", (char*)p_argument);
+	} else {
+		console_write_line("Invalid parameter given, check your input!");
 	}
 
-	return NO_ERR;
+	main_CLI_HELP_REQUESTED_SLOT_CALLBACK(NULL);
 }
 
-void command_line_usage(void) {
-	printf("Tracer v%d.%d\n\n", VERSION_MAJOR, VERSION_MINOR);
-	printf("Usage: shcTracer [options]]\n\n");
-	printf("Options:\n");
-	printf("-path <path>                       : path to directory that includes your makefile\t\n");
-	printf("-file <path>                       : traceoutput will be stored into this file\t\n");
-	printf("-console                           : traceoutput will be shown on console\t\n");
-	printf("-mqtt <topic>@<servicer_ip:port>   : traceoutput will be shown on console\t\n");
+static void main_CLI_HELP_REQUESTED_SLOT_CALLBACK(const void* p_argument) {
+	(void) p_argument;
+
+	console_write_line("Usage: shcTracer [options]]");
+	console_write_line("Options:");
+	console_write_line("-path <path>                       : path to directory that includes your makefile");
+	console_write_line("-file <path>                       : traceoutput will be stored into this file");
+	console_write_line("-console                           : traceoutput will be shown on console");
+	console_write_line("-mqtt <topic>@<servicer_ip:port>   : traceoutput will be shown on console");
+
+	exit_program = 1;
+}
+
+static void main_CLI_UNKNOWN_ARGUMENT_SLOT_CALLBACK(const void* p_argument) {
+
+	DEBUG_PASS("main_CLI_UNKNOWN_ARGUMENT_SLOT_CALLBACK()");
+
+	if (p_argument == NULL) {
+
+		DEBUG_PASS("main_CLI_UNKNOWN_ARGUMENT_SLOT_CALLBACK() - NULLPOINTER EXCEPTION");
+		console_write_line("Unknown argument given given!");
+
+	} else {
+
+		COMMAND_LINE_ARGUMENT_TYPE* p_unknown_argument = (COMMAND_LINE_ARGUMENT_TYPE*) p_argument;
+		console_write_string("Unknown argument given ", p_unknown_argument->argument);
+	}
+
+	exit_program = 1;
+}
+
+static void main_CLI_NO_ARGUMENT_GIVEN_CALLBACK(const void* p_argument) {
+
+	DEBUG_PASS("main_CLI_NO_ARGUMENT_GIVEN_CALLBACK()");
+	console_write_line("No argument was given !");
+	console_write_line("give -help to see a list of valid arguments");
+
+	exit_program = 1;
 }
