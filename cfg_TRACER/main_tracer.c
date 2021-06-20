@@ -31,6 +31,7 @@
 #include "common/signal_slot_interface.h"
 #include "common/common_types.h"
 #include "common/qeue_interface.h"
+#include "common/common_tools_string.h"
 
 #include "mcu_task_management/mcu_task_controller.h"
 #include "mcu_task_management/thread_interface.h"
@@ -44,6 +45,15 @@
 #include "app_tasks/thread_read_trace_object.h"
 #include "app_tasks/thread_parse_trace_object.h"
 #include "app_tasks/thread_print_trace_object.h"
+
+#include "driver/trx_driver_interface.h"
+#include "driver/cfg_driver_interface.h"
+
+// --------------------------------------------------------------------------------
+
+#ifndef TRACER_DEFAULT_COM_DRIVER_DEVICE
+#define TRACER_DEFAULT_COM_DRIVER_DEVICE		"/dev/serial0"
+#endif
 
 // --------------------------------------------------------------------------------
 
@@ -77,12 +87,18 @@ static void main_CLI_UNKNOWN_ARGUMENT_SLOT_CALLBACK(const void* p_argument);
  */
 static void main_CLI_NO_ARGUMENT_GIVEN_CALLBACK(const void* p_argument);
 
+/*!
+ *
+ */
+static void main_CLI_ARGUMENT_DEVICE_SIGNAL_CALLBACK(const void* p_argument);
+
 // --------------------------------------------------------------------------------
 
 SIGNAL_SLOT_INTERFACE_CREATE_SLOT(CLI_HELP_REQUESTED_SIGNAL, MAIN_CLI_HELP_REQUESTED_SLOT, main_CLI_HELP_REQUESTED_SLOT_CALLBACK)
 SIGNAL_SLOT_INTERFACE_CREATE_SLOT(CLI_INVALID_PARAMETER_SIGNAL, MAIN_CLI_INVALID_PARAMETER_SLOT, main_CLI_INVALID_PARAMETER_SLOT_CALLBACK)
 SIGNAL_SLOT_INTERFACE_CREATE_SLOT(CLI_UNKNOWN_ARGUMENT_SIGNAL, MAIN_CLI_UNKNOWN_ARGUMENT_SLOT, main_CLI_UNKNOWN_ARGUMENT_SLOT_CALLBACK)
 SIGNAL_SLOT_INTERFACE_CREATE_SLOT(CLI_NO_ARGUMENT_GIVEN_SIGNAL, MAIN_CLI_NO_ARGUMENT_GIVEN_SLOT, main_CLI_NO_ARGUMENT_GIVEN_CALLBACK)
+SIGNAL_SLOT_INTERFACE_CREATE_SLOT(CLI_ARGUMENT_DEVICE_SIGNAL, MAIN_CLI_ARGUMENT_DEVICE_SIGNAL_SLOT, main_CLI_ARGUMENT_DEVICE_SIGNAL_CALLBACK)
 
 // --------------------------------------------------------------------------------
 
@@ -96,6 +112,14 @@ QEUE_INTERFACE_BUILD_QEUE(TRACE_OBJECT_QEUE, TRACE_OBJECT, sizeof(TRACE_OBJECT),
  */
 static u8 exit_program = 0;
 
+/**
+ * @brief holds the configuration of the communication driver
+ * that is used to read trace data. By default a serial communicaiton
+ * is used.
+ * 
+ */
+static TRX_DRIVER_CONFIGURATION driver_cfg;
+
 // --------------------------------------------------------------------------------
 
 int main(int argc, char* argv[]) {
@@ -105,19 +129,36 @@ int main(int argc, char* argv[]) {
 		initialization();
 	)
 
-	DEBUG_PASS("main() - MAIN_CLI_HELP_REQUESTED_SLOT_connect()");
-	MAIN_CLI_HELP_REQUESTED_SLOT_connect();
+	{
+		DEBUG_PASS("main() - Initialize Slots");
 
-	DEBUG_PASS("main() - MAIN_CLI_INVALID_PARAMETER_SLOT_connect()");
-	MAIN_CLI_INVALID_PARAMETER_SLOT_connect();
+		DEBUG_PASS("main() - MAIN_CLI_HELP_REQUESTED_SLOT_connect()");
+		MAIN_CLI_HELP_REQUESTED_SLOT_connect();
 
-	DEBUG_PASS("main() - MAIN_CLI_UNKNOWN_ARGUMENT_SLOT_connect()");
-	MAIN_CLI_UNKNOWN_ARGUMENT_SLOT_connect();
+		DEBUG_PASS("main() - MAIN_CLI_INVALID_PARAMETER_SLOT_connect()");
+		MAIN_CLI_INVALID_PARAMETER_SLOT_connect();
 
-	DEBUG_PASS("main() - MAIN_CLI_NO_ARGUMENT_GIVEN_SLOT_connect()");
-	MAIN_CLI_NO_ARGUMENT_GIVEN_SLOT_connect();
+		DEBUG_PASS("main() - MAIN_CLI_UNKNOWN_ARGUMENT_SLOT_connect()");
+		MAIN_CLI_UNKNOWN_ARGUMENT_SLOT_connect();
 
-	printf("Welcome to the SHC TRACER v%d.%d\n\n", VERSION_MAJOR, VERSION_MINOR);
+		DEBUG_PASS("main() - MAIN_CLI_NO_ARGUMENT_GIVEN_SLOT_connect()");
+		MAIN_CLI_NO_ARGUMENT_GIVEN_SLOT_connect();
+
+		DEBUG_PASS("main() - MAIN_CLI_ARGUMENT_DEVICE_SIGNAL_SLOT_connect()");
+		MAIN_CLI_ARGUMENT_DEVICE_SIGNAL_SLOT_connect();
+	}
+
+	{
+		DEBUG_PASS("main() - Initialize communication driver");
+
+		driver_cfg.module.usart.baudrate = BAUDRATE_230400;
+		driver_cfg.module.usart.databits = DATABITS_8;
+		driver_cfg.module.usart.parity = PARITY_NONE;
+		driver_cfg.module.usart.stopbits = STOPBITS_1;
+
+		common_tools_string_clear(driver_cfg.device.name, DRIVER_CFG_DEVICE_NAME_MAX_LENGTH);
+		common_tools_string_copy_string(driver_cfg.device.name, TRACER_DEFAULT_COM_DRIVER_DEVICE, DRIVER_CFG_DEVICE_NAME_MAX_LENGTH);
+	}
 
 	command_line_interface(argc, argv);
 
@@ -132,6 +173,8 @@ int main(int argc, char* argv[]) {
 	READ_TRACE_OBJECT_THREAD_start();
 	PARSE_TRACE_OBJECT_THREAD_start();
 	PRINT_TRACE_OBJECT_THREAD_start();
+
+	printf("Welcome to the SHC TRACER v%d.%d\n\n", VERSION_MAJOR, VERSION_MINOR);
 
 	for (;;) {
 
@@ -167,6 +210,7 @@ static void main_CLI_HELP_REQUESTED_SLOT_CALLBACK(const void* p_argument) {
 
 	console_write_line("Usage: shcTracer [options]]");
 	console_write_line("Options:");
+	console_write_line("-dev <device_file>                 : device to use for reading trace data");
 	console_write_line("-path <path>                       : path to directory that includes your makefile");
 	console_write_line("-file <path>                       : traceoutput will be stored into this file");
 	console_write_line("-console                           : traceoutput will be shown on console");
@@ -200,4 +244,18 @@ static void main_CLI_NO_ARGUMENT_GIVEN_CALLBACK(const void* p_argument) {
 	console_write_line("give -help to see a list of valid arguments");
 
 	exit_program = 1;
+}
+
+static void main_CLI_ARGUMENT_DEVICE_SIGNAL_CALLBACK(const void* p_argument) {
+
+	if (p_argument == NULL) {
+		DEBUG_PASS("main_CLI_ARGUMENT_DEVICE_SIGNAL_CALLBACK() - NULL_POINTER_EXCEPTION");
+		return;
+	}
+
+	const char* p_string = (const char*)p_argument;
+	DEBUG_TRACE_STR(p_string, "main_CLI_ARGUMENT_DEVICE_SIGNAL_CALLBACK() - Device");
+
+	common_tools_string_clear(driver_cfg.device.name, DRIVER_CFG_DEVICE_NAME_MAX_LENGTH);
+	common_tools_string_copy_string(driver_cfg.device.name, p_string, DRIVER_CFG_DEVICE_NAME_MAX_LENGTH);
 }

@@ -63,6 +63,7 @@ APP_TASK_CFG =
 APP_TASK_CFG += THREAD_INTERFACE
 APP_TASK_CFG += THREAD_READ_TRACE_OBJECT
 APP_TASK_CFG += THREAD_PARSE_TRACE_OBJECT
+APP_TASK_CFG += THREAD_PRINT_TRACE_OBJECT
 
 #-----------------------------------------------------------------------------
 

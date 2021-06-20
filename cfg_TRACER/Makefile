@@ -20,7 +20,7 @@ BOARD_ID = RASPBERRYPI
 #-----------------------------------------------------------------------------
 
 VERSION_MAJOR		:= 2
-VERSION_MINOR		:= 0
+VERSION_MINOR		:= 5
 
 #-----------------------------------------------------------------------------
 
@@ -57,7 +57,9 @@ APP_TASK_CFG =
 #APP_TASK_CFG += LED_MATRIX
 #APP_TASK_CFG += TEST_TRACER
 APP_TASK_CFG += THREAD_INTERFACE
+APP_TASK_CFG += THREAD_READ_TRACE_OBJECT
 APP_TASK_CFG += THREAD_PARSE_TRACE_OBJECT
+APP_TASK_CFG += THREAD_PRINT_TRACE_OBJECT
 
 #-----------------------------------------------------------------------------
 

@@ -17,6 +17,7 @@
 //-------------------------------------------------------------------------
 
 #define USART0_DRIVER_MAX_NUM_BYTES_RECEIVE_BUFFER	1024
+#define USART0_DRIVER_MAX_NUM_BYTES_TRANSMIT_BUFFER	1024
 
 //-------------------------------------------------------------------------
 
