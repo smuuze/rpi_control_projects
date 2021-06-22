@@ -10,6 +10,10 @@
 
 #define TRACER_OFF
 
+#ifdef TRACER_ON
+#pragma __WARNING__TRACES_ENABLED__
+#endif
+
 // --------------------------------------------------------------------------------
 
 #include "config.h"
@@ -49,6 +53,8 @@
 #include "driver/trx_driver_interface.h"
 #include "driver/cfg_driver_interface.h"
 
+#include "system/system_interface.h"
+
 // --------------------------------------------------------------------------------
 
 #ifndef TRACER_DEFAULT_COM_DRIVER_DEVICE
@@ -58,11 +64,11 @@
 // --------------------------------------------------------------------------------
 
 #ifndef TRACER_RAW_TRACE_OBJECT_QEUE_SIZE
-#define TRACER_RAW_TRACE_OBJECT_QEUE_SIZE		48
+#define TRACER_RAW_TRACE_OBJECT_QEUE_SIZE		100
 #endif
 
 #ifndef TRACER_PARSED_TRACE_OBJECT_QEUE_SIZE
-#define TRACER_PARSED_TRACE_OBJECT_QEUE_SIZE		48
+#define TRACER_PARSED_TRACE_OBJECT_QEUE_SIZE		100
 #endif
 
 // --------------------------------------------------------------------------------
@@ -127,6 +133,10 @@ int main(int argc, char* argv[]) {
 	ATOMIC_OPERATION
 	(
 		initialization();
+
+		READ_TRACE_OBJECT_THREAD_init();
+		PARSE_TRACE_OBJECT_THREAD_init();
+		PRINT_TRACE_OBJECT_THREAD_init();
 	)
 
 	{
@@ -169,6 +179,13 @@ int main(int argc, char* argv[]) {
 	
 	RAW_TRACE_OBJECT_QEUE_init();
 	TRACE_OBJECT_QEUE_init();
+
+
+	i_system.driver.usart0->initialize();
+	i_system.driver.usart0->configure(&driver_cfg);
+	i_system.driver.usart0->start_rx(TRX_DRIVER_INTERFACE_UNLIMITED_RX_LENGTH);
+
+	thread_read_trace_object_set_com_driver(i_system.driver.usart0);
 
 	READ_TRACE_OBJECT_THREAD_start();
 	PARSE_TRACE_OBJECT_THREAD_start();

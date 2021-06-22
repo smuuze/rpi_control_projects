@@ -20,7 +20,7 @@ BOARD_ID = RASPBERRYPI
 #-----------------------------------------------------------------------------
 
 VERSION_MAJOR		:= 2
-VERSION_MINOR		:= 5
+VERSION_MINOR		:= 6
 
 #-----------------------------------------------------------------------------
 
@@ -114,7 +114,7 @@ USER_INTERFACE_CFG += CLI_ARG_DEVICE
 #USER_INTERFACE_CFG += CLI_ARG_REMOTE_CONTROL
 USER_INTERFACE_CFG += CONSOLE
 #USER_INTERFACE_CFG += LCD_16X2
-#USER_INTERFACE_CFG += CFG_FILE_PARSER
+USER_INTERFACE_CFG += CFG_FILE_PARSER
 USER_INTERFACE_CFG += FILE_INTERFACE
 
 #-----------------------------------------------------------------------------
