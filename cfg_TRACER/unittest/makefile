@@ -13,29 +13,33 @@
 # VERSION        = 0x107
 
 # PROJEKT Name des Hexfiles
-PROJECT = shcTracer
+PROJECT = UNITTEST_tracer
 
-BOARD_ID = RASPBERRYPI
+BOARD_ID = UNITTEST
 
-#-----------------------------------------------------------------------------
-
-VERSION_MAJOR		:= 2
-VERSION_MINOR		:= 6
+PLATTFORM = MACOS
 
 #-----------------------------------------------------------------------------
 
-BASE_PATH   = ../..
+VERSION_MAJOR		:= 1
+VERSION_MINOR		:= 0
+
+#-----------------------------------------------------------------------------
+
+BASE_PATH   = ../../..
 FRMWRK_PATH = $(BASE_PATH)/rpi_control_frmwrk
 APP_PATH    = $(FRMWRK_PATH)/src
 MAKE_PATH   = $(FRMWRK_PATH)/make
 
 #-----------------------------------------------------------------------------
 
-MCU = RASPBERRY_PI
+MCU = UNITTEST
 
 #-----------------------------------------------------------------------------
 
-CSRCS += main_tracer.c
+CSRCS	 += ../main_tracer.c
+INC_PATH += ../
+INC_PATH += .
 
 #-----------------------------------------------------------------------------
 
@@ -110,7 +114,7 @@ COPRO_INTERFACE_CFG =
 
 USER_INTERFACE_CFG =
 USER_INTERFACE_CFG += CLI_ARG_DEVICE
-#USER_INTERFACE_CFG += CLI_ARG_COMMAND
+USER_INTERFACE_CFG += CLI_ARG_COMMAND
 #USER_INTERFACE_CFG += CLI_ARG_REMOTE_CONTROL
 USER_INTERFACE_CFG += CONSOLE
 #USER_INTERFACE_CFG += LCD_16X2

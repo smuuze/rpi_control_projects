@@ -1,0 +1,12 @@
+CMD-HELPER - CHANGELOG
+
+-----------------------------------------------------------
+
+Version:	1.05
+
+Date: 		23.06.2021
+Author:		Sebastian Lesse
+Framework:	v6.0
+
+Changes:	- FIX: exit program if command failes on timeout
+		

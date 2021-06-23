@@ -44,6 +44,11 @@
 /*!
  *
  */
+static void main_RPI_HOST_TIMEOUT_SLOT_CALLBACK(const void* p_argument);
+
+/*!
+ *
+ */
 static void main_RPI_HOST_RESPONSE_RECEIVED_SLOT_CALLBACK(const void* p_argument);
 
 /*!
@@ -83,6 +88,7 @@ static void main_CLI_NO_ARGUMENT_GIVEN_CALLBACK(const void* p_argument);
 
 // --------------------------------------------------------------------------------
 
+SIGNAL_SLOT_INTERFACE_CREATE_SLOT(RPI_HOST_RESPONSE_TIMEOUT_SIGNAL, MAIN_RPI_HOST_TIMEOUT_SLOT, main_RPI_HOST_TIMEOUT_SLOT_CALLBACK)
 SIGNAL_SLOT_INTERFACE_CREATE_SLOT(RPI_HOST_RESPONSE_RECEIVED_SIGNAL, MAIN_RPI_HOST_RESPONSE_RECEIVED_SLOT, main_RPI_HOST_RESPONSE_RECEIVED_SLOT_CALLBACK)
 SIGNAL_SLOT_INTERFACE_CREATE_SLOT(RPI_HOST_COMMAND_RECEIVED_SIGNAL, MAIN_RPI_HOST_COMMAND_RECEIVED_SLOT, main_RPI_HOST_COMMAND_RECEIVED_SLOT_CALLBACK)
 SIGNAL_SLOT_INTERFACE_CREATE_SLOT(CLI_HELP_REQUESTED_SIGNAL, MAIN_CLI_HELP_REQUESTED_SLOT, main_CLI_HELP_REQUESTED_SLOT_CALLBACK)
@@ -131,6 +137,9 @@ int main(int argc, char* argv[]) {
 
 	DEBUG_PASS("main() - MAIN_CLI_NO_ARGUMENT_GIVEN_SLOT_connect()");
 	MAIN_CLI_NO_ARGUMENT_GIVEN_SLOT_connect();
+
+	DEBUG_PASS("main() - MAIN_CLI_NO_ARGUMENT_GIVEN_SLOT_connect()");
+	MAIN_RPI_HOST_TIMEOUT_SLOT_connect();
 
 	printf("Welcome to the SHC CMD-Helper v%d.%d\n\n", VERSION_MAJOR, VERSION_MINOR);
 
@@ -200,6 +209,19 @@ static void main_RPI_HOST_COMMAND_RECEIVED_SLOT_CALLBACK(const void* p_argument)
 
 	lcd_write_line("CMD-Helper");
 	lcd_write_line("- command OK");
+}
+
+static void main_RPI_HOST_TIMEOUT_SLOT_CALLBACK(const void* p_argument) {
+
+	(void) p_argument;
+	DEBUG_PASS("main_RPI_HOST_TIMEOUT_SLOT_CALLBACK()");
+
+	exit_program = 1;
+
+	console_write_line("TIMEOUT !");
+
+	lcd_write_line("CMD-Helper");
+	lcd_write_line("- TIMEOUT !");
 }
 
 // --------------------------------------------------------------------------------

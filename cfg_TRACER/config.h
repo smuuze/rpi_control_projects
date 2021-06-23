@@ -8,19 +8,16 @@
 
 //-------------------------------------------------------------------------
 
-#define config_DEBUG_WELCOME_MESSAGE			"Welcome to RPi - Control Board V2"
-
-//-------------------------------------------------------------------------
-
-#define I2C_CLK_LIMIT 225000
-
-//-------------------------------------------------------------------------
-
 #define config_LOCAL_COMMAND_HANDLER_TABLE_FUNC_PROTO		\
 	u8 cmd_handler_version(const COMMAND_BUFFER_INTERFACE* i_cmd_buffer, const ANSWER_BUFFER_INTERFACE* i_answ_buffer);
 
 #define config_LOCAL_COMMAND_HANDLER_TABLE_FUNC_CALLBACK	\
 	{CMD_VERSION, &cmd_handler_version},
+
+//-------------------------------------------------------------------------
+
+#define USART0_DRIVER_MAX_NUM_BYTES_RECEIVE_BUFFER			2048
+#define USART0_DRIVER_MAX_NUM_BYTES_TRANSMIT_BUFFER			2048
 
 //-------------------------------------------------------------------------
 
