@@ -2,7 +2,17 @@ CMD-HELPER - CHANGELOG
 
 -----------------------------------------------------------
 
-Version:	1.05
+Version:	1.6 (beta)
+
+Date: 		24.06.2021
+Author:		Sebastian Lesse
+Framework:	
+
+Changes:	- ADD: samsung tv commands
+
+-----------------------------------------------------------
+
+Version:	1.5
 
 Date: 		23.06.2021
 Author:		Sebastian Lesse

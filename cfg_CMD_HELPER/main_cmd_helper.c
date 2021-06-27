@@ -253,25 +253,27 @@ static void main_CLI_LCD_ACTIVATED_SLOT_CALLBACK(const void* p_argument) {
 static void main_CLI_HELP_REQUESTED_SLOT_CALLBACK(const void* p_argument) {
 	(void) p_argument;
 
-	console_write_line("Usage: cmdHelper -remote <REMOTE_COMMAND>\n\n");
+	console_write_line("Usage: cmdHelper -remote <REMOTE_COMMAND>\n");
 
 	console_write_line("Available REMOTE_COMMAND's:");
 
-	console_write_line("\t Samsung TV commands:");
-	console_write_line("\t\t samsung_tv_power_on");
-	console_write_line("\t\t samsung_tv_power_off");
+	console_write_line("\n\t JVC device commands:\n");
 
-	console_write_line("\t JVC Boomblaster commands:");
-	console_write_string("\t\t", CLI_REMOTE_CONTROL_NAME_JVC_RADIO_POWER_ON);
-	console_write_string("\t\t", CLI_REMOTE_CONTROL_NAME_JVC_RADIO_VOLUME_DOWN);
-	console_write_string("\t\t", CLI_REMOTE_CONTROL_NAME_JVC_RADIO_VOLUME_UP);
-	console_write_string("\t\t", CLI_REMOTE_CONTROL_NAME_JVC_RADIO_VOLUME_MUTE);
-	console_write_string("\t\t", CLI_REMOTE_CONTROL_NAME_JVC_RADIO_PLAY);
-	console_write_string("\t\t", CLI_REMOTE_CONTROL_NAME_JVC_RADIO_PAUSE);
-	console_write_string("\t\t", CLI_REMOTE_CONTROL_NAME_JVC_RADIO_STOP);
-	console_write_string("\t\t", CLI_REMOTE_CONTROL_NAME_JVC_RADIO_BASS_UP);
-	console_write_string("\t\t", CLI_REMOTE_CONTROL_NAME_JVC_RADIO_BASS_DOWN);
-	console_write_string("\t\t", CLI_REMOTE_CONTROL_NAME_JVC_RADIO_SOUND_MODE);
+	CLI_REMOTE_CONTROL_COMMAND_PAIR jvc_commands[] = { CLI_REMOTE_CONTROL_CMD_ARRAY_JVC };
+	u16 i = 0;
+
+	for ( ; i < CLI_REMOTE_SIZEOF_COMMAND_PAIR_TABLE(jvc_commands) ; i++ ) {
+		console_write_string("\t\t", jvc_commands[i].cmd_name);
+	}
+
+	console_write_line("\n\t Samsung device commands:\n");
+
+	CLI_REMOTE_CONTROL_COMMAND_PAIR samsung_commands[] = { CLI_REMOTE_CONTROL_CMD_ARRAY_SAMSUNG };
+	i = 0;
+
+	for ( ; i < CLI_REMOTE_SIZEOF_COMMAND_PAIR_TABLE(samsung_commands) ; i++ ) {
+		console_write_string("\t\t", samsung_commands[i].cmd_name);
+	}
 
 	exit_program = 1;
 }
