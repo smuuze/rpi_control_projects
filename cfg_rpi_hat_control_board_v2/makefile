@@ -2,16 +2,6 @@
 #       Makefile fuer AVR-GCC Projekte
 #-----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
-# PROJECT: Name des Hexfiles usw.
-#-----------------------------------------------------------------------------
-# VERSION_STRING muss (!) zwei Ziffern nach dem '.' enthalten, weil
-# aus dem String noch weitere Varianten von Version erzeugt
-# werden. Beispiel:
-# VERSION_STRING = v1.07
-# VERSION_DIGITS = 107
-# VERSION        = 0x107
-
 # PROJEKT Name des Hexfiles
 PROJECT = RPI_Hat_ControlBoard_V2
 
@@ -77,8 +67,12 @@ SENSOR_MODULE_CFG += LIGHT_SENSOR_GM5528
 
 #-----------------------------------------------------------------------------
 
+POWER_MANAGEMENT_CFG = 
+POWER_MANAGEMENT_CFG += POWER_5V_MODULE
+
+#-----------------------------------------------------------------------------
+
 MANAGEMENT_MODULE_CFG =
-MANAGEMENT_MODULE_CFG += POWER
 MANAGEMENT_MODULE_CFG += IO
 
 #-----------------------------------------------------------------------------
