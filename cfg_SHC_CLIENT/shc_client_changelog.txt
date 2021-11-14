@@ -1,0 +1,23 @@
+SHC-Client - CHANGELOG
+
+-----------------------------------------------------------
+
+Version:		5.11
+
+Date: 			13.11.2021
+Author:			Sebastian Lesse
+
+Framework:		6.04
+
+New-Features:	-	LCD gpio pins are deactivated by default to
+			avoid conflicts with Hifi-Berry sound card.
+			If the LCD is enabled by CLI-argument the gpios
+			will be activated automatically
+
+Bugfixes:	-	none
+
+Misc:		-	none
+
+Known-Bugs:	-	none
+
+-----------------------------------------------------------
