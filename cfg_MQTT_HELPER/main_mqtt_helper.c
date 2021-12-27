@@ -1,30 +1,47 @@
-/*! 
- * --------------------------------------------------------------------------------
+/**
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * \file	main_mqtt_helper.c
- * \brief
- * \author	sebastian lesse
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * --------------------------------------------------------------------------------
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ * @file   main_mqtt_helper.c
+ * @author Sebastian Lesse
+ * @date   2020 / 12 / 19
+ * @brief  SHC MQTT Helper main source file
+ *          This program is used to send and receive messages via MQTT.
+ *          The topic to use can be given by command-line argument.
+ *          The message to send can also be given by command-line argument
+ * 
  */
 
 #define TRACER_OFF
 
-// --------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------
 
 #include "config.h"
 
-// --------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------
 
 #include "tracer.h"
 
-// --------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------
 
 #include "cpu.h"
 
+// --------------------------------------------------------------------------------
+
 #include <stdio.h>
 
-// --------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------
 
 #include "initialization/initialization.h"
 #include "common/signal_slot_interface.h"
@@ -36,12 +53,12 @@
 #include "ui/cfg_file_parser/cfg_file_parser.h"
 #include "protocol_management/mqtt/mqtt_interface.h"
 
-//-----------------------------------------------------------------------------
+// --------------------------------------------------------------------------------
 
 #define MAIN_MODULE_NAME		"MQTT Helper"
 #define MAIN_USER_MSG_MAX_LENGTH	255
 
-//-----------------------------------------------------------------------------
+// --------------------------------------------------------------------------------
 
 /*!
  *
@@ -88,7 +105,7 @@ static void main_CLI_MESSAGE_SLOT_CALLBACK(const void* p_argument);
  */
 static void main_CFG_OBJECT_RECEIVED_SLOT_CALLBACK(const void* p_argument);
 
-// --------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------
 
 SIGNAL_SLOT_INTERFACE_CREATE_SLOT(MQTT_CONNECTION_ESTABLISHED_SIGNAL, MAIN_MQTT_CONNECTION_ESTABLISHED_SLOT, main_MQTT_CONNECTION_ESTABLISHED_SLOT_CALLBACK)
 SIGNAL_SLOT_INTERFACE_CREATE_SLOT(MQTT_CONNECTION_LOST_SIGNAL, MAIN_MQTT_CONNECTION_LOST_SLOT, main_MQTT_CONNECTION_LOST_SLOT_CALLBACK)
@@ -102,7 +119,7 @@ SIGNAL_SLOT_INTERFACE_CREATE_SLOT(CLI_MESSAGE_SIGNAL, MAIN_CLI_MESSAGE_SLOT, mai
 
 SIGNAL_SLOT_INTERFACE_CREATE_SLOT(CFG_PARSER_NEW_CFG_OBJECT_SIGNAL, MAIN_CFG_OBJECT_RECEIVED_SLOT, main_CFG_OBJECT_RECEIVED_SLOT_CALLBACK)
 
-// --------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------
 
 /*!
  *
@@ -124,7 +141,7 @@ static u8 connection_established = 0;
  */
 static char user_msg[MAIN_USER_MSG_MAX_LENGTH];
 
-// --------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------
 
 int main(int argc, char* argv[]) {
 
@@ -159,8 +176,6 @@ int main(int argc, char* argv[]) {
 
 	DEBUG_PASS("main() - MAIN_CLI_MESSAGE_SLOT_connect()");
 	MAIN_CLI_MESSAGE_SLOT_connect();
-
-	printf("Welcome to %s Version %d.%d\n\n", MAIN_MODULE_NAME, VERSION_MAJOR, VERSION_MINOR);
 
 	command_line_interface(argc, argv);
 
@@ -197,7 +212,7 @@ int main(int argc, char* argv[]) {
 	return 0;
 }
 
-// --------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------
 
 static void main_MQTT_CONNECTION_ESTABLISHED_SLOT_CALLBACK(const void* p_argument) {
 	console_write_line("Connection to MQTT-Broker has been established");
@@ -240,7 +255,7 @@ static void main_MQTT_MESSAGE_SEND_SUCCEED_SLOT_CALLBACK(const void* p_argument)
 	exit_program = 1;
 }
 
-// --------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------
 
 static void main_CLI_INVALID_PARAMETER_SLOT_CALLBACK(const void* p_argument) {
 
@@ -269,12 +284,20 @@ static void main_CLI_LCD_ACTIVATED_SLOT_CALLBACK(const void* p_argument) {
 static void main_CLI_HELP_REQUESTED_SLOT_CALLBACK(const void* p_argument) {
 	(void) p_argument;
 
+	console_write("SHC MQTT-Helper Version: ");
+    console_write_number(VERSION_MAJOR);
+	console_write(".");
+    console_write_number(VERSION_MINOR);
+
+    console_new_line();
+    console_new_line();
+
 	console_write_line("Usage: mqttHelper [options]]\n\n");
 	console_write_line("Options:");
-	console_write_line("-topic <topic_name>               : Name of the Topic to listen to");
-	console_write_line("-host <host_name>:<port>          : Host-Address and Port of the MQTT-Broker (e.g. 192.168.1.100:1883)");
-	console_write_line("-client <client_name>             : Name that is used to identify the mqttListener");
-	console_write_line("-msg \"<cmessage>\"               : Message to send, programm will exit after message has been send");
+	console_write_line("-topic <topic_name>         : Name of the Topic to listen to");
+	console_write_line("-host <host_name>:<port>    : Host-Address and Port of the MQTT-Broker (e.g. 192.168.1.100:1883)");
+	console_write_line("-client <client_name>       : Name that is used to identify the mqttListener");
+	console_write_line("-msg \"<cmessage>\"         : Message to send, programm will exit after message has been send");
 
 	exit_program = 1;
 }
@@ -301,7 +324,7 @@ static void main_CLI_MESSAGE_SLOT_CALLBACK(const void* p_argument) {
 	user_msg_pending = 1;
 }
 
-// --------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------
 
 static void main_CFG_OBJECT_RECEIVED_SLOT_CALLBACK(const void* p_argument) {
 

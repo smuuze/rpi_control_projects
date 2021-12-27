@@ -1,30 +1,44 @@
-/*! 
- * --------------------------------------------------------------------------------
+/**
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * \file	main_shc_helper.c
- * \brief
- * \author	sebastian lesse
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * --------------------------------------------------------------------------------
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ * @file   main_shc_client.c
+ * @author Sebastian Lesse
+ * @date   2021 / 12 / 27
+ * @brief  Short description of this file
+ * 
  */
 
 #define TRACER_OFF
 
-// --------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------
 
 #include "config.h"
 
-// --------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------
 
 #include "tracer.h"
 
-// --------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------
 
 #include "cpu.h"
 
+// --------------------------------------------------------------------------------
+
 #include <stdio.h>
 
-// --------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------
 
 #include "initialization/initialization.h"
 
@@ -41,7 +55,7 @@
 #include "ui/cfg_file_parser/cfg_file_parser.h"
 #include "ui/log_interface/log_interface.h"
 
-// --------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------
 
 #define MAIN_STATUS_EXIT_PROGRAM		(1 << 0)
 #define MAIN_STATUS_CONSOLE_ACTIVE		(1 << 1)
@@ -49,12 +63,17 @@
 
 BUILD_MODULE_STATUS_U8(MAIN_STATUS)
 
-//-----------------------------------------------------------------------------
+// --------------------------------------------------------------------------------
 
 TIME_MGMN_BUILD_STATIC_TIMER_U32(MAIN_TIMER)
 
-//-----------------------------------------------------------------------------
+// --------------------------------------------------------------------------------
 
+/**
+ * @brief 
+ * 
+ * @param p_argument 
+ */
 static void main_CLI_HELP_REQUESTED_SLOT_CALLBACK(const void* p_argument) {
 	(void) p_argument;
 
@@ -68,6 +87,11 @@ static void main_CLI_HELP_REQUESTED_SLOT_CALLBACK(const void* p_argument) {
 	MAIN_STATUS_set(MAIN_STATUS_EXIT_PROGRAM);
 }
 
+/**
+ * @brief 
+ * 
+ * @param p_argument 
+ */
 static void main_CLI_CONFIGURATION_SLOT_CALLBACK(const void* p_argument) {
 
 	DEBUG_PASS("main_CLI_CONFIGURATION_SLOT_CALLBACK()");
@@ -82,6 +106,11 @@ static void main_CLI_CONFIGURATION_SLOT_CALLBACK(const void* p_argument) {
 	MAIN_STATUS_set(MAIN_STATUS_CFG_FILE_SET);
 }
 
+/**
+ * @brief 
+ * 
+ * @param p_argument 
+ */
 static void main_CLI_INVALID_PARAMETER_SLOT_CALLBACK(const void* p_argument) {
 
 	DEBUG_PASS("main_CLI_INVALID_PARAMETER_SLOT_CALLBACK");
@@ -108,6 +137,11 @@ static void main_CLI_INVALID_PARAMETER_SLOT_CALLBACK(const void* p_argument) {
 	main_CLI_HELP_REQUESTED_SLOT_CALLBACK(NULL);
 }
 
+/**
+ * @brief 
+ * 
+ * @param p_argument 
+ */
 static void main_CLI_LCD_ACTIVATED_SLOT_CALLBACK(const void* p_argument) {
 
 	DEBUG_PASS("main_CLI_LCD_ACTIVATED_SLOT_CALLBACK()");
@@ -124,6 +158,11 @@ static void main_CLI_LCD_ACTIVATED_SLOT_CALLBACK(const void* p_argument) {
 	lcd_set_enabled(1);
 }
 
+/**
+ * @brief 
+ * 
+ * @param p_argument 
+ */
 static void main_CLI_CONSOLE_ACTIVATED_SLOT_CALLBACK(const void* p_argument) {
 
 	DEBUG_PASS("main_CLI_CONSOLE_ACTIVATED_SLOT_CALLBACK()");
@@ -138,6 +177,11 @@ static void main_CLI_CONSOLE_ACTIVATED_SLOT_CALLBACK(const void* p_argument) {
 	log_message("CONSOLE activated");
 }
 
+/**
+ * @brief 
+ * 
+ * @param p_argument 
+ */
 static void main_CLI_EXECUTER_COMMAND_RESPONSE_SLOT_CALLBACK(const void* p_argument) {
 
 	if (p_argument != NULL) {
@@ -165,6 +209,11 @@ static void main_CLI_EXECUTER_COMMAND_RESPONSE_SLOT_CALLBACK(const void* p_argum
 	}
 }
 
+/**
+ * @brief 
+ * 
+ * @param p_argument 
+ */
 static void main_CLI_EXECUTER_COMMAND_TIMEOUT_CALLBACK(const void* p_argument) {
 	DEBUG_PASS("main_CLI_EXECUTER_COMMAND_TIMEOUT_CALLBACK()");
 
@@ -190,6 +239,11 @@ static void main_CLI_EXECUTER_COMMAND_NOT_FOUND_CALLBACK(const void* p_argument)
 	log_message_string("EXE-command not found - ", (const char*) p_argument);
 }
 
+/**
+ * @brief 
+ * 
+ * @param p_argument 
+ */
 static void main_CLI_EXECUTER_COMMAND_RECEIVED_SLOT_CALLBACK(const void* p_argument) {
 	DEBUG_PASS("main_CLI_EXECUTER_COMMAND_RECEIVED_SLOT_CALLBACK()");
 
@@ -203,6 +257,11 @@ static void main_CLI_EXECUTER_COMMAND_RECEIVED_SLOT_CALLBACK(const void* p_argum
 	log_message_string("EXE-Command: ", (const char*) p_argument);
 }
 
+/**
+ * @brief 
+ * 
+ * @param p_argument 
+ */
 static void main_MQTT_CONNECTION_ESTABLISHED_CALLBACK(const void* p_argument) {
 
 	(void) p_argument;
@@ -217,6 +276,11 @@ static void main_MQTT_CONNECTION_ESTABLISHED_CALLBACK(const void* p_argument) {
 	log_message("MQTT connection established");
 }
 
+/**
+ * @brief 
+ * 
+ * @param p_argument 
+ */
 static void main_MQTT_CONNECTION_FAILED_CALLBACK(const void* p_argument) {
 
 	(void) p_argument;
@@ -231,6 +295,11 @@ static void main_MQTT_CONNECTION_FAILED_CALLBACK(const void* p_argument) {
 	log_message("MQTT connection FAILED!!!");
 }
 
+/**
+ * @brief 
+ * 
+ * @param p_argument 
+ */
 static void main_MQTT_CONNECTION_LOST_CALLBACK(const void* p_argument) {
 
 	if (p_argument != NULL) {
@@ -257,7 +326,6 @@ static void main_MQTT_CONNECTION_LOST_CALLBACK(const void* p_argument) {
 		
 		log_message("MQTT connection lost");
 	}
-
 }
 
 static void main_MQTT_MESSAGE_RECEIVED_CALLBACK(const void* p_argument) {
@@ -274,6 +342,11 @@ static void main_MQTT_MESSAGE_RECEIVED_CALLBACK(const void* p_argument) {
 	log_message_string("MQTT message received: ", (const char*) p_argument);
 }
 
+/**
+ * @brief 
+ * 
+ * @param p_argument 
+ */
 static void main_MQTT_MESSAGE_SEND_FAILED_CALLBACK(const void* p_argument) {
 
 	DEBUG_PASS("main_MQTT_MESSAGE_SEND_FAILED_CALLBACK()");
@@ -287,6 +360,11 @@ static void main_MQTT_MESSAGE_SEND_FAILED_CALLBACK(const void* p_argument) {
 	log_message("MQTT message transmit has FAILED");
 }
 
+/**
+ * @brief 
+ * 
+ * @param p_argument 
+ */
 static void main_MQTT_MESSAGE_SEND_SUCCEEDED_CALLBACK(const void* p_argument) {
 
 	DEBUG_PASS("main_MQTT_MESSAGE_SEND_SUCCEEDED_CALLBACK()");
@@ -300,6 +378,11 @@ static void main_MQTT_MESSAGE_SEND_SUCCEEDED_CALLBACK(const void* p_argument) {
 	log_message("MQTT message successful send");
 }
 
+/**
+ * @brief 
+ * 
+ * @param p_argument 
+ */
 static void main_MQTT_MESSAGE_TO_SEND_CALLBACK(const void* p_argument) {
 
 	DEBUG_TRACE_STR((const char*) p_argument, "main_MQTT_MESSAGE_TO_SEND_CALLBACK()");
@@ -314,6 +397,11 @@ static void main_MQTT_MESSAGE_TO_SEND_CALLBACK(const void* p_argument) {
 	log_message_string("MQTT message to send: ", (const char*) p_argument);
 }
 
+/**
+ * @brief 
+ * 
+ * @param p_argument 
+ */
 static void main_MSG_EXECUTER_RESPONSE_TIMEOUT_SLOT_CALLBACK(const void* p_argument) {
 	DEBUG_PASS("main_MSG_EXECUTER_RESPONSE_TIMEOUT_SLOT_CALLBACK()");
 
@@ -328,6 +416,11 @@ static void main_MSG_EXECUTER_RESPONSE_TIMEOUT_SLOT_CALLBACK(const void* p_argum
 	log_message_string("Timeout while processing command: ", (const char*)p_argument);
 }
 
+/**
+ * @brief 
+ * 
+ * @param p_argument 
+ */
 static void main_MSG_EXECUTER_INVALID_COMMAND_SLOT_CALLBACK(const void* p_argument) {
 	DEBUG_PASS("main_MSG_EXECUTER_INVALID_COMMAND_SLOT_CALLBACK()");
 
@@ -340,6 +433,11 @@ static void main_MSG_EXECUTER_INVALID_COMMAND_SLOT_CALLBACK(const void* p_argume
 	log_message_string("Unknown command: ", (const char*)p_argument);
 }
 
+/**
+ * @brief 
+ * 
+ * @param p_argument 
+ */
 static void main_MSG_EXECUTER_INVALID_COMMAND_SYNTAX_SLOT_CALLBACK(const void* p_argument) {
 	DEBUG_PASS("main_MSG_EXECUTER_INVALID_COMMAND_SYNTAX_SLOT_CALLBACK()");
 
@@ -352,6 +450,11 @@ static void main_MSG_EXECUTER_INVALID_COMMAND_SYNTAX_SLOT_CALLBACK(const void* p
 	log_message_string("Invalid command-syntax: ", (const char*)p_argument);
 }
 
+/**
+ * @brief 
+ * 
+ * @param p_argument 
+ */
 static void main_MSG_EXECUTER_FILE_OPEN_FAILED_SLOT_CALLBACK(const void* p_argument) {
 
 	__UNUSED__ const char* response_msg = (const char*)p_argument;
@@ -367,6 +470,11 @@ static void main_MSG_EXECUTER_FILE_OPEN_FAILED_SLOT_CALLBACK(const void* p_argum
 	log_message_string("File open has failed - file: ", (const char*)p_argument);
 }
 
+/**
+ * @brief 
+ * 
+ * @param p_argument 
+ */
 static void main_MSG_EXECUTER_RESPONSE_RECEIVED_SLOT_CALLBACK(const void* p_argument) {
 
 	__UNUSED__ const char* response_msg = (const char*)p_argument;
@@ -382,6 +490,11 @@ static void main_MSG_EXECUTER_RESPONSE_RECEIVED_SLOT_CALLBACK(const void* p_argu
 	log_message_string("Command successful - response:", (const char*)p_argument);
 }
 
+/**
+ * @brief 
+ * 
+ * @param p_argument 
+ */
 static void main_RPI_HOST_COMMAND_RECEIVED_SLOT_CALLBACK(const void* p_argument) {
 
 	DEBUG_PASS("main_RPI_HOST_COMMAND_RECEIVED_SLOT_CALLBACK()");
@@ -395,6 +508,11 @@ static void main_RPI_HOST_COMMAND_RECEIVED_SLOT_CALLBACK(const void* p_argument)
 	log_message("Processing COM-command");
 }
 
+/**
+ * @brief 
+ * 
+ * @param p_argument 
+ */
 static void main_RPI_HOST_RESPONSE_TIMEOUT_SLOT_CALLBACK(const void* p_argument) {
 
 	DEBUG_PASS("main_RPI_HOST_RESPONSE_TIMEOUT_SLOT_CALLBACK()");
@@ -408,7 +526,7 @@ static void main_RPI_HOST_RESPONSE_TIMEOUT_SLOT_CALLBACK(const void* p_argument)
 	log_message("Timeout on receiving response from control-board");
 }
 
-// --------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------
 
 SIGNAL_SLOT_INTERFACE_CREATE_SLOT(CLI_CONFIGURATION_SIGNAL, MAIN_CLI_CONFIGURATION_SIGNAL_SLOT, main_CLI_CONFIGURATION_SLOT_CALLBACK)
 SIGNAL_SLOT_INTERFACE_CREATE_SLOT(CLI_HELP_REQUESTED_SIGNAL, MAIN_CLI_HELP_REQUESTED_SLOT, main_CLI_HELP_REQUESTED_SLOT_CALLBACK)
@@ -439,9 +557,15 @@ SIGNAL_SLOT_INTERFACE_CREATE_SLOT(MSG_EXECUTER_RESPONSE_RECEIVED_SIGNAL, MAIN_MS
 SIGNAL_SLOT_INTERFACE_CREATE_SLOT(RPI_HOST_COMMAND_RECEIVED_SIGNAL, MAIN_RPI_HOST_COMMAND_RECEIVED_SLOT, main_RPI_HOST_COMMAND_RECEIVED_SLOT_CALLBACK)
 SIGNAL_SLOT_INTERFACE_CREATE_SLOT(RPI_HOST_RESPONSE_TIMEOUT_SIGNAL, MAIN_RPI_HOST_RESPONSE_TIMEOUT_SLOT, main_RPI_HOST_RESPONSE_TIMEOUT_SLOT_CALLBACK)
 
+// --------------------------------------------------------------------------------
 
-// --------------------------------------------------------------------------------------
-
+/**
+ * @brief 
+ * 
+ * @param argc 
+ * @param argv 
+ * @return int 
+ */
 int main(int argc, char* argv[]) {
 
 	ATOMIC_OPERATION

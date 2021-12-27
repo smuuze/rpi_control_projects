@@ -1,11 +1,26 @@
-/*! 
- * --------------------------------------------------------------------------------
+/**
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * \file	main_cmd_helper.c
- * \brief
- * \author	sebastian lesse
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * --------------------------------------------------------------------------------
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ * @file   main_cmd_helper.c
+ * @author Sebastian Lesse
+ * @date   2021 / 12 / 27
+ * @brief  SHC Command Helper main source file
+ *          This program is used to generate a command for the shc-control-board
+ *          by giving the name of the command.
+ *         
+ * 
  */
 
 #define TRACER_OFF
@@ -21,6 +36,35 @@
 // --------------------------------------------------------------------------------
 
 #include "cpu.h"
+
+// --------------------------------------------------------------------------------
+
+/**
+ * @file main_cmd_helper.c
+ * @author sebastian lesse (sebastian lesse)
+ * @brief 
+ * @version 1.0
+ * @date 2021-12-27
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
+
+#define TRACER_OFF
+
+// --------------------------------------------------------------------------------
+
+#include "config.h"
+
+// --------------------------------------------------------------------------------
+
+#include "tracer.h"
+
+// --------------------------------------------------------------------------------
+
+#include "cpu.h"
+
+// --------------------------------------------------------------------------------
 
 #include <stdio.h>
 
@@ -141,8 +185,6 @@ int main(int argc, char* argv[]) {
 	DEBUG_PASS("main() - MAIN_CLI_NO_ARGUMENT_GIVEN_SLOT_connect()");
 	MAIN_RPI_HOST_TIMEOUT_SLOT_connect();
 
-	printf("Welcome to the SHC CMD-Helper v%d.%d\n\n", VERSION_MAJOR, VERSION_MINOR);
-
 	command_line_interface(argc, argv);
 
 	if (exit_program) {
@@ -253,10 +295,17 @@ static void main_CLI_LCD_ACTIVATED_SLOT_CALLBACK(const void* p_argument) {
 static void main_CLI_HELP_REQUESTED_SLOT_CALLBACK(const void* p_argument) {
 	(void) p_argument;
 
-	console_write_line("Usage: cmdHelper -remote <REMOTE_COMMAND>\n");
+	console_write("SHC CMD-Helper Version: ");
+    console_write_number(VERSION_MAJOR);
+	console_write(".");
+    console_write_number(VERSION_MINOR);
 
+    console_new_line();
+    console_new_line();
+
+	console_write_line("Usage: cmdHelper -remote <REMOTE_COMMAND>");
+    console_new_line();
 	console_write_line("Available REMOTE_COMMAND's:");
-
 	console_write_line("\n\t JVC device commands:\n");
 
 	CLI_REMOTE_CONTROL_COMMAND_PAIR jvc_commands[] = { CLI_REMOTE_CONTROL_CMD_ARRAY_JVC };
