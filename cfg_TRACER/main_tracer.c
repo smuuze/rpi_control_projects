@@ -1,18 +1,26 @@
-/*! 
- * --------------------------------------------------------------------------------
+/**
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * \file	main_tracer.c
- * \brief
- * \author	sebastian lesse
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * --------------------------------------------------------------------------------
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ * @file   main_tracer.c
+ * @author Sebastian Lesse
+ * @date   2021 / 12 / 27
+ * @brief  Short description of this file
+ * 
  */
 
 #define TRACER_OFF
-
-#ifdef TRACER_ON
-#pragma __WARNING__TRACES_ENABLED__
-#endif
 
 // --------------------------------------------------------------------------------
 
@@ -25,6 +33,8 @@
 // --------------------------------------------------------------------------------
 
 #include "cpu.h"
+
+// --------------------------------------------------------------------------------
 
 #include <stdio.h>
 
@@ -73,28 +83,38 @@
 
 // --------------------------------------------------------------------------------
 
-/*!
- *
+/**
+ * @brief 
+ * 
+ * @param p_argument 
  */
 static void main_CLI_HELP_REQUESTED_SLOT_CALLBACK(const void* p_argument);
 
-/*!
- *
+/**
+ * @brief 
+ * 
+ * @param p_argument 
  */
 static void main_CLI_INVALID_PARAMETER_SLOT_CALLBACK(const void* p_argument);
 
-/*!
- *
+/**
+ * @brief 
+ * 
+ * @param p_argument 
  */
 static void main_CLI_UNKNOWN_ARGUMENT_SLOT_CALLBACK(const void* p_argument);
 
-/*!
- *
+/**
+ * @brief 
+ * 
+ * @param p_argument 
  */
 static void main_CLI_NO_ARGUMENT_GIVEN_CALLBACK(const void* p_argument);
 
-/*!
- *
+/**
+ * @brief 
+ * 
+ * @param p_argument 
  */
 static void main_CLI_ARGUMENT_DEVICE_SIGNAL_CALLBACK(const void* p_argument);
 
@@ -128,6 +148,13 @@ static TRX_DRIVER_CONFIGURATION driver_cfg;
 
 // --------------------------------------------------------------------------------
 
+/**
+ * @brief 
+ * 
+ * @param argc 
+ * @param argv 
+ * @return int 
+ */
 int main(int argc, char* argv[]) {
 
 	ATOMIC_OPERATION
@@ -191,8 +218,6 @@ int main(int argc, char* argv[]) {
 	PARSE_TRACE_OBJECT_THREAD_start();
 	PRINT_TRACE_OBJECT_THREAD_start();
 
-	printf("Welcome to the SHC TRACER v%d.%d\n\n", VERSION_MAJOR, VERSION_MINOR);
-
 	for (;;) {
 
 		if (exit_program) {
@@ -209,6 +234,11 @@ int main(int argc, char* argv[]) {
 
 // --------------------------------------------------------------------------------
 
+/**
+ * @brief 
+ * 
+ * @param p_argument 
+ */
 static void main_CLI_INVALID_PARAMETER_SLOT_CALLBACK(const void* p_argument) {
 
 	DEBUG_PASS("main_CLI_INVALID_PARAMETER_SLOT_CALLBACK");
@@ -222,8 +252,21 @@ static void main_CLI_INVALID_PARAMETER_SLOT_CALLBACK(const void* p_argument) {
 	main_CLI_HELP_REQUESTED_SLOT_CALLBACK(NULL);
 }
 
+/**
+ * @brief 
+ * 
+ * @param p_argument 
+ */
 static void main_CLI_HELP_REQUESTED_SLOT_CALLBACK(const void* p_argument) {
 	(void) p_argument;
+
+	console_write("SHC Tracer Version: ");
+    console_write_number(VERSION_MAJOR);
+	console_write(".");
+    console_write_number(VERSION_MINOR);
+
+    console_new_line();
+    console_new_line();
 
 	console_write_line("Usage: shcTracer [options]]");
 	console_write_line("Options:");
@@ -236,6 +279,11 @@ static void main_CLI_HELP_REQUESTED_SLOT_CALLBACK(const void* p_argument) {
 	exit_program = 1;
 }
 
+/**
+ * @brief 
+ * 
+ * @param p_argument 
+ */
 static void main_CLI_UNKNOWN_ARGUMENT_SLOT_CALLBACK(const void* p_argument) {
 
 	DEBUG_PASS("main_CLI_UNKNOWN_ARGUMENT_SLOT_CALLBACK()");
@@ -254,6 +302,11 @@ static void main_CLI_UNKNOWN_ARGUMENT_SLOT_CALLBACK(const void* p_argument) {
 	exit_program = 1;
 }
 
+/**
+ * @brief 
+ * 
+ * @param p_argument 
+ */
 static void main_CLI_NO_ARGUMENT_GIVEN_CALLBACK(const void* p_argument) {
 
 	DEBUG_PASS("main_CLI_NO_ARGUMENT_GIVEN_CALLBACK()");
@@ -263,6 +316,11 @@ static void main_CLI_NO_ARGUMENT_GIVEN_CALLBACK(const void* p_argument) {
 	exit_program = 1;
 }
 
+/**
+ * @brief 
+ * 
+ * @param p_argument 
+ */
 static void main_CLI_ARGUMENT_DEVICE_SIGNAL_CALLBACK(const void* p_argument) {
 
 	if (p_argument == NULL) {
