@@ -295,16 +295,16 @@ static void main_CLI_LCD_ACTIVATED_SLOT_CALLBACK(const void* p_argument) {
 static void main_CLI_HELP_REQUESTED_SLOT_CALLBACK(const void* p_argument) {
 	(void) p_argument;
 
-	console_write("SHC CMD-Helper Version: ");
-    console_write_number(VERSION_MAJOR);
+        console_write("SHC CMD-Helper Version: ");
+        console_write_number(VERSION_MAJOR);
 	console_write(".");
-    console_write_number(VERSION_MINOR);
+        console_write_number(VERSION_MINOR);
 
-    console_new_line();
-    console_new_line();
+        console_new_line();
+        console_new_line();
 
 	console_write_line("Usage: cmdHelper -remote <REMOTE_COMMAND>");
-    console_new_line();
+        console_new_line();
 	console_write_line("Available REMOTE_COMMAND's:");
 	console_write_line("\n\t JVC device commands:\n");
 
