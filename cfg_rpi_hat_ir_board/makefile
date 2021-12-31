@@ -20,7 +20,7 @@ BOARD_ID = 191005
 #-----------------------------------------------------------------------------
 
 VERSION_MAJOR		:= 1
-VERSION_MINOR		:= 8
+VERSION_MINOR		:= 9
 
 #-----------------------------------------------------------------------------
 
@@ -78,6 +78,8 @@ THIRD_PARTY_MODULES =
 THIRD_PARTY_MODULES += IR_PROTOCOL_SAMSUNG
 THIRD_PARTY_MODULES += IR_PROTOCOL_JVC
 THIRD_PARTY_MODULES += IR_PROTOCOL_SONY
+THIRD_PARTY_MODULES += IR_PROTOCOL_NEC
+THIRD_PARTY_MODULES += IR_COMMAND_LED_LIGHT
 
 #-----------------------------------------------------------------------------
 
@@ -98,6 +100,7 @@ COMMAND_INTERFACE_CFG =
 COMMAND_INTERFACE_CFG += RPI_CMD_IR_REMOTE_SAMSUNG
 COMMAND_INTERFACE_CFG += RPI_CMD_IR_REMOTE_JVC
 COMMAND_INTERFACE_CFG += RPI_CMD_IR_REMOTE_SONY
+COMMAND_INTERFACE_CFG += RPI_CMD_IR_REMOTE_LED_LIGHTS
 
 #-----------------------------------------------------------------------------
 
