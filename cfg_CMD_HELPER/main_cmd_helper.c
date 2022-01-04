@@ -282,45 +282,45 @@ static void main_CLI_HELP_REQUESTED_SLOT_CALLBACK(const void* p_argument) {
     console_write_line("Available <REMOTE-COMMAND>'s:");
     console_new_line();
     console_write_line("    JVC device commands:");
+    console_new_line();
 
     CLI_REMOTE_CONTROL_COMMAND_PAIR jvc_commands[] = { CLI_REMOTE_CONTROL_CMD_ARRAY_JVC };
     u16 i = 0;
 
     for ( ; i < CLI_REMOTE_SIZEOF_COMMAND_PAIR_TABLE(jvc_commands) ; i++ ) {
-        console_new_line();
         console_write_string("      ", jvc_commands[i].cmd_name);
     }
 
     console_new_line();
     console_write_line("    Samsung device commands:");
+    console_new_line();
 
     CLI_REMOTE_CONTROL_COMMAND_PAIR samsung_commands[] = { CLI_REMOTE_CONTROL_CMD_ARRAY_SAMSUNG };
     i = 0;
 
     for ( ; i < CLI_REMOTE_SIZEOF_COMMAND_PAIR_TABLE(samsung_commands) ; i++ ) {
-        console_new_line();
         console_write_string("      ", samsung_commands[i].cmd_name);
     }
 
     console_new_line();
     console_write_line("    Sony device commands:");
+    console_new_line();
 
     CLI_REMOTE_CONTROL_COMMAND_PAIR sony_commands[] = { CLI_REMOTE_CONTROL_CMD_ARRAY_SONY_BDPLAYER };
     i = 0;
 
     for ( ; i < CLI_REMOTE_SIZEOF_COMMAND_PAIR_TABLE(sony_commands) ; i++ ) {
-        console_new_line();
         console_write_string("      ", sony_commands[i].cmd_name);
     }
 
     console_new_line();
     console_write_line("    LED-Lights device commands:");
+    console_new_line();
 
     CLI_REMOTE_CONTROL_COMMAND_PAIR led_lights_commands[] = { CLI_REMOTE_CONTROL_CMD_ARRAY_LED_LIGHTS };
     i = 0;
 
     for ( ; i < CLI_REMOTE_SIZEOF_COMMAND_PAIR_TABLE(led_lights_commands) ; i++ ) {
-        console_new_line();
         console_write_string("      ", led_lights_commands[i].cmd_name);
     }
 
