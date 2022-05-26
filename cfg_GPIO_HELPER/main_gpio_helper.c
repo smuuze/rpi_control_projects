@@ -303,6 +303,8 @@ static void gpio_reader_read_all(void) {
 
     } else {
         console_write("Open gioPi has FAILED !");
+        console_new_line();
+        return;
     }
 
     gpio_write_header();
