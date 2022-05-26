@@ -111,51 +111,51 @@ static u8 exit_program = 0;
  */
 int main(int argc, char* argv[]) {
 
-	ATOMIC_OPERATION
-	(
-		initialization();
-	)
+    ATOMIC_OPERATION
+    (
+        initialization();
+    )
 
-	DEBUG_PASS("main() - MAIN_RPI_HOST_RESPONSE_RECEIVED_SLOT_connect()");
-	MAIN_RPI_HOST_RESPONSE_RECEIVED_SLOT_connect();
+    DEBUG_PASS("main() - MAIN_RPI_HOST_RESPONSE_RECEIVED_SLOT_connect()");
+    MAIN_RPI_HOST_RESPONSE_RECEIVED_SLOT_connect();
 
-	DEBUG_PASS("main() - MAIN_RPI_HOST_COMMAND_RECEIVED_SLOT_connect()");
-	MAIN_RPI_HOST_COMMAND_RECEIVED_SLOT_connect();
+    DEBUG_PASS("main() - MAIN_RPI_HOST_COMMAND_RECEIVED_SLOT_connect()");
+    MAIN_RPI_HOST_COMMAND_RECEIVED_SLOT_connect();
 
-	DEBUG_PASS("main() - MAIN_CLI_HELP_REQUESTED_SLOT_connect()");
-	MAIN_CLI_HELP_REQUESTED_SLOT_connect();
+    DEBUG_PASS("main() - MAIN_CLI_HELP_REQUESTED_SLOT_connect()");
+    MAIN_CLI_HELP_REQUESTED_SLOT_connect();
 
-	DEBUG_PASS("main() - MAIN_CLI_INVALID_PARAMETER_SLOT_connect()");
-	MAIN_CLI_INVALID_PARAMETER_SLOT_connect();
+    DEBUG_PASS("main() - MAIN_CLI_INVALID_PARAMETER_SLOT_connect()");
+    MAIN_CLI_INVALID_PARAMETER_SLOT_connect();
 
-	DEBUG_PASS("main() - MAIN_CLI_LCD_ACTIVATED_SLOT_connect()");
-	MAIN_CLI_LCD_ACTIVATED_SLOT_connect();
+    DEBUG_PASS("main() - MAIN_CLI_LCD_ACTIVATED_SLOT_connect()");
+    MAIN_CLI_LCD_ACTIVATED_SLOT_connect();
 
-	DEBUG_PASS("main() - MAIN_CFG_OBJECT_RECEIVED_SLOT_connect()");
-	MAIN_CFG_OBJECT_RECEIVED_SLOT_connect();
+    DEBUG_PASS("main() - MAIN_CFG_OBJECT_RECEIVED_SLOT_connect()");
+    MAIN_CFG_OBJECT_RECEIVED_SLOT_connect();
 
-	command_line_interface(argc, argv);
+    command_line_interface(argc, argv);
 
-	if (exit_program) {
-		DEBUG_PASS("main() - initialization FAILED !!! --- ");
-		return 1;
-	}
+    if (exit_program) {
+        DEBUG_PASS("main() - initialization FAILED !!! --- ");
+        return 1;
+    }
 
-	lcd_write_line("SPI-Helper");
-	lcd_write_line("... started");
+    lcd_write_line("SPI-Helper");
+    lcd_write_line("... started");
 
-	for (;;) {
+    for (;;) {
 
-		if (exit_program) {
-			break;
-		}
-		
-		mcu_task_controller_schedule();
-		mcu_task_controller_background_run();
-		watchdog();
-	}
+        if (exit_program) {
+            break;
+        }
+        
+        mcu_task_controller_schedule();
+        mcu_task_controller_background_run();
+        watchdog();
+    }
 
-	return 0;
+    return 0;
 }
 
 // --------------------------------------------------------------------------------
@@ -167,31 +167,31 @@ int main(int argc, char* argv[]) {
  */
 static void main_RPI_HOST_RESPONSE_RECEIVED_SLOT_CALLBACK(const void* p_argument) {
 
-	if (p_argument == NULL) {
-		DEBUG_PASS("main_RPI_HOST_RESPONSE_RECEIVED_SLOT_CALLBACK() - argument is NULL");
-		return;
-	}
+    if (p_argument == NULL) {
+        DEBUG_PASS("main_RPI_HOST_RESPONSE_RECEIVED_SLOT_CALLBACK() - argument is NULL");
+        return;
+    }
 
-	DEBUG_PASS("main_RPI_HOST_RESPONSE_RECEIVED_SLOT_CALLBACK()");
+    DEBUG_PASS("main_RPI_HOST_RESPONSE_RECEIVED_SLOT_CALLBACK()");
 
-	COMMON_GENERIC_BUFFER_TYPE* p_buffer = (COMMON_GENERIC_BUFFER_TYPE*) p_argument;
+    COMMON_GENERIC_BUFFER_TYPE* p_buffer = (COMMON_GENERIC_BUFFER_TYPE*) p_argument;
 
-	u8 t_buffer[128];
-	t_buffer[0] = p_buffer->length;
+    u8 t_buffer[128];
+    t_buffer[0] = p_buffer->length;
 
-	if (p_buffer->length > sizeof(t_buffer) - 1) {
-		p_buffer->length = sizeof(t_buffer) - 1;
-	}
+    if (p_buffer->length > sizeof(t_buffer) - 1) {
+        p_buffer->length = sizeof(t_buffer) - 1;
+    }
 
-	memcpy(t_buffer + 1, p_buffer->data, p_buffer->length);
+    memcpy(t_buffer + 1, p_buffer->data, p_buffer->length);
 
-	console_write_line("Response:");
-	console_hex_dump(p_buffer->length + 1, t_buffer);
+    console_write_line("Response:");
+    console_hex_dump(p_buffer->length + 1, t_buffer);
 
-	lcd_write_line("SPI-Helper");
-	lcd_write_line("- response OK");
+    lcd_write_line("SPI-Helper");
+    lcd_write_line("- response OK");
 
-	exit_program = 1;
+    exit_program = 1;
 }
 
 /**
@@ -201,15 +201,15 @@ static void main_RPI_HOST_RESPONSE_RECEIVED_SLOT_CALLBACK(const void* p_argument
  */
 static void main_RPI_HOST_COMMAND_RECEIVED_SLOT_CALLBACK(const void* p_argument) {
 
-	DEBUG_PASS("main_RPI_HOST_COMMAND_RECEIVED_SLOT_CALLBACK()");
+    DEBUG_PASS("main_RPI_HOST_COMMAND_RECEIVED_SLOT_CALLBACK()");
 
-	COMMON_GENERIC_BUFFER_TYPE* p_buffer = (COMMON_GENERIC_BUFFER_TYPE*) p_argument;
+    COMMON_GENERIC_BUFFER_TYPE* p_buffer = (COMMON_GENERIC_BUFFER_TYPE*) p_argument;
 
-	console_write_line("Command:");
-	console_hex_dump(p_buffer->length, p_buffer->data);
+    console_write_line("Command:");
+    console_hex_dump(p_buffer->length, p_buffer->data);
 
-	lcd_write_line("SPI-Helper");
-	lcd_write_line("- command OK");
+    lcd_write_line("SPI-Helper");
+    lcd_write_line("- command OK");
 }
 
 // --------------------------------------------------------------------------------
@@ -221,18 +221,18 @@ static void main_RPI_HOST_COMMAND_RECEIVED_SLOT_CALLBACK(const void* p_argument)
  */
 static void main_CLI_INVALID_PARAMETER_SLOT_CALLBACK(const void* p_argument) {
 
-	DEBUG_PASS("main_CLI_INVALID_PARAMETER_SLOT_CALLBACK");
+    DEBUG_PASS("main_CLI_INVALID_PARAMETER_SLOT_CALLBACK");
 
-	if (p_argument != NULL) {
-		printf("Invalid parameter for arguemnt %s given!\n", (char*)p_argument);
-	} else {
-		console_write_line("Invalid parameter given, check your input!");
-	}
-	
-	lcd_write_line("SPI-Helper");
-	lcd_write_line("- inv parameter");
+    if (p_argument != NULL) {
+        printf("Invalid parameter for arguemnt %s given!\n", (char*)p_argument);
+    } else {
+        console_write_line("Invalid parameter given, check your input!");
+    }
+    
+    lcd_write_line("SPI-Helper");
+    lcd_write_line("- inv parameter");
 
-	main_CLI_HELP_REQUESTED_SLOT_CALLBACK(NULL);
+    main_CLI_HELP_REQUESTED_SLOT_CALLBACK(NULL);
 }
 
 /**
@@ -242,10 +242,10 @@ static void main_CLI_INVALID_PARAMETER_SLOT_CALLBACK(const void* p_argument) {
  */
 static void main_CLI_LCD_ACTIVATED_SLOT_CALLBACK(const void* p_argument) {
 
-	DEBUG_PASS("main_CLI_LCD_ACTIVATED_SLOT_CALLBACK()");
+    DEBUG_PASS("main_CLI_LCD_ACTIVATED_SLOT_CALLBACK()");
 
-	lcd_init();
-	lcd_set_enabled(1);
+    lcd_init();
+    lcd_set_enabled(1);
 }
 
 /**
@@ -254,22 +254,22 @@ static void main_CLI_LCD_ACTIVATED_SLOT_CALLBACK(const void* p_argument) {
  * @param p_argument 
  */
 static void main_CLI_HELP_REQUESTED_SLOT_CALLBACK(const void* p_argument) {
-	(void) p_argument;
+    (void) p_argument;
 
-	console_write("SHC SPI-Helper Version: ");
+    console_write("SHC SPI-Helper Version: ");
     console_write_number(VERSION_MAJOR);
-	console_write(".");
+    console_write(".");
     console_write_number(VERSION_MINOR);
 
     console_new_line();
     console_new_line();
 
-	console_write_line("Usage: spiHelper [options]]\n\n");
-	console_write_line("Options:");
-	console_write_line("-dev <device>                        : SPI-device to use for communication");
-	console_write_line("-cmd <command>                       : command to send in hexadecimal form (e.g. 0101)");
+    console_write_line("Usage: spiHelper [options]]\n\n");
+    console_write_line("Options:");
+    console_write_line("-dev <device>                        : SPI-device to use for communication");
+    console_write_line("-cmd <command>                       : command to send in hexadecimal form (e.g. 0101)");
 
-	exit_program = 1;
+    exit_program = 1;
 }
 
 /**
@@ -279,9 +279,9 @@ static void main_CLI_HELP_REQUESTED_SLOT_CALLBACK(const void* p_argument) {
  */
 static void main_CFG_OBJECT_RECEIVED_SLOT_CALLBACK(const void* p_argument) {
 
-	CFG_FILE_PARSER_CFG_OBJECT_TYPE* p_cfg_obj = (CFG_FILE_PARSER_CFG_OBJECT_TYPE*)p_argument;
+    CFG_FILE_PARSER_CFG_OBJECT_TYPE* p_cfg_obj = (CFG_FILE_PARSER_CFG_OBJECT_TYPE*)p_argument;
 
-	console_write_line("CONFIGURATIATION-OBJECT:");
-	console_write_string("- key: ", p_cfg_obj->key);
-	console_write_string("- value: ", p_cfg_obj->value);
+    console_write_line("CONFIGURATIATION-OBJECT:");
+    console_write_string("- key: ", p_cfg_obj->key);
+    console_write_string("- value: ", p_cfg_obj->value);
 }
