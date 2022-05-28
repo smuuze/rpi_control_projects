@@ -51,6 +51,8 @@
 #include "ui/command_line/command_line_handler_gpio.h"
 #include "ui/console/ui_console.h"
 
+#include "platine/board_RASPBERRYPI.h"
+
 // --------------------------------------------------------------------------------
 
 #include "../cfg_LINUX_GPIO_DRIVER/linux_gpio_driver_interface.h"
@@ -616,6 +618,50 @@ static void gpio_reader_read_all(void) {
 
 // --------------------------------------------------------------------------------
 
+/**
+ * @brief  Get the pin-descirptor of the given pin-id.
+ * If pin-id is unknow NULL is returned.
+ * 
+ * @param pin_id the number of the pin (BCM)
+ * @return reference to the pin-descirptor of pin-id, or NULL if pin-id is unknown
+ */
+const GPIO_DRIVER_PIN_DESCRIPTOR* pin_id_to_pin_descr(u8 pin_id) {
+
+    switch (pin_id) {
+
+        default: return NULL;
+
+        case 2 : return &I2C_SDA;
+        case 3 : return &I2C_SCL;
+        case 4 : return &GPIO04;
+        case 5 : return &GPIO05;
+        case 6 : return &GPIO06;
+        case 7 : return &SPI_CE1;
+        case 8 : return &SPI_CE0;
+        case 9 : return &SPI_MISO;
+        case 10 : return &SPI_MOSI;
+        case 11 : return &SPI_SCLK;
+        case 12 : return &GPIO12;
+        case 13 : return &GPIO13;
+        case 14 : return &UART_TXD;
+        case 15 : return &UART_RXD;
+        case 16 : return &GPIO16;
+        case 17 : return &GPIO17;
+        case 18 : return &GPIO18;
+        case 19 : return &GPIO19;
+        case 20 : return &GPIO20;
+        case 21 : return &GPIO21;
+        case 22 : return &GPIO22;
+        case 23 : return &GPIO23;
+        case 24 : return &GPIO24;
+        case 25 : return &GPIO25;
+        case 26 : return &GPIO26;
+        case 27 : return &GPIO27;
+    }
+}
+
+// --------------------------------------------------------------------------------
+
 int main(int argc, char* argv[]) {
 
     ATOMIC_OPERATION
@@ -640,9 +686,40 @@ int main(int argc, char* argv[]) {
 
     command_line_interface(argc, argv);
 
+    const GPIO_DRIVER_PIN_DESCRIPTOR* p_pin_descr = pin_id_to_pin_descr(gpio_cmd.pin);
+    if (p_pin_descr == NULL) {
+        console_write_line("Given Pin-Number is unknown");
+        return -1;
+    }
+
     if (gpio_cmd.operation == CLI_HANDLER_OP_READ) {
+        
         if (gpio_cmd.pin == CLI_HANDLER_GPIO_PIN_ALL) {
             gpio_reader_read_all();
+        }
+
+    } else if (gpio_cmd.operation == CLI_HANDLER_OP_WRITE) {
+
+        if (gpio_cmd.pin != CLI_HANDLER_GPIO_PIN_INVALID) {
+
+
+            if (gpio_cmd.level != CLI_HANDLER_GPIO_LEVEL_INVALID) {
+
+                DEBUG_PASS("main() - set level");
+                gpio_driver_set_level(
+                    p_pin_descr,
+                    (gpio_cmd.level == CLI_HANDLER_GPIO_LEVEL_LOW) ? GPIO_LEVEL_LOW : GPIO_LEVEL_HIGH
+                );
+            }
+
+            if (gpio_cmd.mode != CLI_HANDLER_GPIO_DIRECTION_INVALID) {
+
+                DEBUG_PASS("main() - set level");
+                gpio_driver_set_direction(
+                    p_pin_descr,
+                    (gpio_cmd.mode == CLI_HANDLER_GPIO_DIRECTION_IN) ? GPIO_DIRECTION_INPUT : GPIO_DIRECTION_OUTPUT
+                );
+            }
         }
     }
 
