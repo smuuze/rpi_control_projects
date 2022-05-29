@@ -686,12 +686,6 @@ int main(int argc, char* argv[]) {
 
     command_line_interface(argc, argv);
 
-    const GPIO_DRIVER_PIN_DESCRIPTOR* p_pin_descr = pin_id_to_pin_descr(gpio_cmd.pin);
-    if (p_pin_descr == NULL) {
-        console_write_line("Given Pin-Number is unknown");
-        return -1;
-    }
-
     if (gpio_cmd.operation == CLI_HANDLER_OP_READ) {
         
         if (gpio_cmd.pin == CLI_HANDLER_GPIO_PIN_ALL) {
@@ -699,6 +693,12 @@ int main(int argc, char* argv[]) {
         }
 
     } else if (gpio_cmd.operation == CLI_HANDLER_OP_WRITE) {
+
+        const GPIO_DRIVER_PIN_DESCRIPTOR* p_pin_descr = pin_id_to_pin_descr(gpio_cmd.pin);
+        if (p_pin_descr == NULL) {
+            console_write_line("Given Pin-Number is unknown");
+            return -1;
+        }
 
         if (gpio_cmd.pin != CLI_HANDLER_GPIO_PIN_INVALID) {
 
