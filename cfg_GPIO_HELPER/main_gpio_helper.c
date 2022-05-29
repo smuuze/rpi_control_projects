@@ -697,6 +697,7 @@ int main(int argc, char* argv[]) {
         const GPIO_DRIVER_PIN_DESCRIPTOR* p_pin_descr = pin_id_to_pin_descr(gpio_cmd.pin);
         if (p_pin_descr == NULL) {
             console_write_line("Given Pin-Number is unknown");
+            gpio_driver_deinit();
             return -1;
         }
 
