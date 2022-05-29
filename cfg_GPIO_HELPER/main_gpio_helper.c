@@ -625,7 +625,7 @@ static void gpio_reader_read_all(void) {
  * @param pin_id the number of the pin (BCM)
  * @return reference to the pin-descirptor of pin-id, or NULL if pin-id is unknown
  */
-const GPIO_DRIVER_PIN_DESCRIPTOR* pin_id_to_pin_descr(u8 pin_id) {
+GPIO_DRIVER_PIN_DESCRIPTOR* pin_id_to_pin_descr(u8 pin_id) {
 
     switch (pin_id) {
 
@@ -694,15 +694,18 @@ int main(int argc, char* argv[]) {
 
     } else if (gpio_cmd.operation == CLI_HANDLER_OP_WRITE) {
 
-        const GPIO_DRIVER_PIN_DESCRIPTOR* p_pin_descr = pin_id_to_pin_descr(gpio_cmd.pin);
+        GPIO_DRIVER_PIN_DESCRIPTOR* p_pin_descr = pin_id_to_pin_descr(gpio_cmd.pin);
         if (p_pin_descr == NULL) {
             console_write_line("Given Pin-Number is unknown");
             gpio_driver_deinit();
             return -1;
         }
 
-        if (gpio_cmd.pin != CLI_HANDLER_GPIO_PIN_INVALID) {
+        // in this software we want to be able to modify all of the gpio pins.
+        // So if this pin was disabled by board-config, enable it anyway
+        gpio_driver_activate(p_pin_descr);
 
+        if (gpio_cmd.pin != CLI_HANDLER_GPIO_PIN_INVALID) {
 
             if (gpio_cmd.level != CLI_HANDLER_GPIO_LEVEL_INVALID) {
 
