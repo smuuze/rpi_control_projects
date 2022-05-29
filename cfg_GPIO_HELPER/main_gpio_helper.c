@@ -725,6 +725,8 @@ int main(int argc, char* argv[]) {
 
     mcu_task_controller_terminate_all();
 
+    gpio_driver_deinit();
+
     return 0;
 }
 
