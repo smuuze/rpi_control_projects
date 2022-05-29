@@ -289,7 +289,7 @@ static int driver_open(struct inode* device_file, struct file* instance) {
         p_instance_data->desc_array[index] = NULL;
     }
 
-    PRINT_MSG("OPEN - SUCCESS\n");
+    PRINT_MSG("OPEN\n");
     return 0;
 }
 
@@ -303,6 +303,8 @@ static int driver_open(struct inode* device_file, struct file* instance) {
  * @return int 
  */
 static int driver_close(struct inode* device_file, struct file* instance) {
+
+    PRINT_MSG("CLOSE\n");
 
     GPIO_DRIVER_INSTANCE_DATA* p_instance_data = (GPIO_DRIVER_INSTANCE_DATA*) instance->private_data;
 
