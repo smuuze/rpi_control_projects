@@ -313,7 +313,7 @@ static int driver_close(struct inode* device_file, struct file* instance) {
         if (p_instance_data->desc_array[index] != NULL) {
             //gpiod_put(p_instance_data->desc_array[index]);
             gpio_free(get_linux_gpio_index(index));
-            PRINT_MSG("CLOSE - GPIO-NUM:%d DISPOSED\n", index);
+            PRINT_MSG("CLOSE - GPIO:%02u (LINUX:%02d) - DISPOSED\n", index, get_linux_gpio_index(index));
         }
     }
 
@@ -438,7 +438,7 @@ static ssize_t driver_write(struct file* instance, const char __user* user_data,
         int level = (write_cmd.gpio_level == GPIO_DRIVER_LEVEL_HIGH) ? 1 : 0;
         return_value = gpiod_direction_output(p_gpio_descriptor, level);
         GPIO_STATUS_SET_OUTPUT(p_instance_data->gpio_array[write_cmd.gpio_number]);
-        PRINT_MSG("WRITE - GPIO:%02u (LINUX:%02d) - SET OUTPUT - LEVEL:%d\n", level, write_cmd.gpio_number, linux_gpio_number);
+        PRINT_MSG("WRITE - GPIO:%02u (LINUX:%02d) - SET OUTPUT - LEVEL:%d\n", write_cmd.gpio_number, linux_gpio_number, level);
 
     } else if (write_cmd.gpio_direction == GPIO_DRIVER_DIRECTION_INPUT) {
 
