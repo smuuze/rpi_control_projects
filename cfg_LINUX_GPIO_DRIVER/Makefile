@@ -8,7 +8,7 @@ clean:
 
 install:
 	insmod linux_gpio_driver_main.ko
-	chmod root:gpio /dev/GPIO_DRIVER
+	chown root:gpio /dev/GPIO_DRIVER
 	chmod ug=+rw /dev/GPIO_DRIVER
 
 uninstall:
