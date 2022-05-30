@@ -51,6 +51,7 @@
 #include <linux/gpio.h>
 
 #include <asm/io.h>
+#include <linux/ioport.h>
 
 #include <asm/uaccess.h>
 
