@@ -50,6 +50,8 @@
 #include <linux/slab.h>
 #include <linux/gpio.h>
 
+#include <asm/io.h>
+
 #include <asm/uaccess.h>
 
 // --------------------------------------------------------------------------------
@@ -290,6 +292,12 @@ static int driver_open(struct inode* device_file, struct file* instance) {
     }
 
     PRINT_MSG("OPEN\n");
+
+    uint32_t level0 = readl(0x20200034);
+    uint32_t level1 = readl(0x20200038);
+
+    PRINT_MSG("LEVEL0: 0x%08X | LEVEL1: 0x%08X", level0, level1);
+
     return 0;
 }
 
