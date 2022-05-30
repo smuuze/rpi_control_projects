@@ -69,6 +69,14 @@
 
 // --------------------------------------------------------------------------------
 
+#define GPIO_PORT_ADDR                          0x20200000
+
+// --------------------------------------------------------------------------------
+
+#define GPIO_PORT_RANGE                         0x40
+
+// --------------------------------------------------------------------------------
+
 /**
  * @brief Identifies an invalid gpio number
  * that was gieven by th user-application
@@ -293,13 +301,15 @@ static int driver_open(struct inode* device_file, struct file* instance) {
 
     PRINT_MSG("OPEN\n");
 
-    unsigned char *mem_io_address = 0x20200034;
-    uint32_t level0 = readl(mem_io_address);
-    
-    mem_io_address = 0x20200038;
-    uint32_t level1 = readl(mem_io_address);
+    // addr = ioremap(GPIO_PORT_ADDR, GPIO_PORT_RANGE);
 
-    PRINT_MSG("LEVEL0: 0x%08X | LEVEL1: 0x%08X", level0, level1);
+    // unsigned char *mem_io_address = 0x20200034;
+    // uint32_t level0 = readl(mem_io_address);
+    
+    // mem_io_address = 0x20200038;
+    // uint32_t level1 = readl(mem_io_address);
+
+    // PRINT_MSG("LEVEL0: 0x%08X | LEVEL1: 0x%08X", level0, level1);
 
     return 0;
 }
@@ -706,12 +716,14 @@ static int __init mod_init(void) {
     );
 
     if (return_value < 0) {
+        PRINT_MSG("INIT - alloc_chrdev_region() FAILED\n");
         return -EIO;
     }
 
     // Anmelde-Objekt reservieren
     driver_object = cdev_alloc();
     if (driver_object == NULL) {
+        PRINT_MSG("INIT - cdev_alloc() FAILED\n");
         unregister_chrdev_region(dev_number, 1);
         return -EIO;
     }
@@ -722,6 +734,7 @@ static int __init mod_init(void) {
     return_value = cdev_add(driver_object, dev_number, 1);
 
     if (return_value != 0) {
+        PRINT_MSG("INIT - cdev_add() FAILED\n");
         kobject_put(&driver_object->kobj);
         unregister_chrdev_region(dev_number, 1);
         return -EIO;
@@ -730,6 +743,7 @@ static int __init mod_init(void) {
     // Eintrag im Sysfs, damit UDEV den Geraetedateieintrag erzeugt
     driver_class = class_create(THIS_MODULE, DRIVER_NAME);
     if (IS_ERR(driver_class) != 0) {
+        PRINT_MSG("INIT - class_create() FAILED\n");
         kobject_put(&driver_object->kobj);
         unregister_chrdev_region(dev_number, 1);
         return -EIO;
@@ -743,6 +757,13 @@ static int __init mod_init(void) {
         "%s",
         DRIVER_NAME
     );
+
+    if (check_mem_region(GPIO_PORT_ADDR, GPIO_PORT_RANGE) == 0) {
+        PRINT_MSG("INIT - check_mem_region() FAILED\n");
+
+    } else if (request_mem_region(GPIO_PORT_ADDR, GPIO_PORT_RANGE, DRIVER_NAME) == NULL) {
+        PRINT_MSG("INIT - request_mem_region() FAILED\n");
+    }
  
     return 0;
 }
@@ -754,6 +775,8 @@ static int __init mod_init(void) {
  * 
  */
 static void __exit mod_exit(void) {
+
+    release_mem_region(GPIO_PORT_ADDR, GPIO_PORT_RANGE);
 
     // Loeschen des Syfs-Eintrags und damit der Geraetedatei
     device_destroy(driver_class, dev_number);
