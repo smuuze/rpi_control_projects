@@ -296,7 +296,7 @@ static int driver_open(struct inode* device_file, struct file* instance) {
     unsigned char *mem_io_address = 0x20200034;
     uint32_t level0 = readl(mem_io_address);
     
-    unsigned char *mem_io_address = 0x20200038;
+    mem_io_address = 0x20200038;
     uint32_t level1 = readl(mem_io_address);
 
     PRINT_MSG("LEVEL0: 0x%08X | LEVEL1: 0x%08X", level0, level1);
