@@ -153,8 +153,8 @@
  * GPIO is actual configrued as output
  * 
  */
-#define GPIO_STATUS_IS_HIGH(status)             ((status & 0x30) == GPIO_DRIVER_PIN_IS_HIGH)
-#define GPIO_STATUS_SET_HIGH(status)            status = (status & 0xCF) | GPIO_DRIVER_PIN_IS_HIGH
+#define GPIO_STATUS_IS_HIGH(status)             ((status & 0x03) == GPIO_DRIVER_PIN_IS_HIGH)
+#define GPIO_STATUS_SET_HIGH(status)            status = (status & 0xFC) | GPIO_DRIVER_PIN_IS_HIGH
 
 /**
  * @brief Helper Macro to check if the
