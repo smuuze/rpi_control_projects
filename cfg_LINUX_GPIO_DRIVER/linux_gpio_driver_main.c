@@ -764,10 +764,10 @@ static int __init mod_init(void) {
     //    PRINT_MSG("INIT - check_mem_region() FAILED\n");
     //}
 
-    if (request_mem_region(GPIO_PORT_ADDR, GPIO_PORT_RANGE, DRIVER_NAME) == NULL) {
-        PRINT_MSG("INIT - request_mem_region() FAILED\n");
-        return -EIO;
-    }
+    //if (request_mem_region(GPIO_PORT_ADDR, GPIO_PORT_RANGE, DRIVER_NAME) == NULL) {
+    //    PRINT_MSG("INIT - request_mem_region() FAILED\n");
+    //    return -EIO;
+    //}
  
     return 0;
 }
@@ -780,7 +780,7 @@ static int __init mod_init(void) {
  */
 static void __exit mod_exit(void) {
 
-    release_mem_region(GPIO_PORT_ADDR, GPIO_PORT_RANGE);
+    //release_mem_region(GPIO_PORT_ADDR, GPIO_PORT_RANGE);
 
     // Loeschen des Syfs-Eintrags und damit der Geraetedatei
     device_destroy(driver_class, dev_number);
