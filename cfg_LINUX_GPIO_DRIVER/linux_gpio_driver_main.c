@@ -764,7 +764,7 @@ static int __init mod_init(void) {
     //    PRINT_MSG("INIT - check_mem_region() FAILED\n");
     //}
 
-    } else if (request_mem_region(GPIO_PORT_ADDR, GPIO_PORT_RANGE, DRIVER_NAME) == NULL) {
+    if (request_mem_region(GPIO_PORT_ADDR, GPIO_PORT_RANGE, DRIVER_NAME) == NULL) {
         PRINT_MSG("INIT - request_mem_region() FAILED\n");
         return -EIO;
     }
