@@ -167,6 +167,15 @@
 // --------------------------------------------------------------------------------
 
 /**
+ * @brief Definition of GPIO levels
+ * 
+ */
+#define GPIO_LEVEL_HIGH                         1
+#define GPIO_LEVEL_LOW                          0
+
+// --------------------------------------------------------------------------------
+
+/**
  * @brief Names of the gpios that are used to get the descriptors
  * 
  */
@@ -458,7 +467,20 @@ static ssize_t driver_write(struct file* instance, const char __user* user_data,
     if (write_cmd.gpio_direction == GPIO_DRIVER_DIRECTION_OUTPUT) {
 
         // return_value = gpio_direction_output(write_cmd.gpio_number);
-        int level = (write_cmd.gpio_level == GPIO_DRIVER_LEVEL_HIGH) ? 1 : 0;
+        int level = (GPIO_STATUS_IS_HIGH(p_instance_data->gpio_array[write_cmd.gpio_number])) ? GPIO_LEVEL_HIGH : GPIO_LEVEL_LOW;
+
+        if (write_cmd.gpio_level == GPIO_DRIVER_LEVEL_HIGH) {
+            GPIO_STATUS_SET_HIGH(p_instance_data->gpio_array[write_cmd.gpio_number]);
+            level = GPIO_LEVEL_HIGH;
+
+        } else if (write_cmd.gpio_level == GPIO_DRIVER_LEVEL_LOW) {
+            GPIO_STATUS_SET_LOW(p_instance_data->gpio_array[write_cmd.gpio_number]);
+            level = GPIO_LEVEL_LOW;
+
+        } else {
+            // do nothing
+        }
+
         return_value = gpiod_direction_output(p_gpio_descriptor, level);
         GPIO_STATUS_SET_OUTPUT(p_instance_data->gpio_array[write_cmd.gpio_number]);
         PRINT_MSG("WRITE - GPIO:%02u (LINUX:%02d) - SET OUTPUT - LEVEL:%d\n", write_cmd.gpio_number, linux_gpio_number, level);
