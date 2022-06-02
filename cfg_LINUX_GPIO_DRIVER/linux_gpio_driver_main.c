@@ -37,6 +37,7 @@
  * @see https://www.kernel.org/doc/html/latest/driver-api/gpio/board.html
  * @see https://www.kernel.org/doc/html/latest/driver-api/gpio/index.html#c.gpiod_get_index
  * @see https://www.linux-magazin.de/ausgaben/2019/01/kern-technik-6/4/
+ * @see https://www.codeproject.com/Articles/1032794/Simple-I-O-device-driver-for-RaspberryPi
  */
 
 // --------------------------------------------------------------------------------
@@ -759,11 +760,13 @@ static int __init mod_init(void) {
         DRIVER_NAME
     );
 
-    if (check_mem_region(GPIO_PORT_ADDR, GPIO_PORT_RANGE) == 0) {
-        PRINT_MSG("INIT - check_mem_region() FAILED\n");
+    //if (check_mem_region(GPIO_PORT_ADDR, GPIO_PORT_RANGE) == 0) {
+    //    PRINT_MSG("INIT - check_mem_region() FAILED\n");
+    //}
 
     } else if (request_mem_region(GPIO_PORT_ADDR, GPIO_PORT_RANGE, DRIVER_NAME) == NULL) {
         PRINT_MSG("INIT - request_mem_region() FAILED\n");
+        return -EIO;
     }
  
     return 0;
