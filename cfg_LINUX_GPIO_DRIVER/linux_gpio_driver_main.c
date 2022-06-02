@@ -470,15 +470,17 @@ static ssize_t driver_write(struct file* instance, const char __user* user_data,
         int level = (GPIO_STATUS_IS_HIGH(p_instance_data->gpio_array[write_cmd.gpio_number])) ? GPIO_LEVEL_HIGH : GPIO_LEVEL_LOW;
 
         if (write_cmd.gpio_level == GPIO_DRIVER_LEVEL_HIGH) {
+            PRINT_MSG("WRITE - OUTPUT - HIGH-LEVEL\n");
             GPIO_STATUS_SET_HIGH(p_instance_data->gpio_array[write_cmd.gpio_number]);
             level = GPIO_LEVEL_HIGH;
 
         } else if (write_cmd.gpio_level == GPIO_DRIVER_LEVEL_LOW) {
+            PRINT_MSG("WRITE - OUTPUT - LOW-LEVEL\n");
             GPIO_STATUS_SET_LOW(p_instance_data->gpio_array[write_cmd.gpio_number]);
             level = GPIO_LEVEL_LOW;
 
         } else {
-            // do nothing
+            PRINT_MSG("WRITE - OUTPUT - KEEP LEVEL:%d\n", level);
         }
 
         return_value = gpiod_direction_output(p_gpio_descriptor, level);
