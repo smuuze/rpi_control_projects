@@ -91,6 +91,14 @@ SIGNAL_SLOT_INTERFACE_CREATE_SLOT(CLI_LCD_ACTIVATED_SIGNAL, CLI_LCD_ACTIVATED_SL
  */
 static char lcd_string[33];
 
+/**
+ * @brief Number of charactesr that are copied into lcd_string.
+ * If this variable is still 0 after command_line_interface()
+ * A error-message is printed.
+ * 
+ */
+static u16 lcd_string_length = 0;
+
 // --------------------------------------------------------------------------------
 
 int main(int argc, char* argv[]) {
@@ -112,6 +120,13 @@ int main(int argc, char* argv[]) {
     CLI_LCD_ACTIVATED_SLOT_connect();
 
     command_line_interface(argc, argv);
+
+    if (lcd_string_length != 0) {
+        lcd_write_line(lcd_string);
+
+    } else {
+        main_CLI_INVALID_PARAMETER_SLOT_CALLBACK(NULL);
+    }
 
     mcu_task_controller_terminate_all();
 
@@ -175,10 +190,14 @@ static void main_CCLI_LCD_ACTIVATED_SLOT_CALLBACK(const void* p_argument) {
     lcd_init();
 
     const char* p_string = (const char*) p_argument;
+    lcd_string_length = common_tools_string_length(p_string);
+
+    if (lcd_string_length > sizeof(lcd_string)) {
+        lcd_string_length = sizeof(lcd_string) - 1; // -1 to respect 0-termination
+    }
+
     DEBUG_TRACE_STR(p_string, "main_CCLI_LCD_ACTIVATED_SLOT_CALLBACK() - String:");
-
-    common_tools_string_copy_string(lcd_string, p_string, sizeof(lcd_string));
-
+    common_tools_string_copy_string(lcd_string, p_string, lcd_string_length);
 }
 
 // --------------------------------------------------------------------------------
