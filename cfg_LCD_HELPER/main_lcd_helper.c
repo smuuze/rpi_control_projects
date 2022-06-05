@@ -169,6 +169,8 @@ static void main_CCLI_LCD_ACTIVATED_SLOT_CALLBACK(const void* p_argument) {
     lcd_init();
 
     const char* p_string = (const char*) p_argument;
+    DEBUG_TRACE_STR(p_string, "main_CCLI_LCD_ACTIVATED_SLOT_CALLBACK() - String:");
+
     common_tools_string_copy_string(lcd_string, p_string, sizeof(lcd_string));
 
 }
