@@ -13,7 +13,7 @@
 # VERSION        = 0x107
 
 # PROJEKT Name des Hexfiles
-PROJECT = gpioHelper
+PROJECT = lcdHelper
 
 BOARD_ID = RASPBERRYPI
 
