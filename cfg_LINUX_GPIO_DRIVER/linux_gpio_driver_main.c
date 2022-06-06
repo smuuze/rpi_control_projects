@@ -252,46 +252,6 @@ static struct device* driver_dev;
 // --------------------------------------------------------------------------------
 
 /**
- * @brief Get the linux gpio index object
- * 
- * @param gpio_driver_index the gpio-index used inside of the gpio-driver
- * @return corresponding index of the linux sub-system of gpio_driver_index
- */
-static int get_linux_gpio_index(uint8_t gpio_driver_index) {
-    switch (gpio_driver_index) {
-        case 0 : // no break;
-        case 1 : // no break;
-        case 2 : // no break;
-        case 3 : // no break;
-        case 4 : // no break;
-        case 5 : // no break;
-        case 6 : // no break;
-        case 7 : // no break;
-        case 8 : // no break;
-        case 9 : // no break;
-        case 10 : // no break;
-        case 11 : // no break;
-        case 12 : // no break;
-        case 13 : // no break;
-        case 14 : // no break;
-        case 15 : // no break;
-        case 16 : // no break;
-        case 17 : // no break;
-        case 18 : // no break;
-        case 19 : // no break;
-        case 20 : // no break;
-        case 21 : // no break;
-        case 22 : // no break;
-        case 23 : // no break;
-        case 24 : // no break;
-        case 25 : return ((int)gpio_driver_index) + 2;
-        default: return GPIO_DRIVER_GPIO_NUM_INVALID;
-    }
-}
-
-// --------------------------------------------------------------------------------
-
-/**
  * @brief Opens a new isntance of the gpio-driver.
  * Initializes the isntance data for this new instance.
  * 
@@ -352,8 +312,8 @@ static int driver_close(struct inode* device_file, struct file* instance) {
     for ( ; index < GPIO_DRIVER_MAX_NUM_OF_GPIO_PINS; index += 1) {
         if (p_instance_data->desc_array[index] != NULL) {
             //gpiod_put(p_instance_data->desc_array[index]);
-            gpio_free(get_linux_gpio_index(index));
-            PRINT_MSG("CLOSE - GPIO:%02u (LINUX:%02d) - DISPOSED\n", index, get_linux_gpio_index(index));
+            gpio_free(index);
+            PRINT_MSG("CLOSE - GPIO:%02u DISPOSED\n", index);
         }
     }
 
@@ -405,14 +365,8 @@ static ssize_t driver_write(struct file* instance, const char __user* user_data,
         return -EAGAIN;
     }
 
-    /**
-     * @brief The mapped gpio number to use for operation
-     * 
-     */
-    int linux_gpio_number = get_linux_gpio_index(write_cmd.gpio_number);
-
-    if (linux_gpio_number == GPIO_DRIVER_GPIO_NUM_INVALID) {
-        PRINT_MSG("WRITE - INVALID GPIO-NUM: %u\n", write_cmd.gpio_number);
+    if (write_cmd.gpio_number > GPIO_DRIVER_MAX_NUM_OF_GPIO_PINS) {
+        PRINT_MSG("WRITE - GPIO-NUM:%u INVALID\n", write_cmd.gpio_number);
         return -EINVAL;
     }
 
@@ -430,26 +384,26 @@ static ssize_t driver_write(struct file* instance, const char __user* user_data,
     if (p_instance_data->gpio_array[write_cmd.gpio_number] == GPIO_DRIVER_PIN_UNUSED) {
 
         if (write_cmd.gpio_direction == GPIO_DRIVER_DIRECTION_TOGGLE) {
-            PRINT_MSG("WRITE - GPIO:%02u (LINUX:%02d) - FAILED TOGGLE DIRECTION - UNINITIALIZED\n", write_cmd.gpio_number);
+            PRINT_MSG("WRITE - GPIO:%02u - FAILED TOGGLE DIRECTION - UNINITIALIZED\n", write_cmd.gpio_number);
             return -EINVAL;
         }
 
         if (write_cmd.gpio_level == GPIO_DRIVER_LEVEL_TOGGLE) {
-            PRINT_MSG("WRITE - GPIO:%02u (LINUX:%02d) - FAILED TOGGLE LEVEL- UNINITIALIZED\n", write_cmd.gpio_number);
+            PRINT_MSG("WRITE - GPIO:%02u - FAILED TOGGLE LEVEL- UNINITIALIZED\n", write_cmd.gpio_number);
             return -EINVAL;
         }
     }
 
     if (p_instance_data->desc_array[write_cmd.gpio_number] == NULL) {
 
-        PRINT_MSG("WRITE - GPIO:%02u (LINUX:%02d) - GET DESCRIPTOR\n", write_cmd.gpio_number, linux_gpio_number);
+        PRINT_MSG("WRITE - GPIO:%02u - GET DESCRIPTOR\n", write_cmd.gpio_number);
 
-        p_instance_data->desc_array[write_cmd.gpio_number] = gpio_to_desc( linux_gpio_number );
+        p_instance_data->desc_array[write_cmd.gpio_number] = gpio_to_desc( write_cmd.gpio_number );
         
         // gpiod_get_index(
         //     driver_dev,
         //     NULL/*gpio_names[write_cmd.gpio_number]*/,
-        //     linux_gpio_number,
+        //     write_cmd.gpio_number,
         //     GPIOD_ASIS
         // );
     }
@@ -478,29 +432,29 @@ static ssize_t driver_write(struct file* instance, const char __user* user_data,
         int level = (GPIO_STATUS_IS_HIGH(p_instance_data->gpio_array[write_cmd.gpio_number])) ? GPIO_LEVEL_HIGH : GPIO_LEVEL_LOW;
 
         if (write_cmd.gpio_level == GPIO_DRIVER_LEVEL_HIGH) {
-            PRINT_MSG("WRITE - GPIO:%02u (LINUX:%02d) - OUTPUT - HIGH-LEVEL\n");
+            PRINT_MSG("WRITE - GPIO:%02u - OUTPUT - HIGH-LEVEL\n", write_cmd.gpio_number);
             GPIO_STATUS_SET_HIGH(p_instance_data->gpio_array[write_cmd.gpio_number]);
             level = GPIO_LEVEL_HIGH;
 
         } else if (write_cmd.gpio_level == GPIO_DRIVER_LEVEL_LOW) {
-            PRINT_MSG("WRITE - GPIO:%02u (LINUX:%02d) - OUTPUT - LOW-LEVEL\n");
+            PRINT_MSG("WRITE - GPIO:%02u - OUTPUT - LOW-LEVEL\n", write_cmd.gpio_number);
             GPIO_STATUS_SET_LOW(p_instance_data->gpio_array[write_cmd.gpio_number]);
             level = GPIO_LEVEL_LOW;
 
         } else {
-            PRINT_MSG("WRITE - GPIO:%02u (LINUX:%02d) - OUTPUT - KEEP LEVEL:%d\n", write_cmd.gpio_number, linux_gpio_number, level);
+            PRINT_MSG("WRITE - GPIO:%02u - OUTPUT - KEEP LEVEL:%d\n", write_cmd.gpio_number, level);
         }
 
         return_value = gpiod_direction_output(p_gpio_descriptor, level);
         GPIO_STATUS_SET_OUTPUT(p_instance_data->gpio_array[write_cmd.gpio_number]);
-        PRINT_MSG("WRITE - GPIO:%02u (LINUX:%02d) - SET OUTPUT - LEVEL:%d\n", write_cmd.gpio_number, linux_gpio_number, level);
+        PRINT_MSG("WRITE - GPIO:%02u - SET OUTPUT - LEVEL:%d\n", write_cmd.gpio_number, level);
 
     } else if (write_cmd.gpio_direction == GPIO_DRIVER_DIRECTION_INPUT) {
 
         // return_value = gpio_direction_input(write_cmd.gpio_number);
         return_value = gpiod_direction_input(p_gpio_descriptor);
         GPIO_STATUS_SET_INPUT(p_instance_data->gpio_array[write_cmd.gpio_number]);
-        PRINT_MSG("WRITE - GPIO:%02u (LINUX:%02d) - SET INPUT\n", write_cmd.gpio_number, linux_gpio_number);
+        PRINT_MSG("WRITE - GPIO:%02u SET INPUT\n", write_cmd.gpio_number);
 
     } else {
 
@@ -510,12 +464,12 @@ static ssize_t driver_write(struct file* instance, const char __user* user_data,
 
             if (GPIO_STATUS_IS_LOW(p_instance_data->gpio_array[write_cmd.gpio_number])) {
 
-                PRINT_MSG("WRITE - GPIO:%02u (LINUX:%02d) - TOGGLE LEVEL - HIGH\n", write_cmd.gpio_number, linux_gpio_number);
+                PRINT_MSG("WRITE - GPIO:%02u TOGGLE LEVEL - HIGH\n", write_cmd.gpio_number);
                 write_cmd.gpio_level = GPIO_DRIVER_LEVEL_HIGH;
 
             } else {
 
-                PRINT_MSG("WRITE - GPIO:%02u (LINUX:%02d) - TOGGLE LEVEL - LOW\n", write_cmd.gpio_number, linux_gpio_number);
+                PRINT_MSG("WRITE - GPIO:%02u - TOGGLE LEVEL - LOW\n", write_cmd.gpio_number);
                 write_cmd.gpio_level = GPIO_DRIVER_LEVEL_LOW;
             }
 
@@ -524,23 +478,23 @@ static ssize_t driver_write(struct file* instance, const char __user* user_data,
             //gpio_set_value(get_linux_gpio_number(write_cmd.gpio_number),1);
             gpiod_set_value(p_gpio_descriptor, 1);
             GPIO_STATUS_SET_HIGH(p_instance_data->gpio_array[write_cmd.gpio_number]);
-            PRINT_MSG("WRITE - GPIO:%02u (LINUX:%02d) - SET HIGH-LEVEL\n", write_cmd.gpio_number, linux_gpio_number);
+            PRINT_MSG("WRITE - GPIO:%02u - SET HIGH-LEVEL\n", write_cmd.gpio_number);
 
         } else if (write_cmd.gpio_level == GPIO_DRIVER_LEVEL_LOW) {
 
             // gpio_set_value(get_linux_gpio_number(write_cmd.gpio_number),0);
             gpiod_set_value(p_gpio_descriptor, 0);
             GPIO_STATUS_SET_LOW(p_instance_data->gpio_array[write_cmd.gpio_number]);
-            PRINT_MSG("WRITE - GPIO:%02u (LINUX:%02d) - SET LOW-LEVEL\n", write_cmd.gpio_number, linux_gpio_number);
+            PRINT_MSG("WRITE - GPIO:%02u - SET LOW-LEVEL\n", write_cmd.gpio_number);
 
         } else {
-            PRINT_MSG("WRITE - GPIO:%02u (LINUX:%02d) - KEEP EVERYTHING AS IT ISn", write_cmd.gpio_number, linux_gpio_number);
+            PRINT_MSG("WRITE - GPIO:%02u - KEEP EVERYTHING AS IT ISn", write_cmd.gpio_number);
         }
     }
 
     if (return_value != 0) {
         // gpio_free(write_cmd.gpio_number);
-        PRINT_MSG("WRITE - GPIO:%02u (LINUX:%02d) - FAILED - ERROR: %d\n", write_cmd.gpio_direction, write_cmd.gpio_number, return_value);
+        PRINT_MSG("WRITE - GPIO:%02u - FAILED - ERROR: %d\n", write_cmd.gpio_number, return_value);
         p_instance_data->gpio_array[write_cmd.gpio_number] = GPIO_DRIVER_PIN_UNUSED;
         return -1;
     }
@@ -587,14 +541,8 @@ static ssize_t driver_read(struct file* instance, char __user* user_data, size_t
         return -EAGAIN;
     }
 
-    /**
-     * @brief The mapped gpio number to use for operation
-     * 
-     */
-    int linux_gpio_number = get_linux_gpio_index(read_cmd.gpio_number);
-
-    if (linux_gpio_number == GPIO_DRIVER_GPIO_NUM_INVALID) {
-        PRINT_MSG("READ - INVALID GPIO-NUM: %u\n", read_cmd.gpio_number);
+    if (write_cmd.gpio_number > GPIO_DRIVER_MAX_NUM_OF_GPIO_PINS) {
+        PRINT_MSG("READ - GPIO-NUM:%u INVALID\n", write_cmd.gpio_number);
         return -EINVAL;
     }
 
@@ -612,9 +560,9 @@ static ssize_t driver_read(struct file* instance, char __user* user_data, size_t
      */
     if (p_instance_data->desc_array[read_cmd.gpio_number] == NULL) {
 
-        PRINT_MSG("READ - GET GPIO - GPIO-NUM:%u - LINUX-NUM:%d\n", read_cmd.gpio_number, linux_gpio_number);
+        PRINT_MSG("READ - GPIO-NUM:%u - GET GPIO\n", read_cmd.gpio_number);
 
-        p_instance_data->desc_array[read_cmd.gpio_number] = gpio_to_desc( linux_gpio_number );
+        p_instance_data->desc_array[read_cmd.gpio_number] = gpio_to_desc( read_cmd.gpio_number );
         
         // gpiod_get_index(
         //     driver_dev,
@@ -624,7 +572,7 @@ static ssize_t driver_read(struct file* instance, char __user* user_data, size_t
         // );
 
         if (gpiod_direction_input(p_instance_data->desc_array[read_cmd.gpio_number]) != 0) {
-            PRINT_MSG("READ - INIT DIRECTION FAILED - GPIO-NUM:%u - LINUX-NUM:%d\n", read_cmd.gpio_number, linux_gpio_number);
+            PRINT_MSG("READ - GPIO-NUM:%u - INIT DIRECTION FAILED\n", read_cmd.gpio_number);
         }
     }
 
@@ -647,7 +595,7 @@ static ssize_t driver_read(struct file* instance, char __user* user_data, size_t
 
     } else {
 
-        PRINT_MSG("READ - GET DIRECTION FAILED - GPIO-NUM:%u - ERR:%d\n", read_cmd.gpio_number, return_value);
+        PRINT_MSG("READ - GPIO-NUM:%u - GET DIRECTION FAILED - ERR:%d\n", read_cmd.gpio_number, return_value);
         return return_value;
     }
 
@@ -668,7 +616,7 @@ static ssize_t driver_read(struct file* instance, char __user* user_data, size_t
 
     } else {
 
-        PRINT_MSG("READ - GET LEVEL FAILED - GPIO-NUM:%u - ERR:%d\n", read_cmd.gpio_number, return_value);
+        PRINT_MSG("READ - GPIO-NUM:%u - GET LEVEL FAILED - ERR:%d\n", read_cmd.gpio_number, return_value);
         return return_value;
     }
 
