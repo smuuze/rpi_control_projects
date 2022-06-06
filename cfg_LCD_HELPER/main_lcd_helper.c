@@ -122,7 +122,16 @@ int main(int argc, char* argv[]) {
     command_line_interface(argc, argv);
 
     if (lcd_string_length != 0) {
-        lcd_write_line(lcd_string);
+
+        u16 index = 0;
+        u16 line_count = 0;
+        
+        while ( (index < lcd_string_length) && (line_count < lcd_line_count()) ) {
+            lcd_write_line(&lcd_string[index]);
+
+            index += lcd_character_count();
+            line_count += 1;
+        }
 
     } else {
         main_CLI_INVALID_PARAMETER_SLOT_CALLBACK(NULL);
