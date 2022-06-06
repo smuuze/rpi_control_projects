@@ -541,8 +541,8 @@ static ssize_t driver_read(struct file* instance, char __user* user_data, size_t
         return -EAGAIN;
     }
 
-    if (write_cmd.gpio_number > GPIO_DRIVER_MAX_NUM_OF_GPIO_PINS) {
-        PRINT_MSG("READ - GPIO-NUM:%u INVALID\n", write_cmd.gpio_number);
+    if (read_cmd.gpio_number > GPIO_DRIVER_MAX_NUM_OF_GPIO_PINS) {
+        PRINT_MSG("READ - GPIO-NUM:%u INVALID\n", read_cmd.gpio_number);
         return -EINVAL;
     }
 
