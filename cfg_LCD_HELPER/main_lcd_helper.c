@@ -121,16 +121,26 @@ int main(int argc, char* argv[]) {
 
     command_line_interface(argc, argv);
 
+    /**
+     * @brief lcd_string_length is set in
+     * main_CCLI_LCD_ACTIVATED_SLOT_CALLBACK()
+     * 
+     */
+
     if (lcd_string_length != 0) {
 
         u16 index = 0;
         u16 line_count = 0;
         
-        while ( (index < lcd_string_length) && (line_count < lcd_line_count()) ) {
+        while ( line_count < lcd_line_count() ) {
+
             lcd_write_line(&lcd_string[index]);
+            line_count += 1;
 
             index += lcd_character_count();
-            line_count += 1;
+            if (index > lcd_string_length) {
+                break;
+            }
         }
 
     } else {
