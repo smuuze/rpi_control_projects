@@ -155,6 +155,11 @@ int main(int argc, char* argv[]) {
         watchdog();
     }
 
+    ATOMIC_OPERATION
+    (
+        deinitialization();
+    )
+
     return 0;
 }
 
