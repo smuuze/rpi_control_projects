@@ -75,11 +75,19 @@ my $stop_script = "NULL";
 
 # ***********************************************************************
 
+# get the actual date and time of the system this script is executed from
+sub get_date {
+    my $date = localtime();
+}
+
+# ***********************************************************************
+
 # prints the given message into the actual log-file
 # a new line is added autoamtically to the end of the message
 sub log_msg {
     my ($msg) = @_;
-    system("printf \"%s\n\" \"$msg\" >> $log_file");
+    my $date = &get_date();
+    system("printf \"%s\n\" \"$date | $msg\" >> $log_file");
 }
 
 # ***********************************************************************
@@ -93,14 +101,25 @@ sub print_msg {
 
 # ***********************************************************************
 
+# executes the given command
+sub execute_command {
+    my ($cmd) = @_;
+
+    &log_msg("Running command: $cmd");
+    &print_msg(3, "Running command: $cmd");
+    
+    system($cmd);
+}
+
+# ***********************************************************************
+
 # clones the given repository into the current working directory
 sub git_clone {
 
-    &print_msg(3, "RUNNING COMMAND: git clone $repo");
-
     my ($repo) = @_;
     my $cmd = "git clone $repo >> $log_file";
-    system($cmd);
+
+    &execute_command($cmd);
 }
 
 # ***********************************************************************
@@ -108,12 +127,10 @@ sub git_clone {
 # switches to the branch of the actual repository
 sub git_switch_branch {
 
-    &print_msg(3, "RUNNING COMMAND: git checkout $branch");
-
     my ($branch) = @_;
     my $cmd = "git checkout $branch >> $log_file";
 
-    system($cmd);
+    &execute_command($cmd);
 }
 
 # ***********************************************************************
@@ -122,7 +139,8 @@ sub git_switch_branch {
 sub delete_directory {
     my ($dir) = @_;
 
-    &print_msg(3, "DELETE DIRECTORY: $dir");
+    &print_msg(3, "Delete directory: $dir");
+    &log_msg("Delete directory: $dir");
     rmtree($dir) or die "DELETE DIRECTORY($dir) FAILED ";
 }
 
@@ -132,18 +150,9 @@ sub delete_directory {
 sub change_directory {
     my ($dir) = @_;
 
-    &print_msg(3, "CHANGE DIRECTORY TO: $dir");
+    &print_msg(3, "Change directory: $dir");
+    &log_msg("Change directory: $dir");
     chdir($dir) or die "CHANGE DIRECTORY($dir) FAILED ";
-}
-
-# ***********************************************************************
-
-# executes the given command
-sub execute_command {
-    my ($cmd) = @_;
-
-    &print_msg(3, "RUNNING COMMAND: $cmd");
-    system($cmd);
 }
 
 # ***********************************************************************
@@ -181,18 +190,18 @@ sub build_project {
     # check if makefile is existing
     if (-e "makefile" || -e "Makefile") {
 
-        &print_msg(5, "MAKEFILE IS EXISTING");
-
         $cmd = "make clean >> $log_file";
-        &print_msg(3, "RUNNING COMMAND: $cmd");
-        system($cmd);
+        &execute_command($cmd);
 
         $cmd = "make release >> $log_file";
-        &print_msg(3, "RUNNING COMMAND: $cmd");
-        system($cmd);
+        &execute_command($cmd);
+
+        &log_msg("=====================================================\n\n");
 
     } else {
-        &print_msg(5, "NO MAKEFILE - SKIP DIRECTORY: $dir");
+
+        &print_msg(5, "Skip directory: $dir - no makefile");
+        &log_msg("Skip directory: $dir - no makefile");
     }
 }
 
@@ -398,11 +407,11 @@ if ($repository_name_frmwrk eq "INVALID") {
 &log_msg("Set Working directory to: $working_path");
 
 # clone framework repository
-&log_msg("--- Cloning Framework-Repository ---\n");
+&log_msg("Cloning Framework-Repository - $repository_name_frmwrk");
 &git_clone($repository_frmwrk);
 
 # clone projects-repository
-&log_msg("\n--- Cloning Projects-Repository ---\n")
+&log_msg("Cloning Projects-Repository - repository_name_proj")
 &git_clone($repository_proj);
 
 # ***********************************************************************
@@ -415,8 +424,8 @@ if ($repository_name_frmwrk eq "INVALID") {
 
 foreach my $branch (@list_of_branches) {
 
-    &log_msg("--- SWITCHING TO BRANCH $branch ---");
-    &print_msg(5, "--- SWITCHING TO BRANCH $branch ---");
+    &log_msg("Switching to branch:  $branch");
+    &print_msg(5, "Switching to branch:  $branch");
 
     &git_switch_branch($branch);
     &change_directory("..");
@@ -430,9 +439,6 @@ foreach my $branch (@list_of_branches) {
 
     foreach my $dir (@dir_list) {
 
-        &print_msg(5, "PROCESSING DIRECTORY: $dir");
-        &log_msg("--- PROCESSING DIRECTORY: $dir ---");
-
         # check if object is file
         if (-d $dir) {
 
@@ -442,7 +448,7 @@ foreach my $branch (@list_of_branches) {
             &change_directory("..");
 
         } else {
-            &print_msg(5, "SKIP NON DIRECTORY: $dir");
+            &print_msg(5, "Skip non-directory: $dir");
         }
     }
 }
