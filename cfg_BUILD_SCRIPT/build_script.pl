@@ -19,7 +19,10 @@
 #   @file    start_music_radio.pl
 #   @author  Sebastian Lesse
 #   @date    2022 / 03 / 26
-#   @brief   Short description of this file
+#   @brief   performs a build of projects within a given directory
+#            You need to isntall the following packaged via apt to
+#            to run this script on a Raspberry Pi.
+#            - libfile-copy-recursive-perl
 
 # ***********************************************************************
 
@@ -93,10 +96,10 @@ sub print_msg {
 # clones the given repository into the current working directory
 sub git_clone {
 
+    &print_msg(3, "RUNNING COMMAND: git clone $repo");
+
     my ($repo) = @_;
     my $cmd = "git clone $repo >> $log_file";
-
-    &print_msg(3, "RUNNING COMMAND: $cmd");
     system($cmd);
 }
 
@@ -104,10 +107,12 @@ sub git_clone {
 
 # switches to the branch of the actual repository
 sub git_switch_branch {
+
+    &print_msg(3, "RUNNING COMMAND: git checkout $branch");
+
     my ($branch) = @_;
     my $cmd = "git checkout $branch >> $log_file";
 
-    &print_msg(3, "RUNNING COMMAND: $cmd");
     system($cmd);
 }
 
@@ -150,8 +155,18 @@ sub get_repository_name {
     my $repo_name = "";
 
     if (/https:\/\/www\..*\.com\/.*\/(.*)\.git/i) {
+
         $repo_name = $1;
         &print_msg(3, "Repository-Name: = $repo_name");
+
+    } elsif (/https:\/\/www\..*\.com\/.*\/(.*)/i) {
+
+        $repo_name = $1;
+        &print_msg(3, "Repository-Name: = $repo_name");
+
+    } else {
+
+        $repo_name = "INVALID";
     }
 
     $repo_name; # return value
@@ -362,7 +377,16 @@ if (-e $log_file) {
 # ***********************************************************************
 
 my $repository_name_proj = &get_repository_name($repository_proj);
+if ($repository_name_proj eq "INVALID") {
+    print "ERROR - invalid projects-repository given - $repository_proj\n\n ";
+    exit;
+}
+
 my $repository_name_frmwrk = &get_repository_name($repository_frmwrk);
+if ($repository_name_frmwrk eq "INVALID") {
+    print "ERROR - invalid framework-repository given - $repository_frmwrk\n\n ";
+    exit;
+}
 
 # ***********************************************************************
 
