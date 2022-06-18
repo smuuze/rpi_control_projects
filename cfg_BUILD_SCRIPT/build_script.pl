@@ -383,6 +383,12 @@ if (-e $log_file) {
     unlink($log_file);
 }
 
+$branch_count = @list_of_branches;
+if ($branch_count eq 0) {
+    print "ERROR - no repository branches given\n\n ";
+    exit;
+}
+
 # ***********************************************************************
 
 my $repository_name_proj = &get_repository_name($repository_proj);
