@@ -400,7 +400,9 @@ if ($repository_name_frmwrk eq "INVALID") {
 # ***********************************************************************
 
 # running start-script
-&execute_command($start_script);
+if ($start_script ne "NULL") {
+    &execute_command($start_script);
+}
 
 # go into working directory
 &change_directory($working_path);
@@ -418,6 +420,8 @@ if ($repository_name_frmwrk eq "INVALID") {
 
 #go into projects-repository
 &change_directory($repository_name_proj);
+
+&execute_command("ls -ail");
 
 # get list of sub-directories
 @dir_list = glob("*");
@@ -463,7 +467,9 @@ foreach my $branch (@list_of_branches) {
 &delete_directory($repository_name_frmwrk);
 
 # running start-script
-&execute_command($stop_script);
+if ($stop_script ne "NULL") {
+    &execute_command($stop_script);
+}
 
 # ***********************************************************************
 
