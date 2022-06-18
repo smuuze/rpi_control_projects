@@ -190,13 +190,15 @@ sub build_project {
     # check if makefile is existing
     if (-e "makefile" || -e "Makefile") {
 
+        &log_msg("--- BUILD START ---\n\n");
+
         $cmd = "make clean >> $log_file";
         &execute_command($cmd);
 
         $cmd = "make release >> $log_file";
         &execute_command($cmd);
 
-        &log_msg("=====================================================\n\n");
+        &log_msg("\n\n--- BUILD END ---");
 
     } else {
 
@@ -280,8 +282,8 @@ sub print_help {
     print ("\t\t\t\t\t\t results will be copied to\n");
     print ("\t\t\t\t\t\t EXAMPLE: -destination:/mnt/file_server/share1\n\n");
 
-    print ("\t-source:<SOURCE-DIRECTORY> \t\t directory where the compilation results are stored\n");
-    print ("\t\t\t\t\t\t EXAMPLE: -path:/tmp/build_script\n\n");
+    print ("\t-source:<SOURCE-DIRECTORY> \t\t directory where the compilation results are stored inside of the project directory (e.g. release)\n");
+    print ("\t\t\t\t\t\t EXAMPLE: -path:release\n\n");
 
     print ("\t-start:\"<START-SCRIPT>\" \t\t Full path to a script that is executed before the build-process.\n");
     print ("\t\t\t\t\t\t Arguments can also be given\n");
