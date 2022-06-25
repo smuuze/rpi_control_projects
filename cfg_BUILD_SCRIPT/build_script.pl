@@ -88,10 +88,9 @@ sub log_msg {
     my ($msg) = @_;
     my $date = &get_date();
 
-    my $FILE_HANDLE;
-    open($FILE_HANDLE, ">>", $log_file) or die "Open $log_file has failed!";
-    printf($FILE_HANDLE, "%s\n", "$date | $msg");
-    close($FILE_HANDLE);
+    open(FH, ">>", $log_file) or die "Open $log_file has failed!";
+    printf(FH "%s\n", "$date | $msg");
+    close(FH);
 }
 
 # ***********************************************************************
@@ -112,21 +111,18 @@ sub execute_command {
     &log_msg("Running command: $cmd");
     &print_msg(3, "Running command: $cmd");
 
-    my $CMD_HANDLE;
-    my $FILE_HANDLE;
-    my $line;
+    open(FH, ">>", $log_file) or die "Open $log_file has failed!";
+    open(CH, "| $cmd") or die "Open $cmd has failed!";
 
-    open($FILE_HANDLE, ">>", $log_file) or die "Open $log_file has failed!";
-
-    open($CMD_HANDLE, "$cmd |") or die "Open $cmd has failed!";
-    while (defined ($line = <$CMD_HANDLE>)) {
-        print($FILE_HANDLE, "$line\n");
+    while (<CH>) {
+        chomp;
+        printf(FH "%s\n", $_);
     }
 
     my $return_value = $?;
 
-    close($CMD_HANDLE);
-    close($FILE_HANDLE);
+    close(CH);
+    close(FH);
 
     $return_value;
 }
