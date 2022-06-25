@@ -51,7 +51,7 @@ my $repository_frmwrk = "";
 my $repository_proj = "";
 
 # path to use for the operation of this script
-my $working_path = ".";
+my $working_path = "INVALID";
 
 # path to the logfile that will be generated during this process
 # is automatically created by this script
@@ -87,7 +87,11 @@ sub get_date {
 sub log_msg {
     my ($msg) = @_;
     my $date = &get_date();
-    system("printf \"%s\n\" \"$date | $msg\" >> $log_file");
+
+    my $FILE_HANDLE;
+    open($FILE_HANDLE, ">>", $log_file) or die "Open $log_file has failed!";
+    printf($FILE_HANDLE, "%s\n", "$date | $msg");
+    close($FILE_HANDLE);
 }
 
 # ***********************************************************************
@@ -107,8 +111,24 @@ sub execute_command {
 
     &log_msg("Running command: $cmd");
     &print_msg(3, "Running command: $cmd");
-    
-    system($cmd);
+
+    my $CMD_HANDLE;
+    my $FILE_HANDLE;
+    my $line;
+
+    open($FILE_HANDLE, ">>", $log_file) or die "Open $log_file has failed!";
+
+    open($CMD_HANDLE, "$cmd |") or die "Open $cmd has failed!";
+    while (defined ($line = <$CMD_HANDLE>)) {
+        print($FILE_HANDLE, "$line\n");
+    }
+
+    my $return_value = $?;
+
+    close($CMD_HANDLE);
+    close($FILE_HANDLE);
+
+    $return_value;
 }
 
 # ***********************************************************************
@@ -117,7 +137,7 @@ sub execute_command {
 sub git_clone {
 
     my ($repo) = @_;
-    my $cmd = "git clone $repo >> $log_file";
+    my $cmd = "git clone $repo";
 
     &execute_command($cmd);
 }
@@ -128,7 +148,7 @@ sub git_clone {
 sub git_switch_branch {
 
     my ($branch) = @_;
-    my $cmd = "git checkout $branch >> $log_file";
+    my $cmd = "git checkout $branch";
 
     &execute_command($cmd);
 }
@@ -192,18 +212,36 @@ sub build_project {
 
         &log_msg("--- BUILD START ---\n\n");
 
-        $cmd = "make clean >> $log_file";
-        &execute_command($cmd);
+        $cmd = "make clean";
+        if (&execute_command($cmd) != 0) {
+            &log_msg("Build has failed!");
+            &print_msg(1, "Build $dir has failed!");
+            return -2;
+        }
 
-        $cmd = "make release >> $log_file";
-        &execute_command($cmd);
+        $cmd = "make load_frmwrk_revision";
+        if (&execute_command($cmd) != 0) {
+            &log_msg("Build has failed!");
+            &print_msg(1, "Build $dir has failed!");
+            return -1;
+        }
+
+        $cmd = "make release";
+        if (&execute_command($cmd) != 0) {
+            &log_msg("Build has failed!");
+            &print_msg(1, "Build $dir has failed!");
+            return -3;
+        }
 
         &log_msg("\n\n--- BUILD END ---");
+
+        return 0;
 
     } else {
 
         &print_msg(5, "Skip directory: $dir - no makefile");
         &log_msg("Skip directory: $dir - no makefile");
+        return -4;
     }
 }
 
@@ -283,7 +321,7 @@ sub print_help {
     print ("\t\t\t\t\t\t EXAMPLE: -destination:/mnt/file_server/share1\n\n");
 
     print ("\t-source:<SOURCE-DIRECTORY> \t\t directory where the compilation results are stored inside of the project directory (e.g. release)\n");
-    print ("\t\t\t\t\t\t EXAMPLE: -path:release\n\n");
+    print ("\t\t\t\t\t\t EXAMPLE: -source:release\n\n");
 
     print ("\t-start:\"<START-SCRIPT>\" \t\t Full path to a script that is executed before the build-process.\n");
     print ("\t\t\t\t\t\t Arguments can also be given\n");
@@ -370,24 +408,28 @@ foreach my $argument (@ARGV) {
 
 # ***********************************************************************
 
+&log_msg("\n\n========================================================");
+
+# ***********************************************************************
+
 if ($destination eq "NULL") {
-    print "ERROR - no destination given\n\n ";
+    print "ERROR - argument -destination invalid\n\n ";
     exit;
 }
 
 if ($source_dir eq "NULL") {
-    print "ERROR - no source directory given\n\n ";
+    print "ERROR - argument -source invalid\n\n ";
     exit;
-}
-
-if (-e $log_file) {
-    &print_msg(2, "DELETING EXISTING LOG-FILE");
-    unlink($log_file);
 }
 
 $branch_count = @list_of_branches;
 if ($branch_count eq 0) {
-    print "ERROR - no repository branches given\n\n ";
+    print "ERROR - argument -branches invalid\n\n ";
+    exit;
+}
+
+if ($working_path eq "INVALID") {
+    print "ERROR - argument -path invalid\n\n ";
     exit;
 }
 
@@ -429,8 +471,6 @@ if ($start_script ne "NULL") {
 #go into projects-repository
 &change_directory($repository_name_proj);
 
-&execute_command("ls -ail");
-
 # get list of sub-directories
 @dir_list = glob("*");
 
@@ -455,8 +495,11 @@ foreach my $branch (@list_of_branches) {
         if (-d $dir) {
 
             &change_directory($dir);
-            &build_project();
-            &copy_result("$source_dir", "$destination/$dir/$branch");
+
+            if (&build_project() == 0) {
+                &copy_result("$source_dir", "$destination/$dir/$branch");
+            }
+            
             &change_directory("..");
 
         } else {
