@@ -82,24 +82,42 @@ sub get_date {
 
 # ***********************************************************************
 
+my $LOG_HANDLE;
+my @log_file_content;
+
+sub log_open {
+    my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
+
+    $year += 1900;
+    $mday = sprintf("%02d", $mday);
+    $mon = sprintf("%02d", ($mon + 1));
+
+    $log_file = "build_log_${year}_${mon}_${mday}.txt";
+}
+
 # prints the given message into the actual log-file
 # a new line is added autoamtically to the end of the message
-sub log_msg {
+sub log_write {
     my ($msg) = @_;
     my $date = &get_date();
+    my $line = "$date | $msg\n";
 
-    open(FH, ">>", $log_file) or die "Open $log_file has failed!";
-    printf(FH "%s\n", "$date | $msg");
-    close(FH);
+    push(@log_file_content, $line);
+    print $line if $verbose_level > 0;
+}
+
+sub log_close {
+    open($LOG_HANDLE, ">>", $log_file) or die "Open $log_file has failed!";
+    print($LOG_HANDLE @log_file_content);
+    close($LOG_HANDLE);
 }
 
 # ***********************************************************************
 
-# prints a message on the console if the verbose-level is high enugh
-# using &print_ms(3, "Message to print");
-sub print_msg {
-    my ($level, $msg) = @_;
-    print "$msg\n" if $verbose_level >= $level;
+sub fatal_exit {
+    my ($msg) = @_;
+    &log_close();
+    die $msg;
 }
 
 # ***********************************************************************
@@ -108,22 +126,19 @@ sub print_msg {
 sub execute_command {
     my ($cmd) = @_;
 
-    &log_msg("Running command: $cmd");
-    &print_msg(3, "Running command: $cmd");
+    &log_write("Running command: $cmd");
 
-    open(FH, ">>", $log_file) or die "Open $log_file has failed!";
-    open(CH, "| $cmd") or die "Open $cmd has failed!";
+    # 2>&1 - pipe STDERR out to STDOUT
+    open(CH, "$cmd 2>&1 |") or &fatal_exit("Open $cmd has failed!");
 
     while (<CH>) {
         chomp;
-        printf(FH "%s\n", $_);
+        &log_write("$_");
     }
 
-    my $return_value = $?;
-
     close(CH);
-    close(FH);
 
+    my $return_value = $?;
     $return_value;
 }
 
@@ -155,9 +170,8 @@ sub git_switch_branch {
 sub delete_directory {
     my ($dir) = @_;
 
-    &print_msg(3, "Delete directory: $dir");
-    &log_msg("Delete directory: $dir");
-    rmtree($dir) or die "DELETE DIRECTORY($dir) FAILED ";
+    &log_write("Delete directory: $dir");
+    rmtree($dir) or &fatal_exit("DELETE DIRECTORY($dir) FAILED ");
 }
 
 # ***********************************************************************
@@ -166,9 +180,8 @@ sub delete_directory {
 sub change_directory {
     my ($dir) = @_;
 
-    &print_msg(3, "Change directory: $dir");
-    &log_msg("Change directory: $dir");
-    chdir($dir) or die "CHANGE DIRECTORY($dir) FAILED ";
+    &log_write("Change directory: $dir");
+    chdir($dir) or &fatal_exit("CHANGE DIRECTORY($dir) FAILED ");
 }
 
 # ***********************************************************************
@@ -182,12 +195,12 @@ sub get_repository_name {
     if (/https:\/\/www\..*\.com\/.*\/(.*)\.git/i) {
 
         $repo_name = $1;
-        &print_msg(3, "Repository-Name: = $repo_name");
+        &log_write("Repository-Name: = $repo_name");
 
     } elsif (/https:\/\/www\..*\.com\/.*\/(.*)/i) {
 
         $repo_name = $1;
-        &print_msg(3, "Repository-Name: = $repo_name");
+        &log_write("Repository-Name: = $repo_name");
 
     } else {
 
@@ -206,37 +219,33 @@ sub build_project {
     # check if makefile is existing
     if (-e "makefile" || -e "Makefile") {
 
-        &log_msg("--- BUILD START ---\n\n");
+        &log_write("--- BUILD START ---");
 
         $cmd = "make clean";
         if (&execute_command($cmd) != 0) {
-            &log_msg("Build has failed!");
-            &print_msg(1, "Build $dir has failed!");
+            &log_write("Build $dir has failed!");
             return -2;
         }
 
         $cmd = "make load_frmwrk_revision";
         if (&execute_command($cmd) != 0) {
-            &log_msg("Build has failed!");
-            &print_msg(1, "Build $dir has failed!");
+            &log_write("Build $dir has failed!");
             return -1;
         }
 
         $cmd = "make release";
         if (&execute_command($cmd) != 0) {
-            &log_msg("Build has failed!");
-            &print_msg(1, "Build $dir has failed!");
+            &log_write("Build $dir has failed!");
             return -3;
         }
 
-        &log_msg("\n\n--- BUILD END ---");
+        &log_write("--- BUILD END ---");
 
         return 0;
 
     } else {
 
-        &print_msg(5, "Skip directory: $dir - no makefile");
-        &log_msg("Skip directory: $dir - no makefile");
+        &log_write("Skip directory: $dir - no makefile");
         return -4;
     }
 }
@@ -273,10 +282,9 @@ sub get_list_of_branches {
 sub copy_result {
     my ($src, $dest) = @_;
 
-    &log_msg("COPY: $src -> $dest");
-    &print_msg(5, "COPY: $src -> $dest");
+    &log_write("COPY: $src -> $dest");
 
-    File::Copy::Recursive::dircopy($src, $dest) or die $!;
+    File::Copy::Recursive::dircopy($src, $dest) or &fatal_exit($!);
 }
 
 # ***********************************************************************
@@ -336,75 +344,75 @@ sub print_help {
 
 # ***********************************************************************
 
+&log_open();
+
+# ***********************************************************************
+
 # get the arguments which are used calling this application
 foreach my $argument (@ARGV) {
 
     $_ = $argument;
 
     if (/-help/i) {
+
         &print_help();
         exit 0;
-    }
 
-    if (/-verbose:(\d)/i) {
+    } elsif (/-verbose:(\d)/i) {
+
         $verbose_level = $1;
-        &print_msg(3, "ARGUMENT verbose = $1");
-    }
+        &log_write("ARGUMENT verbose = $1");
 
-    if (/-repository:(.*)/i) {
-        &print_msg(3, "ARGUMENT repository = $1");
+    } elsif (/-repository:(.*)/i) {
+
+        &log_write("ARGUMENT repository = $1");
         $repository_proj = $1;
-    }
 
-    if (/-framework:(.*)/i) {
-        &print_msg(3, "ARGUMENT framework = $1");
+    } elsif (/-framework:(.*)/i) {
+
+        &log_write("ARGUMENT framework = $1");
         $repository_frmwrk = $1;
-    }
 
-    if (/-path:(.*)/i) {
-        &print_msg(3, "ARGUMENT path = $1");
+    } elsif (/-path:(.*)/i) {
+
+        &log_write("ARGUMENT path = $1");
         $working_path = $1;
-    }
 
-    if (/-log:(.*)/i) {
-        &print_msg(3, "ARGUMENT log = $1");
-        $log_file = $1;
-    }
+    } elsif (/-destination:(.*)/i) {
 
-    if (/-destination:(.*)/i) {
-        &print_msg(3, "ARGUMENT destination = $1");
+        &log_write("ARGUMENT destination = $1");
         $destination = $1;
-    }
 
-    if (/-source:(.*)/i) {
-        &print_msg(3, "ARGUMENT source = $1");
+    } elsif (/-source:(.*)/i) {
+
+        &log_write("ARGUMENT source = $1");
         $source_dir = $1;
-    }
 
-    if (/-start:(.*)/i) {
-        &print_msg(3, "ARGUMENT start = $1");
+    } elsif (/-start:(.*)/i) {
+
+        &log_write("ARGUMENT start = $1");
         $start_script = $1;
-    }
 
-    if (/-stop:(.*)/i) {
-        &print_msg(3, "ARGUMENT stop = $1");
+    } elsif (/-stop:(.*)/i) {
+
+        &log_write("ARGUMENT stop = $1");
         $stop_script = $1;
-    }
 
-    if (/-branches:(.*)/i) {
-        &print_msg(3, "ARGUMENT branches = $1");
+    } elsif (/-branches:(.*)/i) {
+
+        &log_write("ARGUMENT branches = $1");
         @list_of_branches = &get_list_of_branches($1);
+
+    } else {
+
+        print("Invalid argument: \"$argument\"\nType -help for available arguments\n");
+        exit 0;
     }
 }
 
 # ***********************************************************************
 
-&print_msg(1, "\n\nBUILD-SCRIPT v$version_major.$version_minor");
-&print_msg(1, "----------------------\n");
-
-# ***********************************************************************
-
-&log_msg("\n\n========================================================");
+&log_write("\n\n========================================================\nBUILD-SCRIPT v$version_major.$version_minor\n========================================================");
 
 # ***********************************************************************
 
@@ -452,14 +460,14 @@ if ($start_script ne "NULL") {
 
 # go into working directory
 &change_directory($working_path);
-&log_msg("Set Working directory to: $working_path");
+&log_write("Set Working directory to: $working_path");
 
 # clone framework repository
-&log_msg("Cloning Framework-Repository - $repository_name_frmwrk");
+&log_write("Cloning Framework-Repository - $repository_name_frmwrk");
 &git_clone($repository_frmwrk);
 
 # clone projects-repository
-&log_msg("Cloning Projects-Repository - repository_name_proj")
+&log_write("Cloning Projects-Repository - repository_name_proj")
 &git_clone($repository_proj);
 
 # ***********************************************************************
@@ -472,8 +480,8 @@ if ($start_script ne "NULL") {
 
 foreach my $branch (@list_of_branches) {
 
-    &log_msg("Switching to branch:  $branch");
-    &print_msg(5, "Switching to branch:  $branch");
+    &log_write("Switching to branch:  $branch");
+    &log_write("Switching to branch:  $branch");
 
     &git_switch_branch($branch);
     &change_directory("..");
@@ -499,7 +507,7 @@ foreach my $branch (@list_of_branches) {
             &change_directory("..");
 
         } else {
-            &print_msg(5, "Skip non-directory: $dir");
+            &log_write("Skip non-directory: $dir");
         }
     }
 }
@@ -520,5 +528,7 @@ if ($stop_script ne "NULL") {
 
 # ***********************************************************************
 
-&print_msg(3, "PROGRAMM FINISHED");
+&log_write("PROGRAMM FINISHED\n\n\n");
+&log_close();
+
 exit 0;
