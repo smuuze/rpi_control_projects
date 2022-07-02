@@ -46,15 +46,4 @@ release: release_dir
 
 show_version:
 	$(VERBOSE) $(ECHO) "$(VERSION_MAJOR).$(VERSION_MINOR)"
-
-#---------------------------------------------------------------------------------------
-
-repo_last_commit_frmwrk:
-
-repo_check_modifications_frmwrk:
-
-save_frmwrk_revision:
-
-show_frmwrk_revision:
-
-load_frmwrk_revision:
+	
