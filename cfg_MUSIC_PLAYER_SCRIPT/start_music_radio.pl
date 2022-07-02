@@ -27,7 +27,7 @@
 my $version_major = 1;
 
 # Minor version
-my $version_minor = 1;
+my $version_minor = 2;
 
 # ***********************************************************************
 
