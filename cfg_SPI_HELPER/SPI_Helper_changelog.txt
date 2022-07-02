@@ -1,4 +1,4 @@
-LCD-HELPER - CHANGELOG
+SPI-HELPER - CHANGELOG
 
 -----------------------------------------------------------
 
