@@ -1,5 +1,7 @@
 #!/usr/bin/perl
 
+# ***********************************************************************
+
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
 #   the Free Software Foundation, either version 3 of the License, or
@@ -19,14 +21,20 @@
 #   @date    2022 / 03 / 26
 #   @brief   Short description of this file
 
+# ***********************************************************************
+
 # Major version
 my $version_major = 1;
 
 # Minor version
-my $version_minor = 0;
+my $version_minor = 1;
+
+# ***********************************************************************
 
 # the higher the value the more output is generated
 my $verbose_level = 5;
+
+# ***********************************************************************
 
 # name of artist to play, is given via command line
 my $artist_name;
@@ -41,6 +49,8 @@ my $synchronize_file_name = "/home/shc/music_player_sync_file";
 
 # Into this file the name of the actual playing track is stored
 my $now_playing_file = "/home/shc/now_playing.txt";
+
+# ***********************************************************************
 
 # kills play processes to stop play music
 sub kill_play {
@@ -96,6 +106,8 @@ sub sleep {
     system($command);
 }
 
+# ***********************************************************************
+
 # get the arguments which are used calling this application
 foreach my $argument (@ARGV) {
 
@@ -124,6 +136,8 @@ foreach my $argument (@ARGV) {
         exit;
     }
 }
+
+# ***********************************************************************
 
 # into this file the shuffled playlist will be stored
 my $playlist_file_name = "/home/shc/music_radio_playlist.m3u";
