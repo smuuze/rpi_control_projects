@@ -4,8 +4,8 @@
 
 #-----------------------------------------------------------------------------
 
-# same name as script file (e.g. build_script.pl)
-PROJECT = build_script
+# same name as script file (e.g. status_script.pl)
+PROJECT = status_script
 
 #-----------------------------------------------------------------------------
 
@@ -46,4 +46,3 @@ release: release_dir
 
 show_version:
 	$(VERBOSE) $(ECHO) "$(VERSION_MAJOR).$(VERSION_MINOR)"
-	
