@@ -39,7 +39,7 @@ use constant MODE_GET => 2;
 my $version_major = 1;
 
 # Minor version
-my $version_minor = 0;
+my $version_minor = 1;
 
 # ***********************************************************************
 
