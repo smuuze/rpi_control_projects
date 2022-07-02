@@ -13,14 +13,14 @@
 # VERSION        = 0x107
 
 # PROJEKT Name des Hexfiles
-PROJECT = RPI_Hat_IR_Board
+PROJECT = gpioHelper
 
-BOARD_ID = 191005
+BOARD_ID = RASPBERRYPI
 
 #-----------------------------------------------------------------------------
 
 VERSION_MAJOR		:= 1
-VERSION_MINOR		:= 9
+VERSION_MINOR		:= 0
 
 #-----------------------------------------------------------------------------
 
@@ -31,23 +31,31 @@ MAKE_PATH   = $(FRMWRK_PATH)/make
 
 #-----------------------------------------------------------------------------
 
-MCU = ATMEGA1284P
+MCU = RASPBERRY_PI
 
 #-----------------------------------------------------------------------------
 
-CSRCS += ${APP_PATH}/main_rpi_hat.c
+CSRCS += main_gpio_helper.c
 
 #-----------------------------------------------------------------------------
 
-HOST_INTERFACE_TYPE = I2C
+#HOST_INTERFACE_TYPE = SPI
 
 #-----------------------------------------------------------------------------
 
-APP_TASK_CFG += 
+COMMON_MODULES = 
+#COMMON_MODULES += QEUE
+#COMMON_MODULES += DATETIME
+COMMON_MODULES += STRING
+
+#-----------------------------------------------------------------------------
+
+APP_TASK_CFG = 
+#APP_TASK_CFG += EVENT
+#APP_TASK_CFG += EVENT
+#APP_TASK_CFG += COPRO_ROUTING
 #APP_TASK_CFG += LED_MATRIX
 #APP_TASK_CFG += TEST_TRACER
-APP_TASK_CFG += IR_REMOTE
-APP_TASK_CFG += EVENT
 
 #-----------------------------------------------------------------------------
 
@@ -58,28 +66,13 @@ EXPANSION_BOARD_CFG =
 #-----------------------------------------------------------------------------
 
 DRIVER_MODULE_CFG =
-DRIVER_MODULE_CFG += GPIO
+DRIVER_MODULE_CFG += GPIO_LINUX
+DRIVER_MODULE_CFG += GPIO_NO_INIT_ON_START
 DRIVER_MODULE_CFG += RTC
 DRIVER_MODULE_CFG += CLK
-DRIVER_MODULE_CFG += TIMER0
-DRIVER_MODULE_CFG += TIMER1
-DRIVER_MODULE_CFG += I2C0
 #DRIVER_MODULE_CFG += USART0
-#DRIVER_MODULE_CFG += USART1
-
-#-----------------------------------------------------------------------------
-
-PROTOCOL_CFG =
-PROTOCOL_CFG += RPI_PROTOCOL_I2C
-
-#-----------------------------------------------------------------------------
-
-THIRD_PARTY_MODULES = 
-THIRD_PARTY_MODULES += IR_PROTOCOL_SAMSUNG
-THIRD_PARTY_MODULES += IR_PROTOCOL_JVC
-THIRD_PARTY_MODULES += IR_PROTOCOL_SONY
-THIRD_PARTY_MODULES += IR_PROTOCOL_NEC
-THIRD_PARTY_MODULES += IR_COMMAND_LED_LIGHT
+#DRIVER_MODULE_CFG += I2C0
+#DRIVER_MODULE_CFG += SPI0
 
 #-----------------------------------------------------------------------------
 
@@ -90,23 +83,42 @@ SENSOR_MODULE_CFG =
 
 MANAGEMENT_MODULE_CFG =
 #MANAGEMENT_MODULE_CFG += POWER
-MANAGEMENT_MODULE_CFG += IO
-MANAGEMENT_MODULE_CFG += RPI_PROTOCOL_I2C
-#MANAGEMENT_MODULE_CFG += RPI_PROTOCOL
+#MANAGEMENT_MODULE_CFG += IO
+#MANAGEMENT_MODULE_CFG += RPI_PROTOCOL_HOST
+
+#-----------------------------------------------------------------------------
+
+PROTOCOL_CFG = 
+#PROTOCOL_CFG += MQTT_PROTOCOL
 
 #-----------------------------------------------------------------------------
 
 COMMAND_INTERFACE_CFG = 
-COMMAND_INTERFACE_CFG += RPI_CMD_IR_REMOTE_SAMSUNG
-COMMAND_INTERFACE_CFG += RPI_CMD_IR_REMOTE_JVC
-COMMAND_INTERFACE_CFG += RPI_CMD_IR_REMOTE_SONY
-COMMAND_INTERFACE_CFG += RPI_CMD_IR_REMOTE_LED_LIGHTS
+#COMMAND_INTERFACE_CFG += RPI_CMD_IO
+#COMMAND_INTERFACE_CFG += RPI_CMD_SENSOR
+#COMMAND_INTERFACE_CFG += RPI_CMD_ROUTING
+
+#-----------------------------------------------------------------------------
+
+COPRO_INTERFACE_CFG =
+#COPRO_INTERFACE_CFG += COPRO1_I2C0
+
+#-----------------------------------------------------------------------------
+
+USER_INTERFACE_CFG =
+USER_INTERFACE_CFG += CLI_ARG_DEVICE
+USER_INTERFACE_CFG += CLI_ARG_COMMAND
+USER_INTERFACE_CFG += CONSOLE
+USER_INTERFACE_CFG += LCD_16X2
+USER_INTERFACE_CFG += CFG_FILE_PARSER
+USER_INTERFACE_CFG += FILE_INTERFACE
+USER_INTERFACE_CFG += CLI_ARG_GPIO
 
 #-----------------------------------------------------------------------------
 
 TRACER_CFG =
-TRACER_CFG += USART0
-TRACER_CFG += BAUDRATE_230400
+TRACER_CFG += CONSOLE
+#TRACER_CFG += BAUDRATE_230400
 #TRACER_CFG += PARITY_NONE
 #TRACER_CFG += DATABITS_8
 #TRACER_CFG += STOPBITS_1
