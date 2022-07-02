@@ -80,14 +80,20 @@ static void main_CLI_ARGUMENT_FILE_SLOT_CALLBACK(const void* p_argument);
  */
 static void main_CLI_ARGUMENT_N_SLOT_CALLBACK(const void* p_argument);
 
+/**
+ * @brief Handles the CLI_ARGUMENT_ADDR_SIGNAL
+ * 
+ * @param p_argument number of type u32
+ */
+static void main_CLI_ARGUMENT_ADDR_SLOT_CALLBACK(const void* p_argument);
+
 // --------------------------------------------------------------------------------
 
 SIGNAL_SLOT_INTERFACE_CREATE_SLOT(CLI_HELP_REQUESTED_SIGNAL, MAIN_CLI_HELP_REQUESTED_SLOT, main_CLI_HELP_REQUESTED_SLOT_CALLBACK)
 SIGNAL_SLOT_INTERFACE_CREATE_SLOT(CLI_INVALID_PARAMETER_SIGNAL, MAIN_CLI_INVALID_PARAMETER_SLOT, main_CLI_INVALID_PARAMETER_SLOT_CALLBACK)
 SIGNAL_SLOT_INTERFACE_CREATE_SLOT(CLI_ARGUMENT_FILE_SIGNAL, CLI_ARGUMENT_FILE_SLOT, main_CLI_ARGUMENT_FILE_SLOT_CALLBACK)
 SIGNAL_SLOT_INTERFACE_CREATE_SLOT(CLI_ARGUMENT_N_SIGNAL, CLI_ARGUMENT_N_SLOT, main_CLI_ARGUMENT_N_SLOT_CALLBACK)
-
-
+SIGNAL_SLOT_INTERFACE_CREATE_SLOT(CLI_ARGUMENT_ADDR_SIGNAL, CLI_ARGUMENT_ADDR_SLOT, main_CLI_ARGUMENT_ADDR_SLOT_CALLBACK)
 
 // --------------------------------------------------------------------------------
 
@@ -104,6 +110,12 @@ static char file_path[MAIN_MAX_LENGTH_FILE_PATH];
  */
 static u32 char_count = 32;
 
+/**
+ * @brief Address to start reading from. Is set to 0 by default
+ * 
+ */
+static u32 addr_offset = 0;
+
 // --------------------------------------------------------------------------------
 
 int main(int argc, char* argv[]) {
@@ -112,6 +124,9 @@ int main(int argc, char* argv[]) {
     (
         initialization();
     )
+
+    char_count = 32;
+    addr_offset = 0;
 
     common_tools_string_clear(file_path, MAIN_MAX_LENGTH_FILE_PATH);
 
@@ -127,18 +142,42 @@ int main(int argc, char* argv[]) {
     DEBUG_PASS("main() - CLI_ARGUMENT_N_SLOT_connect()");
     CLI_ARGUMENT_N_SLOT_connect();
 
+    DEBUG_PASS("main() - CLI_ARGUMENT_N_SLOT_connect()");
+    CLI_ARGUMENT_ADDR_SIGNAL_connect();
+
     command_line_interface(argc, argv);
 
-    int handle = open(file_path, O_RDONLY);
+    if (common_tools_string_length(file_path) == 0) {
+        console_write_line("INVALID FILE GIVEN!");
+        return -1;
+    }
+
+    int handle = open(file_path, O_RDONLY | O_SYNC | O_CLOEXEC);
     if (handle < 0) {
-        console_write_line("OPEN FILE HAS FAILED!");
+        console_write("OPEN FILE HAS FAILED! - ERROR: ");
+        console_write_number(handle);
+        console_new_line();
         return -1;
     }
 
     u8 buffer[MAIN_READ_BUFFER_MAX_LEN];
 
-    if (read(handle, &buffer[0], char_count) <= 0 ) {
-        console_write_line("READING FILE HAS FAILED!");
+    u32* gpio = (u32*)mmap(0, BLOCK_SIZE, PROT_READ, MAP_SHARED, handle, addr_offset) ;
+
+    i32 return_value = read(handle, &buffer[0], char_count);
+    if (return_value < 0) {
+
+        console_write("READING FILE HAS FAILED! - ERROR: ");
+        console_write_number(return_value);
+        console_new_line();
+
+        close(handle);
+        return -1;
+
+    } else if (return_value == 0) {
+
+        console_write_line("READING FILE HAS FAILED! - NO DATA");
+
         close(handle);
         return -1;
     }
@@ -185,6 +224,7 @@ static void main_CLI_HELP_REQUESTED_SLOT_CALLBACK(const void* p_argument) {
 
     console_write_line("-file <FILE-PATH>           : path to the file to read from");
     console_write_line("-n                          : number of bytes / characters to read from the file (default is 32)");
+    console_write_line("-addr                       : address tos tart reading from, default is 0");
     console_write_line("-h                          : Print this help screen");
 }
 
@@ -203,6 +243,13 @@ static void main_CLI_ARGUMENT_N_SLOT_CALLBACK(const void* p_argument) {
     if (char_count > MAIN_READ_BUFFER_MAX_LEN) {
         char_count = MAIN_READ_BUFFER_MAX_LEN;
     }
+}
+
+// --------------------------------------------------------------------------------
+
+static void main_CLI_ARGUMENT_ADDR_SLOT_CALLBACK(const void* p_argument) {
+    const u32* p_addr_offset = (const u32*)p_argument;
+    addr_offset = *p_addr_offset;
 }
 
 // --------------------------------------------------------------------------------
