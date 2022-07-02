@@ -505,6 +505,7 @@ foreach my $branch (@list_of_branches) {
             }
             
             &change_directory("..");
+            &git_switch_branch($branch);
 
         } else {
             &log_write("Skip non-directory: $dir");
