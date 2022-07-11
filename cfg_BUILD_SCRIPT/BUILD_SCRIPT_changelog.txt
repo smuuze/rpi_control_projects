@@ -2,6 +2,32 @@ BUILD_SCRIPT - CHANGELOG
 
 -----------------------------------------------------------
 
+Version:        1.02
+
+Date:           < NOT RELEASED >
+Author:         Sebastian Lesse
+
+Framework:      ??.??
+
+New-Features:
+
+    -   Add argument to set ci-script, to run before projects are build
+
+Bugfixes:
+
+    -   none
+
+Misc:
+
+    -   none
+
+Known-Bugs:
+
+    -   none
+
+
+-----------------------------------------------------------
+
 Version:        1.01
 
 Date:           2022 / 07 / 02

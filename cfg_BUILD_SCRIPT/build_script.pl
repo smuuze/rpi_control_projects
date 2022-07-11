@@ -20,12 +20,14 @@
 #   @author  Sebastian Lesse
 #   @date    2022 / 03 / 26
 #   @brief   performs a build of projects within a given directory
-#            You need to isntall the following packaged via apt to
+#            You need to install the following packaged via apt to
 #            to run this script on a Raspberry Pi.
 #            - libfile-copy-recursive-perl
 
 # ***********************************************************************
 
+use Cwd qw(cwd);
+use File::Basename;
 use File::Path qw(rmtree);
 use File::Copy::Recursive qw(dircopy );
 
@@ -73,6 +75,12 @@ my $start_script = "NULL";
 # command to call on exiting the build-script
 my $stop_script = "NULL";
 
+# command to run unittest of the frmwrk-repository
+my $ci_script = "NULL";
+
+# if 1 the script will pause and wait for user input at several points
+my $pausing = 0;
+
 # ***********************************************************************
 
 # get the actual date and time of the system this script is executed from
@@ -118,6 +126,16 @@ sub fatal_exit {
     my ($msg) = @_;
     &log_close();
     die $msg;
+}
+
+# ***********************************************************************
+
+# prints a message on the console and wait until the user has pressed the enter-key
+sub wait_for_enter_key {
+    if ($pausing != 0) {
+        print "Press ENTER to continue.\n";
+        <STDIN>;
+    }
 }
 
 # ***********************************************************************
@@ -208,6 +226,31 @@ sub get_repository_name {
     }
 
     $repo_name; # return value
+}
+
+# ***********************************************************************
+
+# runs the given ci-script
+sub run_ci_script {
+
+    my ($ci_script_path) = @_;
+    my $ci_dir = dirname($ci_script_path);
+    my $current_dir = cwd;
+    my $return_value = 0;
+
+    &log_write("Running ci-script: $ci_script_path");
+    &log_write("Directory ci-script: $ci_dir");
+
+    &change_directory($ci_dir);
+
+    if (&execute_command($ci_script_path) != 0) {
+        &log_write("Execute CI-script have failed!");
+        $return_value = -1;
+    }
+
+    &change_directory($current_dir);
+
+    return $return_value;
 }
 
 # ***********************************************************************
@@ -337,7 +380,15 @@ sub print_help {
 
     print ("\t-branches:<LIST-OF-BRANCHES> \t\t comma separated list of branches that are used\n");
     print ("\t\t\t\t\t\t in the form <BRANCH1>,<BRANCH2>,<BRANCH3\n");
-    print ("\t\t\t\t\t\t EXAMPLE: -branches:dev,master,debug");
+    print ("\t\t\t\t\t\t EXAMPLE: -branches:dev,master,debug\n\n");
+
+    print ("\t-ciscript:<CI-SCRIPT-PATH> \t\t Optional argument with path to a script that runs before projects are build\n");
+    print ("\t\t\t\t\t\t If given this script must be executed successful. Otherwise the projects will not be build\n");
+    print ("\t\t\t\t\t\t This program enters the directory of the given sscript before exucuting it.\n");
+    print ("\t\t\t\t\t\t After the script has been exectuted the previous working directory will be re-entered\n");
+    print ("\t\t\t\t\t\t EXAMPLE: -ciscript:/home/build/ci_script.sh\n\n");
+
+    print ("\t-pausing \t\t\t\t Causes the script to stop at several points and waits for user to press ENTER key\n\n");
 
     print ("\n\n");
 }
@@ -403,12 +454,26 @@ foreach my $argument (@ARGV) {
         &log_write("ARGUMENT branches = $1");
         @list_of_branches = &get_list_of_branches($1);
 
+    } elsif (/-ciscript:(.*)/i) {
+
+        &log_write("ARGUMENT ciscript = $1");
+        $ci_script = $1;
+
+    }  elsif (/-pausing/i) {
+
+        &log_write("ARGUMENT pausing activated");
+        $pausing = 1;
+
     } else {
 
         print("Invalid argument: \"$argument\"\nType -help for available arguments\n");
         exit 0;
     }
 }
+
+# ***********************************************************************
+
+&wait_for_enter_key;
 
 # ***********************************************************************
 
@@ -472,6 +537,10 @@ if ($start_script ne "NULL") {
 
 # ***********************************************************************
 
+&wait_for_enter_key;
+
+# ***********************************************************************
+
 #go into projects-repository
 &change_directory($repository_name_proj);
 
@@ -489,6 +558,18 @@ foreach my $branch (@list_of_branches) {
     &change_directory($repository_name_frmwrk);
 
     &git_switch_branch($branch);
+
+    &wait_for_enter_key;
+
+    if ($ci_script ne "NULL") {
+        # call function to run ci-script here
+        if (&run_ci_script($ci_script) != 0) {
+            &fatal_exit("CI-SCRIPT HAS FAILED - ABORT!");
+        }
+    }
+
+    &wait_for_enter_key;
+
     &change_directory("..");
 
     &change_directory($repository_name_proj);
