@@ -1,0 +1,54 @@
+MUSIC_PLAYER_SCRIPT - CHANGELOG
+
+-----------------------------------------------------------
+
+Version:        1.02
+
+Date:           < NOT RELEASED >
+Author:         Sebastian Lesse
+
+Framework:      ??.??
+
+New-Features:
+
+    -   none
+
+Bugfixes:
+
+    -   check if killall command was successfull
+
+    -   incorrect call for "killall mpg3" instead of "killall mpg123"
+
+Misc:
+
+    -   none
+
+Known-Bugs:
+
+    -   none
+
+
+-----------------------------------------------------------
+
+Version:        1.01
+
+Date:           2022 / 07 / 02
+Author:         Sebastian Lesse
+
+Framework:      6.05
+
+New-Features:
+
+    -   none
+
+Bugfixes:
+
+    -   none
+
+Misc:
+
+    -   none
+
+Known-Bugs:
+
+    -   none

@@ -55,8 +55,18 @@ my $now_playing_file = "/home/shc/now_playing.txt";
 # kills play processes to stop play music
 sub kill_play {
 
-    system("killall", "play");
-    system("killall", "mpg3");
+    if (system("killall play") == 0) {
+        print "killall play succeeded!\n" if $verbose_level > 3;
+        return 0;
+
+    } elsif (system("killall mpg123") == 0) {
+        print "killall mpg123 succeeded!\n" if $verbose_level > 3;
+        return 0;
+
+    } else {
+        print "Nothing playing?\n" if $verbose_level > 3;
+        return -1
+    }
 }
 
 # subroutine to delete the synchroniozation file
