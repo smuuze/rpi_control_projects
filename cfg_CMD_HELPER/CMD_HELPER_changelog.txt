@@ -2,6 +2,31 @@ CMD-HELPER - CHANGELOG
 
 -----------------------------------------------------------
 
+Version:        1.09
+
+Date:           < NOTE RELEASED >
+Author:         Sebastian Lesse
+
+Framework:      6.06
+
+New-Features:
+
+    -   none
+
+Bugfixes:
+
+    -   none
+
+Misc:
+
+    -   CMD-Helper does not use wiring-Pi anymore
+
+Known-Bugs:
+
+    -   none
+
+-----------------------------------------------------------
+
 Version:	1.6 (beta)
 
 Date: 		24.06.2021
