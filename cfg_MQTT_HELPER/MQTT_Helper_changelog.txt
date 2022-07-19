@@ -2,6 +2,32 @@ MQTT-HELPER - CHANGELOG
 
 -----------------------------------------------------------
 
+Version:        1.03
+
+Date:           < NOTE RELEASED >
+Author:         Sebastian Lesse
+
+Framework:      6.06
+
+New-Features:
+
+    -   none
+
+Bugfixes:
+
+    -   none
+
+Misc:
+
+    -   MQTT-Helper does not sue wiring-Pi anymore
+
+Known-Bugs:
+
+    -   none
+
+
+-----------------------------------------------------------
+
 Version:        1.02
 
 Date:           2022 / 07 / 02
