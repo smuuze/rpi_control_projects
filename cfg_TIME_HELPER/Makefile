@@ -56,7 +56,7 @@ EXPANSION_BOARD_CFG =
 #-----------------------------------------------------------------------------
 
 DRIVER_MODULE_CFG =
-DRIVER_MODULE_CFG += GPIO
+DRIVER_MODULE_CFG += GPIO_EMPTY
 DRIVER_MODULE_CFG += RTC
 DRIVER_MODULE_CFG += CLK
 #DRIVER_MODULE_CFG += USART0

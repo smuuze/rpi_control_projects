@@ -2,6 +2,32 @@ TIME-HELPER - CHANGELOG
 
 -----------------------------------------------------------
 
+Version:        1.02
+
+Date:           < NOTE RELEASED >
+Author:         Sebastian Lesse
+
+Framework:      6.06
+
+New-Features:
+
+    -   none
+
+Bugfixes:
+
+    -   none
+
+Misc:
+
+    -   none
+
+Known-Bugs:
+
+    -   none
+
+
+-----------------------------------------------------------
+
 Version:        1.01
 
 Date:           2022 / 07 / 02
