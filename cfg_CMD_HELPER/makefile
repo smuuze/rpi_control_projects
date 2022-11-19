@@ -82,6 +82,7 @@ SENSOR_MODULE_CFG =
 #-----------------------------------------------------------------------------
 
 MANAGEMENT_MODULE_CFG =
+MANAGEMENT_MODULE_CFG += TIMER
 #MANAGEMENT_MODULE_CFG += POWER
 #MANAGEMENT_MODULE_CFG += IO
 
