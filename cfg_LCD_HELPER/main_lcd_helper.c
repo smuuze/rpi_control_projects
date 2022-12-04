@@ -43,17 +43,20 @@
 // --------------------------------------------------------------------------------
 
 #include "initialization/initialization.h"
+
 #include "common/signal_slot_interface.h"
 #include "common/common_types.h"
+#include "common/common_tools_string.h"
 
 #include "mcu_task_management/mcu_task_controller.h"
 
 #include "ui/command_line/command_line_interface.h"
 #include "ui/command_line/command_line_handler_gpio.h"
-#include "ui/console/ui_console.h"
 
-#include "common/common_tools_string.h"
+#include "ui/console/ui_console.h"
 #include "ui/lcd/ui_lcd_interface.h"
+
+#include "time_management/time_management.h"
 
 // --------------------------------------------------------------------------------
 
@@ -84,6 +87,10 @@ SIGNAL_SLOT_INTERFACE_CREATE_SLOT(CLI_LCD_ACTIVATED_SIGNAL, CLI_LCD_ACTIVATED_SL
 
 // --------------------------------------------------------------------------------
 
+TIME_MGMN_BUILD_STATIC_TIMER_U16(LCD_HELPER_TIMER)
+
+// --------------------------------------------------------------------------------
+
 /**
  * @brief Buffer to remember the string that
  * was given by the user via command-line.
@@ -108,6 +115,8 @@ int main(int argc, char* argv[]) {
         initialization();
     )
 
+    lcd_controller_set_enabled(LCD_ENABLE);
+
     common_tools_string_clear(lcd_string, sizeof(lcd_string));
 
     DEBUG_PASS("main() - MAIN_CLI_HELP_REQUESTED_SLOT_connect()");
@@ -124,7 +133,6 @@ int main(int argc, char* argv[]) {
     /**
      * @brief lcd_string_length is set in
      * main_CCLI_LCD_ACTIVATED_SLOT_CALLBACK()
-     * 
      */
 
     if (lcd_string_length != 0) {
@@ -132,12 +140,12 @@ int main(int argc, char* argv[]) {
         u16 index = 0;
         u16 line_count = 0;
         
-        while ( line_count < lcd_line_count() ) {
+        while ( line_count < lcd_controller_get_line_count() ) {
 
-            lcd_write_line(&lcd_string[index]);
+            SIGNAL_LCD_LINE_send(&lcd_string[index]);
             line_count += 1;
 
-            index += lcd_character_count();
+            index += lcd_controller_get_character_count();
             if (index > lcd_string_length) {
                 break;
             }
@@ -145,6 +153,19 @@ int main(int argc, char* argv[]) {
 
     } else {
         main_CLI_INVALID_PARAMETER_SLOT_CALLBACK(NULL);
+    }
+
+    LCD_HELPER_TIMER_start();
+
+    for (;;) {
+        
+        mcu_task_controller_schedule();
+        mcu_task_controller_background_run();
+        watchdog();
+
+        if (LCD_HELPER_TIMER_is_up(3000)) {
+            break;
+        }
     }
 
     mcu_task_controller_terminate_all();
@@ -204,9 +225,6 @@ static void main_CCLI_LCD_ACTIVATED_SLOT_CALLBACK(const void* p_argument) {
         main_CLI_HELP_REQUESTED_SLOT_CALLBACK(NULL);
         return;
     }
-
-    lcd_set_enabled(LCD_ENABLE);
-    lcd_init();
 
     const char* p_string = (const char*) p_argument;
     lcd_string_length = common_tools_string_length(p_string);
