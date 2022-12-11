@@ -77,13 +77,20 @@ static void main_CLI_INVALID_PARAMETER_SLOT_CALLBACK(const void* p_argument);
 /*!
  *
  */
-static void main_CCLI_LCD_ACTIVATED_SLOT_CALLBACK(const void* p_argument);
+static void main_CLI_LCD_ACTIVATED_SLOT_CALLBACK(const void* p_argument);
+
+/*!
+ *
+ */
+static void main_LCD_UPDATED_SLOT_CALLBACK(const void* p_argument);
 
 // --------------------------------------------------------------------------------
 
 SIGNAL_SLOT_INTERFACE_CREATE_SLOT(CLI_HELP_REQUESTED_SIGNAL, MAIN_CLI_HELP_REQUESTED_SLOT, main_CLI_HELP_REQUESTED_SLOT_CALLBACK)
 SIGNAL_SLOT_INTERFACE_CREATE_SLOT(CLI_INVALID_PARAMETER_SIGNAL, MAIN_CLI_INVALID_PARAMETER_SLOT, main_CLI_INVALID_PARAMETER_SLOT_CALLBACK)
-SIGNAL_SLOT_INTERFACE_CREATE_SLOT(CLI_LCD_ACTIVATED_SIGNAL, CLI_LCD_ACTIVATED_SLOT, main_CCLI_LCD_ACTIVATED_SLOT_CALLBACK)
+SIGNAL_SLOT_INTERFACE_CREATE_SLOT(CLI_LCD_ACTIVATED_SIGNAL, MAIN_CLI_LCD_ACTIVATED_SLOT, main_CLI_LCD_ACTIVATED_SLOT_CALLBACK)
+
+SIGNAL_SLOT_INTERFACE_CREATE_SLOT(SIGNAL_LCD_UPDATED, MAIN_LCD_UPDATED_SLOT, main_LCD_UPDATED_SLOT_CALLBACK)
 
 // --------------------------------------------------------------------------------
 
@@ -106,6 +113,12 @@ static char lcd_string[33];
  */
 static u16 lcd_string_length = 0;
 
+/**
+ * @brief The program will be exit if set to 1.
+ * 
+ */
+static u8 exit_program = 0;
+
 // --------------------------------------------------------------------------------
 
 int main(int argc, char* argv[]) {
@@ -126,7 +139,10 @@ int main(int argc, char* argv[]) {
     MAIN_CLI_INVALID_PARAMETER_SLOT_connect();
 
     DEBUG_PASS("main() - CLI_LCD_ACTIVATED_SLOT_connect()");
-    CLI_LCD_ACTIVATED_SLOT_connect();
+    MAIN_CLI_LCD_ACTIVATED_SLOT_connect();
+
+    DEBUG_PASS("main() - MAIN_LCD_UPDATED_SLOT_connect()");
+    MAIN_LCD_UPDATED_SLOT_connect();
 
     command_line_interface(argc, argv);
 
@@ -163,7 +179,11 @@ int main(int argc, char* argv[]) {
         mcu_task_controller_background_run();
         watchdog();
 
-        if (LCD_HELPER_TIMER_is_up(3000)) {
+        if (LCD_HELPER_TIMER_is_up(10000)) {
+            break;
+        }
+
+        if (exit_program) {
             break;
         }
     }
@@ -218,7 +238,7 @@ static void main_CLI_HELP_REQUESTED_SLOT_CALLBACK(const void* p_argument) {
 
 // --------------------------------------------------------------------------------
 
-static void main_CCLI_LCD_ACTIVATED_SLOT_CALLBACK(const void* p_argument) {
+static void main_CLI_LCD_ACTIVATED_SLOT_CALLBACK(const void* p_argument) {
 
     if (p_argument == NULL) {
         console_write_line("FATAL: NULL-POINTER-EXCEPTION");
@@ -233,8 +253,15 @@ static void main_CCLI_LCD_ACTIVATED_SLOT_CALLBACK(const void* p_argument) {
         lcd_string_length = sizeof(lcd_string) - 1; // -1 to respect 0-termination
     }
 
-    DEBUG_TRACE_STR(p_string, "main_CCLI_LCD_ACTIVATED_SLOT_CALLBACK() - String:");
+    DEBUG_TRACE_STR(p_string, "main_CLI_LCD_ACTIVATED_SLOT_CALLBACK() - String:");
     common_tools_string_copy_string(lcd_string, p_string, sizeof(lcd_string));
+}
+
+// --------------------------------------------------------------------------------
+
+static void main_LCD_UPDATED_SLOT_CALLBACK(const void* p_argument) {
+    DEBUG_PASS("main_LCD_UPDATED_SLOT_CALLBACK()");
+    exit_program = 1;
 }
 
 // --------------------------------------------------------------------------------

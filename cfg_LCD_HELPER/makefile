@@ -19,8 +19,8 @@ BOARD_ID = RASPBERRYPI
 
 #-----------------------------------------------------------------------------
 
-VERSION_MAJOR		:= 1
-VERSION_MINOR		:= 2
+VERSION_MAJOR		:= 2
+VERSION_MINOR		:= 0
 
 #-----------------------------------------------------------------------------
 
@@ -44,7 +44,7 @@ CSRCS += main_lcd_helper.c
 #-----------------------------------------------------------------------------
 
 COMMON_MODULES = 
-#COMMON_MODULES += QEUE
+COMMON_MODULES += QEUE
 #COMMON_MODULES += DATETIME
 COMMON_MODULES += STRING
 
