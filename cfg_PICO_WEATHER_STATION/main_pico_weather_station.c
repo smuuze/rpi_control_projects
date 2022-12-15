@@ -49,6 +49,8 @@
 #include "cfg_driver_interface.h"
 #include "time_management/time_management.h"
 
+#include "string.h"
+
 // --------------------------------------------------------------------------------
 
 TIME_MGMN_BUILD_STATIC_TIMER_U16(MAIN_TEST_TIMER)
@@ -83,22 +85,22 @@ int main( void ) {
     main_init();
     DEBUG_PASS(config_DEBUG_WELCOME_MESSAGE);
 
-    TRX_DRIVER_CONFIGURATION uart_cfg = {
-        .module = {
-            .usart = {
-                .baudrate = BAUDRATE_9600,
-                // .baudrate = BAUDRATE_115200,
-                // .baudrate = BAUDRATE_230400,
-                .databits = DATABITS_8,
-                .parity = PARITY_NONE,
-                .stopbits = STOPBITS_1
-            }
-        }
-    };
+    // TRX_DRIVER_CONFIGURATION uart_cfg = {
+    //     .module = {
+    //         .usart = {
+    //             .baudrate = BAUDRATE_9600,
+    //             // .baudrate = BAUDRATE_115200,
+    //             // .baudrate = BAUDRATE_230400,
+    //             .databits = DATABITS_8,
+    //             .parity = PARITY_NONE,
+    //             .stopbits = STOPBITS_1
+    //         }
+    //     }
+    // };
 
     u8 i = 0u;
 
-    i_system.driver.usart0->configure(&uart_cfg);
+    // i_system.driver.usart0->configure(&uart_cfg);
 
     MAIN_TEST_TIMER_start();
     GPIO_25_drive_high();
@@ -117,6 +119,19 @@ int main( void ) {
         task_yield();
         watchdog();
     }
+}
+
+// --------------------------------------------------------------------------------
+
+/**
+ * @brief We only need the strlen functionality of the common-tools-string module.
+ * The common-tools-string module occupies more pogram memory then neded.
+ * So, we implement this fucntion here.
+ * 
+ * @see common_tools_string#common_tools_string_length
+ */
+u16 common_tools_string_length(const char* p_string) {
+    return strlen(p_string);
 }
 
 // --------------------------------------------------------------------------------
