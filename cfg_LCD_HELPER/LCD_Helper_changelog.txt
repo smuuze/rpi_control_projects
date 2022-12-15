@@ -2,6 +2,32 @@ LCD-HELPER - CHANGELOG
 
 -----------------------------------------------------------
 
+Version:        2.0
+
+Date:           <NOT RELEASED>
+Author:         Sebastian Lesse
+
+Framework:      6.05
+
+New-Features:
+
+    -   Using smooth update of last LCD line
+
+Bugfixes:
+
+    -   none
+
+Misc:
+
+    -   using new LCD controller implementation
+
+Known-Bugs:
+
+    -   none
+
+
+-----------------------------------------------------------
+
 Version:        1.01
 
 Date:           2022 / 07 / 02

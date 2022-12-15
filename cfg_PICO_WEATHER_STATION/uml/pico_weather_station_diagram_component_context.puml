@@ -1,0 +1,35 @@
+@startuml pico_weather_station_diagram_component_context
+
+skinparam monochrome true
+'skinparam linetype ortho
+'skinparam style strictuml
+
+'mainframe component: PICO-WEATHER-STATION - structure - context
+
+frame "component: PICO-WEATHER-STATION - structure - context" {
+    node Framework
+    node LCD
+    node Keyboard
+    node DCF
+    node USB
+    node Sensor
+    note right
+    - Temperature
+    - Humidity
+    - Air-Pressure
+    end note
+
+    component PICO_WEATER_STATION [
+        <<System>>
+        Pico-Weater-Station
+    ]
+
+    PICO_WEATER_STATION -up- Sensor
+    PICO_WEATER_STATION -up- DCF
+    PICO_WEATER_STATION -left- LCD
+    PICO_WEATER_STATION -right- Keyboard
+    PICO_WEATER_STATION -down- Framework
+    PICO_WEATER_STATION -down- USB
+}
+
+@enduml

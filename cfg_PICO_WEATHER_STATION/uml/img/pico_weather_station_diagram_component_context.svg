@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" height="349px" preserveAspectRatio="none" style="width:467px;height:349px;background:#FFFFFF;" version="1.1" viewBox="0 0 467 349" width="467px" zoomAndPan="magnify"><defs/><g><!--MD5=[7f8e01c036504e123fe1ff4dcd0f3890]
+cluster component: PICO-WEATHER-STATION - structure - context--><g id="cluster_component: PICO-WEATHER-STATION - structure - context"><rect fill="none" height="336" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:1.0;" width="454" x="7" y="7"/><path d="M451,7 L451,16.4883 L441,26.4883 L7,26.4883 " fill="none" style="stroke:#181818;stroke-width:1.0;"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="434" x="10" y="21.5352">component: PICO-WEATHER-STATION - structure - context</text></g><!--MD5=[c4ae5e6a8e5d25f249fb8cf39b4f6989]
+entity Framework--><g id="elem_Framework"><polygon fill="#F1F1F1" points="92.5,291,102.5,281,209.5,281,209.5,317.4883,199.5,327.4883,92.5,327.4883,92.5,291" style="stroke:#181818;stroke-width:0.5;"/><line style="stroke:#181818;stroke-width:0.5;" x1="199.5" x2="209.5" y1="291" y2="281"/><line style="stroke:#181818;stroke-width:0.5;" x1="92.5" x2="199.5" y1="291" y2="291"/><line style="stroke:#181818;stroke-width:0.5;" x1="199.5" x2="199.5" y1="291" y2="327.4883"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="77" x="107.5" y="314.5352">Framework</text></g><!--MD5=[4fa49025eed565a6a4073ac6911b5f04]
+entity LCD--><g id="elem_LCD"><polygon fill="#F1F1F1" points="23.5,176.5,33.5,166.5,90.5,166.5,90.5,202.9883,80.5,212.9883,23.5,212.9883,23.5,176.5" style="stroke:#181818;stroke-width:0.5;"/><line style="stroke:#181818;stroke-width:0.5;" x1="80.5" x2="90.5" y1="176.5" y2="166.5"/><line style="stroke:#181818;stroke-width:0.5;" x1="23.5" x2="80.5" y1="176.5" y2="176.5"/><line style="stroke:#181818;stroke-width:0.5;" x1="80.5" x2="80.5" y1="176.5" y2="212.9883"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="27" x="38.5" y="200.0352">LCD</text></g><!--MD5=[fb474a65459f7c6e90680d615206be56]
+entity Keyboard--><g id="elem_Keyboard"><polygon fill="#F1F1F1" points="339.5,176.5,349.5,166.5,444.5,166.5,444.5,202.9883,434.5,212.9883,339.5,212.9883,339.5,176.5" style="stroke:#181818;stroke-width:0.5;"/><line style="stroke:#181818;stroke-width:0.5;" x1="434.5" x2="444.5" y1="176.5" y2="166.5"/><line style="stroke:#181818;stroke-width:0.5;" x1="339.5" x2="434.5" y1="176.5" y2="176.5"/><line style="stroke:#181818;stroke-width:0.5;" x1="434.5" x2="434.5" y1="176.5" y2="212.9883"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="65" x="354.5" y="200.0352">Keyboard</text></g><!--MD5=[74d58434b61eac80e60ca2a9d0dc9948]
+entity DCF--><g id="elem_DCF"><polygon fill="#F1F1F1" points="87,57,97,47,155,47,155,83.4883,145,93.4883,87,93.4883,87,57" style="stroke:#181818;stroke-width:0.5;"/><line style="stroke:#181818;stroke-width:0.5;" x1="145" x2="155" y1="57" y2="47"/><line style="stroke:#181818;stroke-width:0.5;" x1="87" x2="145" y1="57" y2="57"/><line style="stroke:#181818;stroke-width:0.5;" x1="145" x2="145" y1="57" y2="93.4883"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="28" x="102" y="80.5352">DCF</text></g><!--MD5=[6adf806993c4fed3f755089b7e3c05bf]
+entity USB--><g id="elem_USB"><polygon fill="#F1F1F1" points="245,291,255,281,311,281,311,317.4883,301,327.4883,245,327.4883,245,291" style="stroke:#181818;stroke-width:0.5;"/><line style="stroke:#181818;stroke-width:0.5;" x1="301" x2="311" y1="291" y2="281"/><line style="stroke:#181818;stroke-width:0.5;" x1="245" x2="301" y1="291" y2="291"/><line style="stroke:#181818;stroke-width:0.5;" x1="301" x2="301" y1="291" y2="327.4883"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="26" x="260" y="314.5352">USB</text></g><!--MD5=[94b3b673d5a236560eff806941c90c67]
+entity Sensor--><g id="elem_Sensor"><polygon fill="#F1F1F1" points="190.5,57,200.5,47,277.5,47,277.5,83.4883,267.5,93.4883,190.5,93.4883,190.5,57" style="stroke:#181818;stroke-width:0.5;"/><line style="stroke:#181818;stroke-width:0.5;" x1="267.5" x2="277.5" y1="57" y2="47"/><line style="stroke:#181818;stroke-width:0.5;" x1="190.5" x2="267.5" y1="57" y2="57"/><line style="stroke:#181818;stroke-width:0.5;" x1="267.5" x2="267.5" y1="57" y2="93.4883"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="47" x="205.5" y="80.5352">Sensor</text></g><g id="elem_GMN10"><path d="M313,42 L313,66 L277.77,70 L313,74 L313,97.9316 A0,0 0 0 0 313,97.9316 L425,97.9316 A0,0 0 0 0 425,97.9316 L425,52 L415,42 L313,42 A0,0 0 0 0 313,42 " fill="#FAFAFA" style="stroke:#181818;stroke-width:0.5;"/><path d="M415,42 L415,52 L425,52 L415,42 " fill="#FAFAFA" style="stroke:#181818;stroke-width:0.5;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="91" x="319" y="59.5684">- Temperature</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="70" x="319" y="74.8789">- Humidity</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="91" x="319" y="90.1895">- Air-Pressure</text></g><!--MD5=[139882b8a8ab6a691bc4cd9ff9a78949]
+entity PICO_WEATER_STATION--><g id="elem_PICO_WEATER_STATION"><rect fill="#F1F1F1" height="62.9766" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="179" x="125.5" y="158"/><rect fill="#F1F1F1" height="10" style="stroke:#181818;stroke-width:0.5;" width="15" x="284.5" y="163"/><rect fill="#F1F1F1" height="2" style="stroke:#181818;stroke-width:0.5;" width="4" x="282.5" y="165"/><rect fill="#F1F1F1" height="2" style="stroke:#181818;stroke-width:0.5;" width="4" x="282.5" y="169"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="62" x="140.5" y="191.5352">«System»</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="139" x="140.5" y="208.0234">Pico-Weater-Station</text></g><!--MD5=[97f8c22acab6a4394a0645bea8e4d201]
+link Sensor to PICO_WEATER_STATION--><g id="link_Sensor_PICO_WEATER_STATION"><path d="M230.38,93.38 C227.43,111.62 223.23,137.58 219.97,157.77 " fill="none" id="Sensor-PICO_WEATER_STATION" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[a1a67e049f01d5fa887b5fbcb6c7e00b]
+link DCF to PICO_WEATER_STATION--><g id="link_DCF_PICO_WEATER_STATION"><path d="M138.9,93.38 C153.5,111.62 174.27,137.58 190.42,157.77 " fill="none" id="DCF-PICO_WEATER_STATION" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[fac4026231bea0638b74448a70629ec7]
+link LCD to PICO_WEATER_STATION--><g id="link_LCD_PICO_WEATER_STATION"><path d="M90.95,189.5 C102.41,189.5 113.88,189.5 125.35,189.5 " fill="none" id="LCD-PICO_WEATER_STATION" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[937a147dd9c399348a27b820a78bb0d6]
+link PICO_WEATER_STATION to Keyboard--><g id="link_PICO_WEATER_STATION_Keyboard"><path d="M304.88,189.5 C316.34,189.5 327.8,189.5 339.25,189.5 " fill="none" id="PICO_WEATER_STATION-Keyboard" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[64ac4c7932f5967928eec87b9f2bc3f5]
+link PICO_WEATER_STATION to Framework--><g id="link_PICO_WEATER_STATION_Framework"><path d="M197.51,221.24 C186.85,239.98 173.47,263.5 163.8,280.5 " fill="none" id="PICO_WEATER_STATION-Framework" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[1508204243766709b828219dda080904]
+link PICO_WEATER_STATION to USB--><g id="link_PICO_WEATER_STATION_USB"><path d="M232.22,221.24 C242.71,239.98 255.88,263.5 265.4,280.5 " fill="none" id="PICO_WEATER_STATION-USB" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[d71994f6a93ea9ea1a6b720edcc37ba3]
+@startuml pico_weather_station_diagram_component_context
+
+skinparam monochrome true
+'skinparam linetype ortho
+'skinparam style strictuml
+
+'mainframe component: PICO-WEATHER-STATION - structure - context
+
+frame "component: PICO-WEATHER-STATION - structure - context" {
+    node Framework
+    node LCD
+    node Keyboard
+    node DCF
+    node USB
+    node Sensor
+    note right
+    - Temperature
+    - Humidity
+    - Air-Pressure
+    end note
+
+    component PICO_WEATER_STATION [
+        <<System>>
+        Pico-Weater-Station
+    ]
+
+    PICO_WEATER_STATION -up- Sensor
+    PICO_WEATER_STATION -up- DCF
+    PICO_WEATER_STATION -left- LCD
+    PICO_WEATER_STATION -right- Keyboard
+    PICO_WEATER_STATION -down- Framework
+    PICO_WEATER_STATION -down- USB
+}
+
+@enduml
+
+@startuml pico_weather_station_diagram_component_context
+
+skinparam monochrome true
+
+
+frame "component: PICO-WEATHER-STATION - structure - context" {
+    node Framework
+    node LCD
+    node Keyboard
+    node DCF
+    node USB
+    node Sensor
+    note right
+    - Temperature
+    - Humidity
+    - Air-Pressure
+    end note
+
+    component PICO_WEATER_STATION [
+        <<System>>
+        Pico-Weater-Station
+    ]
+
+    PICO_WEATER_STATION -up- Sensor
+    PICO_WEATER_STATION -up- DCF
+    PICO_WEATER_STATION -left- LCD
+    PICO_WEATER_STATION -right- Keyboard
+    PICO_WEATER_STATION -down- Framework
+    PICO_WEATER_STATION -down- USB
+}
+
+@enduml
+
+PlantUML version 1.2022.7(Mon Aug 22 19:01:30 CEST 2022)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Default Encoding: UTF-8
+Language: de
+Country: DE
+--></g></svg>

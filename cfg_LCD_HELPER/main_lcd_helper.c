@@ -43,17 +43,20 @@
 // --------------------------------------------------------------------------------
 
 #include "initialization/initialization.h"
+
 #include "common/signal_slot_interface.h"
 #include "common/common_types.h"
+#include "common/common_tools_string.h"
 
 #include "mcu_task_management/mcu_task_controller.h"
 
 #include "ui/command_line/command_line_interface.h"
 #include "ui/command_line/command_line_handler_gpio.h"
-#include "ui/console/ui_console.h"
 
-#include "common/common_tools_string.h"
+#include "ui/console/ui_console.h"
 #include "ui/lcd/ui_lcd_interface.h"
+
+#include "time_management/time_management.h"
 
 // --------------------------------------------------------------------------------
 
@@ -74,13 +77,24 @@ static void main_CLI_INVALID_PARAMETER_SLOT_CALLBACK(const void* p_argument);
 /*!
  *
  */
-static void main_CCLI_LCD_ACTIVATED_SLOT_CALLBACK(const void* p_argument);
+static void main_CLI_LCD_ACTIVATED_SLOT_CALLBACK(const void* p_argument);
+
+/*!
+ *
+ */
+static void main_LCD_UPDATED_SLOT_CALLBACK(const void* p_argument);
 
 // --------------------------------------------------------------------------------
 
 SIGNAL_SLOT_INTERFACE_CREATE_SLOT(CLI_HELP_REQUESTED_SIGNAL, MAIN_CLI_HELP_REQUESTED_SLOT, main_CLI_HELP_REQUESTED_SLOT_CALLBACK)
 SIGNAL_SLOT_INTERFACE_CREATE_SLOT(CLI_INVALID_PARAMETER_SIGNAL, MAIN_CLI_INVALID_PARAMETER_SLOT, main_CLI_INVALID_PARAMETER_SLOT_CALLBACK)
-SIGNAL_SLOT_INTERFACE_CREATE_SLOT(CLI_LCD_ACTIVATED_SIGNAL, CLI_LCD_ACTIVATED_SLOT, main_CCLI_LCD_ACTIVATED_SLOT_CALLBACK)
+SIGNAL_SLOT_INTERFACE_CREATE_SLOT(CLI_LCD_ACTIVATED_SIGNAL, MAIN_CLI_LCD_ACTIVATED_SLOT, main_CLI_LCD_ACTIVATED_SLOT_CALLBACK)
+
+SIGNAL_SLOT_INTERFACE_CREATE_SLOT(SIGNAL_LCD_UPDATED, MAIN_LCD_UPDATED_SLOT, main_LCD_UPDATED_SLOT_CALLBACK)
+
+// --------------------------------------------------------------------------------
+
+TIME_MGMN_BUILD_STATIC_TIMER_U16(LCD_HELPER_TIMER)
 
 // --------------------------------------------------------------------------------
 
@@ -99,6 +113,12 @@ static char lcd_string[33];
  */
 static u16 lcd_string_length = 0;
 
+/**
+ * @brief The program will be exit if set to 1.
+ * 
+ */
+static u8 exit_program = 0;
+
 // --------------------------------------------------------------------------------
 
 int main(int argc, char* argv[]) {
@@ -107,6 +127,8 @@ int main(int argc, char* argv[]) {
     (
         initialization();
     )
+
+    lcd_controller_set_enabled(LCD_ENABLE);
 
     common_tools_string_clear(lcd_string, sizeof(lcd_string));
 
@@ -117,14 +139,16 @@ int main(int argc, char* argv[]) {
     MAIN_CLI_INVALID_PARAMETER_SLOT_connect();
 
     DEBUG_PASS("main() - CLI_LCD_ACTIVATED_SLOT_connect()");
-    CLI_LCD_ACTIVATED_SLOT_connect();
+    MAIN_CLI_LCD_ACTIVATED_SLOT_connect();
+
+    DEBUG_PASS("main() - MAIN_LCD_UPDATED_SLOT_connect()");
+    MAIN_LCD_UPDATED_SLOT_connect();
 
     command_line_interface(argc, argv);
 
     /**
      * @brief lcd_string_length is set in
      * main_CCLI_LCD_ACTIVATED_SLOT_CALLBACK()
-     * 
      */
 
     if (lcd_string_length != 0) {
@@ -132,12 +156,12 @@ int main(int argc, char* argv[]) {
         u16 index = 0;
         u16 line_count = 0;
         
-        while ( line_count < lcd_line_count() ) {
+        while ( line_count < lcd_controller_get_line_count() ) {
 
-            lcd_write_line(&lcd_string[index]);
+            SIGNAL_LCD_LINE_send(&lcd_string[index]);
             line_count += 1;
 
-            index += lcd_character_count();
+            index += lcd_controller_get_character_count();
             if (index > lcd_string_length) {
                 break;
             }
@@ -145,6 +169,23 @@ int main(int argc, char* argv[]) {
 
     } else {
         main_CLI_INVALID_PARAMETER_SLOT_CALLBACK(NULL);
+    }
+
+    LCD_HELPER_TIMER_start();
+
+    for (;;) {
+        
+        mcu_task_controller_schedule();
+        mcu_task_controller_background_run();
+        watchdog();
+
+        if (LCD_HELPER_TIMER_is_up(10000)) {
+            break;
+        }
+
+        if (exit_program) {
+            break;
+        }
     }
 
     mcu_task_controller_terminate_all();
@@ -197,16 +238,13 @@ static void main_CLI_HELP_REQUESTED_SLOT_CALLBACK(const void* p_argument) {
 
 // --------------------------------------------------------------------------------
 
-static void main_CCLI_LCD_ACTIVATED_SLOT_CALLBACK(const void* p_argument) {
+static void main_CLI_LCD_ACTIVATED_SLOT_CALLBACK(const void* p_argument) {
 
     if (p_argument == NULL) {
         console_write_line("FATAL: NULL-POINTER-EXCEPTION");
         main_CLI_HELP_REQUESTED_SLOT_CALLBACK(NULL);
         return;
     }
-
-    lcd_set_enabled(LCD_ENABLE);
-    lcd_init();
 
     const char* p_string = (const char*) p_argument;
     lcd_string_length = common_tools_string_length(p_string);
@@ -215,8 +253,15 @@ static void main_CCLI_LCD_ACTIVATED_SLOT_CALLBACK(const void* p_argument) {
         lcd_string_length = sizeof(lcd_string) - 1; // -1 to respect 0-termination
     }
 
-    DEBUG_TRACE_STR(p_string, "main_CCLI_LCD_ACTIVATED_SLOT_CALLBACK() - String:");
+    DEBUG_TRACE_STR(p_string, "main_CLI_LCD_ACTIVATED_SLOT_CALLBACK() - String:");
     common_tools_string_copy_string(lcd_string, p_string, sizeof(lcd_string));
+}
+
+// --------------------------------------------------------------------------------
+
+static void main_LCD_UPDATED_SLOT_CALLBACK(const void* p_argument) {
+    DEBUG_PASS("main_LCD_UPDATED_SLOT_CALLBACK()");
+    exit_program = 1;
 }
 
 // --------------------------------------------------------------------------------
