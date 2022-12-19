@@ -128,7 +128,7 @@ int main(int argc, char* argv[]) {
         initialization();
     )
 
-    lcd_controller_set_enabled(LCD_ENABLE);
+    lcd_set_enabled(LCD_ENABLE);
 
     common_tools_string_clear(lcd_string, sizeof(lcd_string));
 
