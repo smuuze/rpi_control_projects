@@ -42,18 +42,25 @@
 
 // --------------------------------------------------------------------------------
 
-#include "initialization/initialization.h"
-#include "mcu_task_management/mcu_task_controller.h"
-
-#include "system_interface.h"
-#include "cfg_driver_interface.h"
-#include "time_management/time_management.h"
-
 #include "string.h"
 
 // --------------------------------------------------------------------------------
 
-TIME_MGMN_BUILD_STATIC_TIMER_U16(MAIN_TEST_TIMER)
+#include "initialization/initialization.h"
+#include "mcu_task_management/mcu_task_controller.h"
+
+// --------------------------------------------------------------------------------
+
+#include "system_interface.h"
+#include "cfg_driver_interface.h"
+#include "time_management/time_management.h"
+#include "ui/lcd/lcd_interface.h"
+
+// --------------------------------------------------------------------------------
+
+TIME_MGMN_BUILD_STATIC_TIMER_U16(MAIN_LED_TIMER)
+TIME_MGMN_BUILD_STATIC_TIMER_U16(MAIN_LCD_TIMER)
+
 INCLUDE_GPIO(GPIO_25)
 
 // --------------------------------------------------------------------------------
@@ -85,34 +92,41 @@ int main( void ) {
     main_init();
     DEBUG_PASS(config_DEBUG_WELCOME_MESSAGE);
 
-    // TRX_DRIVER_CONFIGURATION uart_cfg = {
-    //     .module = {
-    //         .usart = {
-    //             .baudrate = BAUDRATE_9600,
-    //             // .baudrate = BAUDRATE_115200,
-    //             // .baudrate = BAUDRATE_230400,
-    //             .databits = DATABITS_8,
-    //             .parity = PARITY_NONE,
-    //             .stopbits = STOPBITS_1
-    //         }
-    //     }
-    // };
-
     u8 i = 0u;
 
-    // i_system.driver.usart0->configure(&uart_cfg);
+    lcd_set_enabled(LCD_ENABLE);
 
-    MAIN_TEST_TIMER_start();
+    MAIN_LED_TIMER_start();
     GPIO_25_drive_high();
+
+    MAIN_LCD_TIMER_start();
+    u8 lcd_line_index = 0;
+
+
+    static const char lcd_line_array[4][17] = {
+        "LCD LINE ONE    \0",
+        "LCD LINE TWO    \0",
+        "LCD LINE THREE  \0",
+        "LCD LINE FOUR   \0"
+    };
 
     for (;;) {
 
-        if (MAIN_TEST_TIMER_is_up(500)) {
-            MAIN_TEST_TIMER_start();
+        if (MAIN_LED_TIMER_is_up(500)) {
+            MAIN_LED_TIMER_start();
             GPIO_25_toggle_level();
 
             DEBUG_TRACE_byte(i, "Value of i is");
             i += 1u;
+        }
+
+        if (MAIN_LCD_TIMER_is_up(5000)) {
+            MAIN_LCD_TIMER_start();
+            SIGNAL_LCD_LINE_send(lcd_line_array[lcd_line_index]);
+
+            if (++lcd_line_index >= 4) {
+                lcd_line_index = 0;
+            }
         }
 
         mcu_task_controller_schedule();
@@ -126,7 +140,7 @@ int main( void ) {
 /**
  * @brief We only need the strlen functionality of the common-tools-string module.
  * The common-tools-string module occupies more pogram memory then neded.
- * So, we implement this fucntion here.
+ * So, we implement this function here.
  * 
  * @see common_tools_string#common_tools_string_length
  */

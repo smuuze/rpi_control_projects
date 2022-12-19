@@ -1,19 +1,8 @@
 #-----------------------------------------------------------------------------
-#       Makefile fuer AVR-GCC Projekte
-#-----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
-# PROJECT: Name des Hexfiles usw.
-#-----------------------------------------------------------------------------
-# VERSION_STRING muss (!) zwei Ziffern nach dem '.' enthalten, weil
-# aus dem String noch weitere Varianten von Version erzeugt
-# werden. Beispiel:
-# VERSION_STRING = v1.07
-# VERSION_DIGITS = 107
-# VERSION        = 0x107
-
-# PROJEKT Name des Hexfiles
 PROJECT = PICO_Weather_Station
+
+#-----------------------------------------------------------------------------
 
 BOARD_ID = PI_PICO
 
@@ -26,12 +15,13 @@ VERSION_MINOR := 0
 
 BASE_PATH    = ../..
 FRMWRK_PATH  = $(BASE_PATH)/rpi_control_frmwrk
+SOC_PATH     = $(BASE_PATH)/rpi_control_rp2040
 APP_PATH     = $(FRMWRK_PATH)/src
 MAKE_PATH    = $(FRMWRK_PATH)/make
 
 #-----------------------------------------------------------------------------
 
-MCU = RP2040
+MCU = rp2040
 
 #-----------------------------------------------------------------------------
 
@@ -44,7 +34,7 @@ CSRCS += main_pico_weather_station.c
 #-----------------------------------------------------------------------------
 
 COMMON_MODULES = 
-#COMMON_MODULES += QEUE
+COMMON_MODULES += QEUE
 #COMMON_MODULES += DATETIME
 #COMMON_MODULES += STRING
 
@@ -113,10 +103,21 @@ COMMAND_INTERFACE_CFG =
 
 #-----------------------------------------------------------------------------
 
+USER_INTERFACE_CFG =
+# USER_INTERFACE_CFG += CFG_FILE_PARSER
+# USER_INTERFACE_CFG += CLI_ARG_DEVICE
+# USER_INTERFACE_CFG += CLI_ARG_COMMAND
+# USER_INTERFACE_CFG += CONSOLE
+USER_INTERFACE_CFG += LCD_16X2
+# USER_INTERFACE_CFG += FILE_INTERFACE
+# USER_INTERFACE_CFG += LOG_INTERFACE
+
+#-----------------------------------------------------------------------------
+
 TRACER_CFG =
 TRACER_CFG += USART0
-# TRACER_CFG += BAUDRATE_230400
-TRACER_CFG += BAUDRATE_9600
+TRACER_CFG += BAUDRATE_230400
+#TRACER_CFG += BAUDRATE_9600
 #TRACER_CFG += PARITY_NONE
 #TRACER_CFG += DATABITS_8
 #TRACER_CFG += STOPBITS_1
