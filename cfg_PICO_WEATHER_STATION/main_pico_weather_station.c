@@ -54,7 +54,7 @@
 #include "system_interface.h"
 #include "cfg_driver_interface.h"
 #include "time_management/time_management.h"
-#include "ui/lcd/lcd_interface.h"
+#include "modules/lcd/lcd_interface.h"
 
 // --------------------------------------------------------------------------------
 

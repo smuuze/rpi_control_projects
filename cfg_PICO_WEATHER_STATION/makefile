@@ -48,6 +48,11 @@ APP_TASK_CFG +=
 
 #-----------------------------------------------------------------------------
 
+MODULES_CFG = 
+MODULES_CFG += LCD_16X2
+
+#-----------------------------------------------------------------------------
+
 EXPANSION_BOARD_CFG = 
 #EXPANSION_BOARD_CFG += SENSOR_SHT31_ADS1115
 #EXPANSION_BOARD_CFG += GPIO_PCA9670
@@ -69,15 +74,6 @@ DRIVER_MODULE_CFG += IRQ
 
 PROTOCOL_CFG =
 #PROTOCOL_CFG += RPI_PROTOCOL_I2C
-
-#-----------------------------------------------------------------------------
-
-THIRD_PARTY_MODULES = 
-#THIRD_PARTY_MODULES += IR_PROTOCOL_SAMSUNG
-#THIRD_PARTY_MODULES += IR_PROTOCOL_JVC
-#THIRD_PARTY_MODULES += IR_PROTOCOL_SONY
-#THIRD_PARTY_MODULES += IR_PROTOCOL_NEC
-#THIRD_PARTY_MODULES += IR_COMMAND_LED_LIGHT
 
 #-----------------------------------------------------------------------------
 
@@ -108,7 +104,6 @@ USER_INTERFACE_CFG =
 # USER_INTERFACE_CFG += CLI_ARG_DEVICE
 # USER_INTERFACE_CFG += CLI_ARG_COMMAND
 # USER_INTERFACE_CFG += CONSOLE
-USER_INTERFACE_CFG += LCD_16X2
 # USER_INTERFACE_CFG += FILE_INTERFACE
 # USER_INTERFACE_CFG += LOG_INTERFACE
 
