@@ -10,6 +10,17 @@
 
 #define config_DEBUG_WELCOME_MESSAGE    "Welcome to RPi-Pico Weater-Station"
 
+// --------------------------------------------------------------------------------
+
+#define _config_PROGRAM_DESCRIPTION     "Implementation of the Chipdesign "         \
+                                        "Weather-Station useable on a RP2040 MCU"
+
+#define _config_PROGRAM_NAME            "Pico-Weather-Station"
+
+#define _config_PROGRAM_URL             "https://github.com/smuuze/rpi_control_projects/cfg_PICO_WEATHER_STATION"
+
+// --------------------------------------------------------------------------------
+
 #endif /* _config_H_ */
 
 // --------------------------------------------------------------------------------
