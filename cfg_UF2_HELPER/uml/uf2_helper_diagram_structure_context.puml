@@ -1,0 +1,38 @@
+@startuml uf2_helper_diagram_structure_context
+
+'***************************************************************************
+
+skinparam monochrome true
+'skinparam linetype ortho
+
+'***************************************************************************
+
+frame "component: UF2-Helper - Structure - Context" {
+
+'***************************************************************************
+
+    component framework [
+        <<Framework>>
+        RPi Control Framework
+    ]
+
+    artifact uf2_file [
+        <<File>>
+        UF2 File
+    ]
+
+    component uf2_helper #DDDDDD [
+        <<Project>>
+        UF2 Helper
+    ]
+
+    uf2_helper -right- uf2_file
+    uf2_helper -left- framework
+
+'***************************************************************************
+
+}
+
+'***************************************************************************
+
+@enduml

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="133px" preserveAspectRatio="none" style="width:521px;height:133px;" version="1.1" viewBox="0 0 521 133" width="521px" zoomAndPan="magnify"><defs><filter height="300%" id="f6cw4vsr1jr8m" width="300%" x="-1" y="-1"><feGaussianBlur result="blurOut" stdDeviation="2.0"/><feColorMatrix in="blurOut" result="blurOut2" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .4 0"/><feOffset dx="4.0" dy="4.0" in="blurOut2" result="blurOut3"/><feBlend in="SourceGraphic" in2="blurOut3" mode="normal"/></filter></defs><g><!--MD5=[bb188c120a52898c64ea15833994328c]
+cluster component: UF2-Helper - Structure - Context--><rect fill="#FFFFFF" filter="url(#f6cw4vsr1jr8m)" height="114" style="stroke:#000000;stroke-width:1.5;" width="502" x="7" y="7"/><path d="M347,7 L347,16.4883 L337,26.4883 L7,26.4883 " fill="none" style="stroke:#000000;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="330" x="10" y="21.5352">component: UF2-Helper - Structure - Context</text><!--MD5=[0796db514c55fc3d601e197f0c57846b]
+entity framework--><rect fill="#F8F8F8" filter="url(#f6cw4vsr1jr8m)" height="62.9766" style="stroke:#383838;stroke-width:1.5;" width="198" x="23" y="42"/><rect fill="#F8F8F8" height="10" style="stroke:#383838;stroke-width:1.5;" width="15" x="201" y="47"/><rect fill="#F8F8F8" height="2" style="stroke:#383838;stroke-width:1.5;" width="4" x="199" y="49"/><rect fill="#F8F8F8" height="2" style="stroke:#383838;stroke-width:1.5;" width="4" x="199" y="53"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="91" x="38" y="75.5352">«Framework»</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="158" x="38" y="92.0234">RPi Control Framework</text><!--MD5=[6395cc1469bc96c5d14c865d1f7a5d7c]
+entity uf2_file--><rect fill="#F8F8F8" filter="url(#f6cw4vsr1jr8m)" height="55.9766" style="stroke:#000000;stroke-width:1.5;" width="85" x="407.5" y="45.5"/><polygon fill="#F8F8F8" points="475.5,50.5,475.5,64.5,487.5,64.5,487.5,56.5,481.5,50.5,475.5,50.5" style="stroke:#000000;stroke-width:1.5;"/><line style="stroke:#000000;stroke-width:1.5;" x1="481.5" x2="481.5" y1="50.5" y2="56.5"/><line style="stroke:#000000;stroke-width:1.5;" x1="487.5" x2="481.5" y1="56.5" y2="56.5"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="38" x="417.5" y="72.0352">«File»</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="55" x="417.5" y="88.5234">UF2 File</text><!--MD5=[87cb035e8924bcd14b2e93abaf0e3e0d]
+entity uf2_helper--><rect fill="#DDDDDD" filter="url(#f6cw4vsr1jr8m)" height="62.9766" style="stroke:#383838;stroke-width:1.5;" width="116" x="256" y="42"/><rect fill="#DDDDDD" height="10" style="stroke:#383838;stroke-width:1.5;" width="15" x="352" y="47"/><rect fill="#DDDDDD" height="2" style="stroke:#383838;stroke-width:1.5;" width="4" x="350" y="49"/><rect fill="#DDDDDD" height="2" style="stroke:#383838;stroke-width:1.5;" width="4" x="350" y="53"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="61" x="271" y="75.5352">«Project»</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="76" x="271" y="92.0234">UF2 Helper</text><!--MD5=[2603c5dcb8cbd5a3ae24e342c24c7127]
+link uf2_helper to uf2_file--><path codeLine="28" d="M372.17,73.5 C383.93,73.5 395.68,73.5 407.44,73.5 " fill="none" id="uf2_helper-uf2_file" style="stroke:#383838;stroke-width:1.0;"/><!--MD5=[6c92a91ab5234f5af135e84b1d2659b4]
+link framework to uf2_helper--><path codeLine="29" d="M221.38,73.5 C232.83,73.5 244.29,73.5 255.75,73.5 " fill="none" id="framework-uf2_helper" style="stroke:#383838;stroke-width:1.0;"/><!--MD5=[97794ffbf8efbdec7369cdbc60732bfe]
+@startuml uf2_helper_diagram_structure_context
+
+'***************************************************************************
+
+skinparam monochrome true
+'skinparam linetype ortho
+
+'***************************************************************************
+
+frame "component: UF2-Helper - Structure - Context" {
+
+'***************************************************************************
+
+    component framework [
+        <<Framework>>
+        RPi Control Framework
+    ]
+
+    artifact uf2_file [
+        <<File>>
+        UF2 File
+    ]
+
+    component uf2_helper #DDDDDD [
+        <<Project>>
+        UF2 Helper
+    ]
+
+    uf2_helper -right- uf2_file
+    uf2_helper -left- framework
+
+'***************************************************************************
+
+}
+
+'***************************************************************************
+
+@enduml
+
+@startuml uf2_helper_diagram_structure_context
+
+
+skinparam monochrome true
+
+
+frame "component: UF2-Helper - Structure - Context" {
+
+
+    component framework [
+        <<Framework>>
+        RPi Control Framework
+    ]
+
+    artifact uf2_file [
+        <<File>>
+        UF2 File
+    ]
+
+    component uf2_helper #DDDDDD [
+        <<Project>>
+        UF2 Helper
+    ]
+
+    uf2_helper -right- uf2_file
+    uf2_helper -left- framework
+
+
+}
+
+
+@enduml
+
+PlantUML version 1.2021.00(Sun Jan 10 11:25:05 CET 2021)
+(GPL source distribution)
+Java Runtime: Java(TM) SE Runtime Environment
+JVM: Java HotSpot(TM) 64-Bit Server VM
+Default Encoding: UTF-8
+Language: de
+Country: DE
+--></g></svg>
