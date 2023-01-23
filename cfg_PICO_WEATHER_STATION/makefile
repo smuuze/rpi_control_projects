@@ -50,6 +50,7 @@ APP_TASK_CFG +=
 
 MODULES_CFG = 
 MODULES_CFG += LCD_16X2
+MODULES_CFG += KEYPAD_3X4
 
 #-----------------------------------------------------------------------------
 
@@ -69,6 +70,7 @@ DRIVER_MODULE_CFG += IRQ
 #DRIVER_MODULE_CFG += I2C0
 #DRIVER_MODULE_CFG += USART0
 #DRIVER_MODULE_CFG += USART1
+DRIVER_MODULE_CFG += KEYPAD_3x4
 
 #-----------------------------------------------------------------------------
 
