@@ -43,6 +43,13 @@ HOST_INTERFACE_TYPE = I2C
 
 #-----------------------------------------------------------------------------
 
+COMMON_MODULES = 
+COMMON_MODULES += QEUE
+#COMMON_MODULES += DATETIME
+#COMMON_MODULES += STRING
+
+#-----------------------------------------------------------------------------
+
 APP_TASK_CFG += 
 #APP_TASK_CFG += LED_MATRIX
 #APP_TASK_CFG += TEST_TRACER
