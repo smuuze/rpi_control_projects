@@ -61,14 +61,17 @@
 // --------------------------------------------------------------------------------
 
 static void main_KEY_0_PRESSED_SLOT_CALLBACK(const void* p_argument) {
+    (void) p_argument;
     console_write_line("KEY_0 PRESSED");
 }
 
 static void main_KEY_0_DOWN_SLOT_CALLBACK(const void* p_argument) {
+    (void) p_argument;
     console_write_line("KEY_0 DOWN");
 }
 
 static void main_KEY_0_RELEASED_SLOT_CALLBACK(const void* p_argument) {
+    (void) p_argument;
     console_write_line("KEY_0 RELEASE");
 }
 
@@ -80,14 +83,17 @@ SIGNAL_SLOT_INTERFACE_CREATE_SLOT(KEY_0_RELEASED, MAIN_KEY_0_RELEASED_SLOT, main
 // --------------------------------------------------------------------------------
 
 static void main_KEY_1_PRESSED_SLOT_CALLBACK(const void* p_argument) {
+    (void) p_argument;
     console_write_line("KEY_1 PRESSED");
 }
 
 static void main_KEY_1_DOWN_SLOT_CALLBACK(const void* p_argument) {
+    (void) p_argument;
     console_write_line("KEY_1 DOWN");
 }
 
 static void main_KEY_1_RELEASED_SLOT_CALLBACK(const void* p_argument) {
+    (void) p_argument;
     console_write_line("KEY_1 RELEASE");
 }
 
@@ -99,14 +105,17 @@ SIGNAL_SLOT_INTERFACE_CREATE_SLOT(KEY_1_RELEASED, MAIN_KEY_1_RELEASED_SLOT, main
 // --------------------------------------------------------------------------------
 
 static void main_KEY_2_PRESSED_SLOT_CALLBACK(const void* p_argument) {
+    (void) p_argument;
     console_write_line("KEY_2 PRESSED");
 }
 
 static void main_KEY_2_DOWN_SLOT_CALLBACK(const void* p_argument) {
+    (void) p_argument;
     console_write_line("KEY_2 DOWN");
 }
 
 static void main_KEY_2_RELEASED_SLOT_CALLBACK(const void* p_argument) {
+    (void) p_argument;
     console_write_line("KEY_2 RELEASE");
 }
 
@@ -118,14 +127,17 @@ SIGNAL_SLOT_INTERFACE_CREATE_SLOT(KEY_2_RELEASED, MAIN_KEY_2_RELEASED_SLOT, main
 // --------------------------------------------------------------------------------
 
 static void main_KEY_3_PRESSED_SLOT_CALLBACK(const void* p_argument) {
+    (void) p_argument;
     console_write_line("KEY_3 PRESSED");
 }
 
 static void main_KEY_3_DOWN_SLOT_CALLBACK(const void* p_argument) {
+    (void) p_argument;
     console_write_line("KEY_3 DOWN");
 }
 
 static void main_KEY_3_RELEASED_SLOT_CALLBACK(const void* p_argument) {
+    (void) p_argument;
     console_write_line("KEY_3 RELEASE");
 }
 
@@ -137,14 +149,17 @@ SIGNAL_SLOT_INTERFACE_CREATE_SLOT(KEY_3_RELEASED, MAIN_KEY_3_RELEASED_SLOT, main
 // --------------------------------------------------------------------------------
 
 static void main_KEY_4_PRESSED_SLOT_CALLBACK(const void* p_argument) {
+    (void) p_argument;
     console_write_line("KEY_4 PRESSED");
 }
 
 static void main_KEY_4_DOWN_SLOT_CALLBACK(const void* p_argument) {
+    (void) p_argument;
     console_write_line("KEY_4 DOWN");
 }
 
 static void main_KEY_4_RELEASED_SLOT_CALLBACK(const void* p_argument) {
+    (void) p_argument;
     console_write_line("KEY_4 RELEASE");
 }
 
@@ -156,14 +171,17 @@ SIGNAL_SLOT_INTERFACE_CREATE_SLOT(KEY_4_RELEASED, MAIN_KEY_4_RELEASED_SLOT, main
 // --------------------------------------------------------------------------------
 
 static void main_KEY_5_PRESSED_SLOT_CALLBACK(const void* p_argument) {
+    (void) p_argument;
     console_write_line("KEY_5 PRESSED");
 }
 
 static void main_KEY_5_DOWN_SLOT_CALLBACK(const void* p_argument) {
+    (void) p_argument;
     console_write_line("KEY_5 DOWN");
 }
 
 static void main_KEY_5_RELEASED_SLOT_CALLBACK(const void* p_argument) {
+    (void) p_argument;
     console_write_line("KEY_5 RELEASE");
 }
 
@@ -175,14 +193,17 @@ SIGNAL_SLOT_INTERFACE_CREATE_SLOT(KEY_5_RELEASED, MAIN_KEY_5_RELEASED_SLOT, main
 // --------------------------------------------------------------------------------
 
 static void main_KEY_6_PRESSED_SLOT_CALLBACK(const void* p_argument) {
+    (void) p_argument;
     console_write_line("KEY_6 PRESSED");
 }
 
 static void main_KEY_6_DOWN_SLOT_CALLBACK(const void* p_argument) {
+    (void) p_argument;
     console_write_line("KEY_6 DOWN");
 }
 
 static void main_KEY_6_RELEASED_SLOT_CALLBACK(const void* p_argument) {
+    (void) p_argument;
     console_write_line("KEY_6 RELEASE");
 }
 
@@ -194,14 +215,17 @@ SIGNAL_SLOT_INTERFACE_CREATE_SLOT(KEY_6_RELEASED, MAIN_KEY_6_RELEASED_SLOT, main
 // --------------------------------------------------------------------------------
 
 static void main_KEY_7_PRESSED_SLOT_CALLBACK(const void* p_argument) {
+    (void) p_argument;
     console_write_line("KEY_7 PRESSED");
 }
 
 static void main_KEY_7_DOWN_SLOT_CALLBACK(const void* p_argument) {
+    (void) p_argument;
     console_write_line("KEY_7 DOWN");
 }
 
 static void main_KEY_7_RELEASED_SLOT_CALLBACK(const void* p_argument) {
+    (void) p_argument;
     console_write_line("KEY_7 RELEASE");
 }
 
@@ -213,14 +237,17 @@ SIGNAL_SLOT_INTERFACE_CREATE_SLOT(KEY_7_RELEASED, MAIN_KEY_7_RELEASED_SLOT, main
 // --------------------------------------------------------------------------------
 
 static void main_KEY_8_PRESSED_SLOT_CALLBACK(const void* p_argument) {
+    (void) p_argument;
     console_write_line("KEY_8 PRESSED");
 }
 
 static void main_KEY_8_DOWN_SLOT_CALLBACK(const void* p_argument) {
+    (void) p_argument;
     console_write_line("KEY_8 DOWN");
 }
 
 static void main_KEY_8_RELEASED_SLOT_CALLBACK(const void* p_argument) {
+    (void) p_argument;
     console_write_line("KEY_8 RELEASE");
 }
 
@@ -232,14 +259,17 @@ SIGNAL_SLOT_INTERFACE_CREATE_SLOT(KEY_8_RELEASED, MAIN_KEY_8_RELEASED_SLOT, main
 // --------------------------------------------------------------------------------
 
 static void main_KEY_9_PRESSED_SLOT_CALLBACK(const void* p_argument) {
+    (void) p_argument;
     console_write_line("KEY_9 PRESSED");
 }
 
 static void main_KEY_9_DOWN_SLOT_CALLBACK(const void* p_argument) {
+    (void) p_argument;
     console_write_line("KEY_9 DOWN");
 }
 
 static void main_KEY_9_RELEASED_SLOT_CALLBACK(const void* p_argument) {
+    (void) p_argument;
     console_write_line("KEY_9 RELEASE");
 }
 
