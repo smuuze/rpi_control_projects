@@ -94,7 +94,7 @@ static void keyboard_thread_init(void) {
  * @param p_thread_id 
  * @return void* 
  */
-static THREAD_INTERFACE_EXIT_STATUS keyboard_thread_run(void* p_thread_id) {
+static THREAD_INTERFACE_EXIT_STATUS keyboard_thread_run(void) {
 
     u8 key = 0;
 
