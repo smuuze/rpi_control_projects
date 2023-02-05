@@ -51,6 +51,7 @@
 #include "mcu_task_management/mcu_task_controller.h"
 
 #include "ui/console/ui_console.h"
+#include "ui/command_line/command_line_interface.h"
 
 #include "modules/keypad/keypad_interface.h"
 
