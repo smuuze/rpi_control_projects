@@ -94,16 +94,20 @@ static void keyboard_thread_init(void) {
  * @param p_thread_id 
  * @return void* 
  */
-static void* keyboard_thread_run(void* p_thread_id) {
-    
-    do {
+static THREAD_INTERFACE_EXIT_STATUS keyboard_thread_run(void* p_thread_id) {
 
-        u8 key = getchar();
+    u8 key = 0;
+
+    do {
+        
+        key = getchar();
         if (key) {
             KEYBOARD_KEY_PRESSED_SIGNAL_send(&key);
         }
 
     } while (keyboard_thread_active);
+
+    return 0;
 }
 
 /**
