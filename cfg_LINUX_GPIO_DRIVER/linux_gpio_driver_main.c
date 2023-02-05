@@ -445,9 +445,9 @@ static ssize_t driver_write(struct file* instance, const char __user* user_data,
             PRINT_MSG("WRITE - GPIO:%02u - OUTPUT - KEEP LEVEL:%d\n", write_cmd.gpio_number, level);
         }
 
+        PRINT_MSG("WRITE - GPIO:%02u - SET OUTPUT - LEVEL:%d\n", write_cmd.gpio_number, level);
         return_value = gpiod_direction_output(p_gpio_descriptor, level);
         GPIO_STATUS_SET_OUTPUT(p_instance_data->gpio_array[write_cmd.gpio_number]);
-        PRINT_MSG("WRITE - GPIO:%02u - SET OUTPUT - LEVEL:%d\n", write_cmd.gpio_number, level);
 
     } else if (write_cmd.gpio_direction == GPIO_DRIVER_DIRECTION_INPUT) {
 
@@ -475,17 +475,15 @@ static ssize_t driver_write(struct file* instance, const char __user* user_data,
 
         } else if (write_cmd.gpio_level == GPIO_DRIVER_LEVEL_HIGH) {
 
-            //gpio_set_value(get_linux_gpio_number(write_cmd.gpio_number),1);
+            PRINT_MSG("WRITE - GPIO:%02u - SET HIGH-LEVEL\n", write_cmd.gpio_number);
             gpiod_set_value(p_gpio_descriptor, 1);
             GPIO_STATUS_SET_HIGH(p_instance_data->gpio_array[write_cmd.gpio_number]);
-            PRINT_MSG("WRITE - GPIO:%02u - SET HIGH-LEVEL\n", write_cmd.gpio_number);
 
         } else if (write_cmd.gpio_level == GPIO_DRIVER_LEVEL_LOW) {
 
-            // gpio_set_value(get_linux_gpio_number(write_cmd.gpio_number),0);
+            PRINT_MSG("WRITE - GPIO:%02u - SET LOW-LEVEL\n", write_cmd.gpio_number);
             gpiod_set_value(p_gpio_descriptor, 0);
             GPIO_STATUS_SET_LOW(p_instance_data->gpio_array[write_cmd.gpio_number]);
-            PRINT_MSG("WRITE - GPIO:%02u - SET LOW-LEVEL\n", write_cmd.gpio_number);
 
         } else {
             PRINT_MSG("WRITE - GPIO:%02u - KEEP EVERYTHING AS IT ISn", write_cmd.gpio_number);
