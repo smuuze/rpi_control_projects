@@ -99,7 +99,7 @@ static THREAD_INTERFACE_EXIT_STATUS keyboard_thread_run(void* p_thread_id) {
     u8 key = 0;
 
     do {
-        
+
         key = getchar();
         if (key) {
             KEYBOARD_KEY_PRESSED_SIGNAL_send(&key);
@@ -121,9 +121,9 @@ static void keyboard_thread_terminate(void) {
 THREAD_INTERFACE_BUILD_THREAD(
     KEYBOARD_THREAD,
     THREAD_PRIORITY_LOW,
-    p_init,
-    p_run,
-    p_terminate
+    keyboard_thread_init,
+    keyboard_thread_run,
+    keyboard_thread_terminate
 )
 
 // --------------------------------------------------------------------------------
