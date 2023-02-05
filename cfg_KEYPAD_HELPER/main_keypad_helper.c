@@ -103,7 +103,7 @@ static void* keyboard_thread_run(void* p_thread_id) {
             KEYBOARD_KEY_PRESSED_SIGNAL_send(&key);
         }
 
-    } while (keyboard_thread_active)
+    } while (keyboard_thread_active);
 }
 
 /**
