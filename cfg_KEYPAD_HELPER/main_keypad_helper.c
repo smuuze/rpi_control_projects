@@ -440,7 +440,6 @@ int main(int argc, char* argv[]) {
     ATOMIC_OPERATION
     (
         mcu_task_controller_terminate_all();
-        gpio_driver_deinit();
         deinitialization();
     )
 
