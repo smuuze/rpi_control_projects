@@ -250,10 +250,6 @@ SIGNAL_SLOT_INTERFACE_CREATE_SLOT(KEY_9_RELEASED, MAIN_KEY_9_RELEASED_SLOT, main
 
 // --------------------------------------------------------------------------------
 
-TIME_MGMN_BUILD_STATIC_TIMER_U16(LCD_HELPER_TIMER)
-
-// --------------------------------------------------------------------------------
-
 
 /**
  * @brief The program will be exit if set to 1.
