@@ -34,6 +34,11 @@
 
 // --------------------------------------------------------------------------------
 
+#include <stdio.h>
+#include <stdlib.h>
+
+// --------------------------------------------------------------------------------
+
 #include "tracer.h"
 
 // --------------------------------------------------------------------------------
@@ -57,7 +62,65 @@
 
 // --------------------------------------------------------------------------------
 
+#include "mcu_task_management/thread_interface.h"
+
+// --------------------------------------------------------------------------------
+
 #define MAIN_MODULE_NAME            "KEYPAD Helper"
+
+// --------------------------------------------------------------------------------
+
+SIGNAL_SLOT_INTERFACE_CREATE_SIGNAL(KEYBOARD_KEY_PRESSED_SIGNAL)
+
+/**
+ * @brief While this var is set to 1 the keyboard thread is running
+ * Is set to 0 on calling KEYBOARD_THREAD_terminate()
+ * 
+ */
+static u8 keyboard_thread_active = 0;
+
+/**
+ * @brief 
+ * 
+ */
+static void keyboard_thread_init(void) {
+    keyboard_thread_active = 1;
+    KEYBOARD_KEY_PRESSED_SIGNAL_init();
+}
+
+/**
+ * @brief 
+ * 
+ * @param p_thread_id 
+ * @return void* 
+ */
+static void* keyboard_thread_run(void* p_thread_id) {
+    
+    do {
+
+        u8 key = getchar();
+        if (key) {
+            KEYBOARD_KEY_PRESSED_SIGNAL_send(&key);
+        }
+
+    } while (keyboard_thread_active)
+}
+
+/**
+ * @brief 
+ * 
+ */
+static void keyboard_thread_terminate(void) {
+    keyboard_thread_active = 1;
+}
+
+THREAD_INTERFACE_BUILD_THREAD(
+    KEYBOARD_THREAD,
+    THREAD_PRIORITY_LOW,
+    p_init,
+    p_run,
+    p_terminate
+)
 
 // --------------------------------------------------------------------------------
 
@@ -281,12 +344,28 @@ SIGNAL_SLOT_INTERFACE_CREATE_SLOT(KEY_9_RELEASED, MAIN_KEY_9_RELEASED_SLOT, main
 
 // --------------------------------------------------------------------------------
 
-
 /**
  * @brief The program will be exit if set to 1.
  * 
  */
 static u8 exit_program = 0;
+
+// --------------------------------------------------------------------------------
+
+static void main_KEYBOARD_KEY_PRESSED_SLOT_CALLBACK(const void* p_argument) {
+
+    if (p_argument != NULL) {
+        u8* p_key = (u8*)p_argument;
+        exit_program = 1;
+        console_write_line("KEYBOARD KEY-PRESSED");
+    }
+}
+
+SIGNAL_SLOT_INTERFACE_CREATE_SLOT(
+    KEYBOARD_KEY_PRESSED_SIGNAL,
+    MAIN_KEYBOARD_KEY_PRESSED_SLOT,
+    main_KEYBOARD_KEY_PRESSED_SLOT_CALLBACK
+)
 
 // --------------------------------------------------------------------------------
 
@@ -337,6 +416,10 @@ int main(int argc, char* argv[]) {
     MAIN_KEY_9_DOWN_SLOT_connect();
     MAIN_KEY_9_RELEASED_SLOT_connect();
 
+    KEYBOARD_THREAD_init();
+    MAIN_KEYBOARD_KEY_PRESSED_SLOT_connect();
+    KEYBOARD_THREAD_start();
+
     command_line_interface(argc, argv);
 
     for (;;) {
@@ -350,10 +433,10 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    mcu_task_controller_terminate_all();
-
     ATOMIC_OPERATION
     (
+        mcu_task_controller_terminate_all();
+        gpio_driver_deinit();
         deinitialization();
     )
 
