@@ -451,10 +451,9 @@ static ssize_t driver_write(struct file* instance, const char __user* user_data,
 
     } else if (write_cmd.gpio_direction == GPIO_DRIVER_DIRECTION_INPUT) {
 
-        // return_value = gpio_direction_input(write_cmd.gpio_number);
+        PRINT_MSG("WRITE - GPIO:%02u SET INPUT\n", write_cmd.gpio_number);
         return_value = gpiod_direction_input(p_gpio_descriptor);
         GPIO_STATUS_SET_INPUT(p_instance_data->gpio_array[write_cmd.gpio_number]);
-        PRINT_MSG("WRITE - GPIO:%02u SET INPUT\n", write_cmd.gpio_number);
 
     } else {
 
