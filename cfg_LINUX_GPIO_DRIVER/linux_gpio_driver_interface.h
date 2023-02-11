@@ -137,7 +137,7 @@
  * that are supported by this driver
  * 
  */
-#define GPIO_DRIVER_MAX_NUM_OF_GPIO_PINS        27
+#define GPIO_DRIVER_MAX_NUM_OF_GPIO_PINS        28
 
 // --------------------------------------------------------------------------------
 
