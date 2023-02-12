@@ -45,6 +45,7 @@ APP_TASK_CFG +=
 #APP_TASK_CFG += TEST_TRACER
 #APP_TASK_CFG += IR_REMOTE
 #APP_TASK_CFG += EVENT
+APP_TASK_CFG += KEYPAD_2_LCD
 
 #-----------------------------------------------------------------------------
 
