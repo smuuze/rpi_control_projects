@@ -57,6 +57,7 @@ APP_TASK_CFG =
 #APP_TASK_CFG += LED_MATRIX
 #APP_TASK_CFG += TEST_TRACER
 APP_TASK_CFG += THREAD_INTERFACE
+APP_TASK_CFG += KEYPAD_2_LCD
 
 #-----------------------------------------------------------------------------
 
