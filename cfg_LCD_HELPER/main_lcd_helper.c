@@ -54,7 +54,7 @@
 #include "ui/command_line/command_line_handler_gpio.h"
 
 #include "ui/console/ui_console.h"
-#include "ui/lcd/ui_lcd_interface.h"
+#include "modules/lcd/lcd_interface.h"
 
 #include "time_management/time_management.h"
 
