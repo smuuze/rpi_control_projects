@@ -156,12 +156,12 @@ int main(int argc, char* argv[]) {
         u16 index = 0;
         u16 line_count = 0;
         
-        while ( line_count < lcd_controller_get_line_count() ) {
+        while ( line_count < lcd_get_line_count() ) {
 
             SIGNAL_LCD_LINE_send(&lcd_string[index]);
             line_count += 1;
 
-            index += lcd_controller_get_character_count();
+            index += lcd_get_character_count();
             if (index > lcd_string_length) {
                 break;
             }
@@ -260,6 +260,7 @@ static void main_CLI_LCD_ACTIVATED_SLOT_CALLBACK(const void* p_argument) {
 // --------------------------------------------------------------------------------
 
 static void main_LCD_UPDATED_SLOT_CALLBACK(const void* p_argument) {
+    (void) p_argument;
     DEBUG_PASS("main_LCD_UPDATED_SLOT_CALLBACK()");
     exit_program = 1;
 }
