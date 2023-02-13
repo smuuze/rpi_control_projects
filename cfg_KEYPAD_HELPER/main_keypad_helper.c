@@ -59,6 +59,7 @@
 #include "ui/command_line/command_line_interface.h"
 
 #include "modules/keypad/keypad_interface.h"
+#include "modules/lcd/lcd_interface.h"
 
 // --------------------------------------------------------------------------------
 
@@ -425,6 +426,8 @@ int main(int argc, char* argv[]) {
     KEYBOARD_THREAD_start();
 
     command_line_interface(argc, argv);
+
+    LCD_PRINT("Welcome to the  Keypad-Helper");
 
     for (;;) {
         

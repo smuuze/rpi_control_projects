@@ -44,7 +44,7 @@ CSRCS += main_keypad_helper.c
 #-----------------------------------------------------------------------------
 
 COMMON_MODULES = 
-#COMMON_MODULES += QEUE
+COMMON_MODULES += QEUE
 #COMMON_MODULES += DATETIME
 COMMON_MODULES += STRING
 
