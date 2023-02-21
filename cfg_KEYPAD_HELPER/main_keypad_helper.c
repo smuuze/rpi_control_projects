@@ -427,7 +427,8 @@ int main(int argc, char* argv[]) {
 
     command_line_interface(argc, argv);
 
-    LCD_PRINT("Welcome to the  Keypad-Helper");
+    lcd_set_enabled(LCD_ENABLE);
+    SIGNAL_LCD_LINE_send("Welcome to the  Keypad-Helper");
 
     for (;;) {
         
