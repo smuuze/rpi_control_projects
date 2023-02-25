@@ -423,8 +423,15 @@ int main(int argc, char* argv[]) {
 
     command_line_interface(argc, argv);
 
+    LCD_CONFIGUREATION lcd_cfg = {
+        .refresh_mode = LCD_REFRESH_MODE_DIRECT
+    };
+
     lcd_set_enabled(LCD_ENABLE);
-    SIGNAL_LCD_LINE_send("Welcome to the  Keypad-Helper");
+    lcd_configure(&lcd_cfg);
+
+    SIGNAL_LCD_LINE_send("Welcome to      ");
+    SIGNAL_LCD_LINE_send("   Keypad Helper");
 
     for (;;) {
         
