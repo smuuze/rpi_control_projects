@@ -358,8 +358,11 @@ static u8 exit_program = 0;
 // --------------------------------------------------------------------------------
 
 static void main_KEYBOARD_KEY_PRESSED_SLOT_CALLBACK(const void* p_argument) {
-    (void) p_argument;
-    console_write_line("KEYBOARD KEY-PRESSED");
+
+    if (p_argument != NULL) {
+        exit_program = 1;
+        console_write_line("KEYBOARD KEY-PRESSED");
+    }
 }
 
 SIGNAL_SLOT_INTERFACE_CREATE_SLOT(
