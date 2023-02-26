@@ -427,7 +427,8 @@ int main(int argc, char* argv[]) {
     command_line_interface(argc, argv);
 
     LCD_CONFIGUREATION lcd_cfg = {
-        .refresh_mode = LCD_REFRESH_MODE_DIRECT
+        .refresh_mode = LCD_REFRESH_MODE_DIRECT,
+        .refresh_pause = LCD_REFRESH_PAUSE_OFF
     };
 
     lcd_set_enabled(LCD_ENABLE);
