@@ -55,19 +55,49 @@
 #include "cfg_driver_interface.h"
 #include "time_management/time_management.h"
 #include "modules/lcd/lcd_interface.h"
+#include "signal_slot_interface.h"
 
 // --------------------------------------------------------------------------------
 
-TIME_MGMN_BUILD_STATIC_TIMER_U16(MAIN_LED_TIMER)
 TIME_MGMN_BUILD_STATIC_TIMER_U16(MAIN_LCD_TIMER)
-
-INCLUDE_GPIO(GPIO_25)
 
 // --------------------------------------------------------------------------------
 
 void task_yield(void) {
 	mcu_task_controller_background_run();
 }
+
+// --------------------------------------------------------------------------------
+
+/**
+ * @brief After power-up we print a welcome screen
+ * After this welcome screen has been printed on the LCD
+ * we will configure th lcd-controller to not use any smooth update mode.
+ */
+static void main_LCD_UPDATED_SLOT_CALLBACK(void* p_argument) {
+    (void) p_argument;
+
+    static u8 configured = 0;
+
+    if (configured == 0) {
+        
+        // we only want to configure the lcd-controller once.
+        configured = 1;
+        
+        LCD_CONFIGUREATION lcd_cfg = {
+            .refresh_mode = LCD_REFRESH_MODE_DIRECT,
+            .refresh_pause = LCD_REFRESH_PAUSE_OFF
+        };
+
+        lcd_configure(&lcd_cfg);
+    }
+}
+
+SIGNAL_SLOT_INTERFACE_CREATE_SLOT(
+    SIGNAL_LCD_UPDATED,
+    MAIN_LCD_UPDATED_SLOT,
+    main_LCD_UPDATED_SLOT_CALLBACK
+)
 
 // --------------------------------------------------------------------------------
 
@@ -78,12 +108,6 @@ void main_init(void) {
         initialization();
     )
 
-    #ifdef HAS_GPIO_LED_RED
-    {
-        LED_RED_drive_low();
-    }
-    #endif
-
     DEBUG_PASS("main_init() - Initialization done");
 }
 
@@ -92,42 +116,15 @@ int main( void ) {
     main_init();
     DEBUG_PASS(config_DEBUG_WELCOME_MESSAGE);
 
-    u8 i = 0u;
+    MAIN_LCD_UPDATED_SLOT_connect();
 
     lcd_set_enabled(LCD_ENABLE);
-
-    MAIN_LED_TIMER_start();
-    GPIO_25_drive_high();
-
-    MAIN_LCD_TIMER_start();
-    u8 lcd_line_index = 0;
-
-
-    static const char lcd_line_array[4][17] = {
-        "LCD LINE ONE    \0",
-        "LCD LINE TWO    \0",
-        "LCD LINE THREE  \0",
-        "LCD LINE FOUR   \0"
-    };
+    SIGNAL_LCD_LINE_send("                ");
+    SIGNAL_LCD_LINE_send("   Welcome to   ");
+    SIGNAL_LCD_LINE_send("  PICO Weather  ");
+    SIGNAL_LCD_LINE_send("  Station  1.0  ");
 
     for (;;) {
-
-        if (MAIN_LED_TIMER_is_up(500)) {
-            MAIN_LED_TIMER_start();
-            GPIO_25_toggle_level();
-
-            DEBUG_TRACE_byte(i, "Value of i is");
-            i += 1u;
-        }
-
-        if (MAIN_LCD_TIMER_is_up(5000)) {
-            MAIN_LCD_TIMER_start();
-            SIGNAL_LCD_LINE_send(lcd_line_array[lcd_line_index]);
-
-            if (++lcd_line_index >= 4) {
-                lcd_line_index = 0;
-            }
-        }
 
         mcu_task_controller_schedule();
         task_yield();
@@ -136,6 +133,7 @@ int main( void ) {
 }
 
 // --------------------------------------------------------------------------------
+
 
 /**
  * @brief We only need the strlen functionality of the common-tools-string module.

@@ -46,6 +46,7 @@ APP_TASK_CFG +=
 #APP_TASK_CFG += IR_REMOTE
 #APP_TASK_CFG += EVENT
 APP_TASK_CFG += KEYPAD_2_LCD
+APP_TASK_CFG += LED_BLINKER
 
 #-----------------------------------------------------------------------------
 
@@ -90,7 +91,7 @@ MANAGEMENT_MODULE_CFG =
 #MANAGEMENT_MODULE_CFG += IO
 #MANAGEMENT_MODULE_CFG += RPI_PROTOCOL_I2C
 #MANAGEMENT_MODULE_CFG += RPI_PROTOCOL
-MANAGEMENT_MODULE_CFG += TIME
+MANAGEMENT_MODULE_CFG += TIMER
 
 #-----------------------------------------------------------------------------
 
