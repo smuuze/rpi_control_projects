@@ -1,0 +1,52 @@
+TRACER - CHANGELOG
+
+-----------------------------------------------------------
+
+Version:        2.08
+
+Date:           < NOTE RELEASED >
+Author:         Sebastian Lesse
+
+Framework:      6.06
+
+New-Features:
+
+    -   none
+
+Bugfixes:
+
+    -   none
+
+Misc:
+
+    -   TRACER can does not use wiring-Pi anymore
+
+Known-Bugs:
+
+    -   none
+
+
+-----------------------------------------------------------
+
+Version:        2.07
+
+Date:           2022 / 07 / 02
+Author:         Sebastian Lesse
+
+Framework:      6.05
+
+New-Features:
+
+    -   none
+
+Bugfixes:
+
+    -   none
+
+Misc:
+
+    -   none
+
+Known-Bugs:
+
+    -   none
