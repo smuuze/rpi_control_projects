@@ -57,9 +57,14 @@
 #include "modules/lcd/lcd_interface.h"
 #include "signal_slot_interface.h"
 
+#include "driver/cfg_driver_interface.h"
+#include "driver/communication/spi/spi0_driver.h"
+
+#include "modules/movement_detection/movement_detection_controller.h"
+
 // --------------------------------------------------------------------------------
 
-TIME_MGMN_BUILD_STATIC_TIMER_U16(MAIN_LCD_TIMER)
+TIME_MGMN_BUILD_STATIC_TIMER_U16(MAIN_TIMER)
 
 // --------------------------------------------------------------------------------
 
@@ -101,6 +106,25 @@ SIGNAL_SLOT_INTERFACE_CREATE_SLOT(
 
 // --------------------------------------------------------------------------------
 
+/**
+ * @brief Is set to 1 by if the MOVEMENT_DETECT_SIGNAL arrives.
+ * is set to 0 in the main loop
+ */
+static u8 movement_detected = 0;
+
+static void main_MOVEMENT_DETECTED_SLOT_CALLBACK(void* p_argument) {
+    (void) p_argument;
+    movement_detected = 1;
+}
+
+SIGNAL_SLOT_INTERFACE_CREATE_SLOT(
+    MOVEMENT_DETECT_SIGNAL,
+    MAIN_MOVEMENT_DETECTED_SLOT,
+    main_MOVEMENT_DETECTED_SLOT_CALLBACK
+)
+
+// --------------------------------------------------------------------------------
+
 void main_init(void) {
 
     ATOMIC_OPERATION
@@ -117,6 +141,7 @@ int main( void ) {
     DEBUG_PASS(config_DEBUG_WELCOME_MESSAGE);
 
     MAIN_LCD_UPDATED_SLOT_connect();
+    MAIN_MOVEMENT_DETECTED_SLOT_connect();
 
     lcd_set_enabled(LCD_ENABLE);
     SIGNAL_LCD_LINE_send("                ");
@@ -124,11 +149,59 @@ int main( void ) {
     SIGNAL_LCD_LINE_send("  PICO Weather  ");
     SIGNAL_LCD_LINE_send("  Station  1.0  ");
 
+    u8 spi_tx_buffer [] = {
+        0x11, 0x22, 0x33, 0x44, 0x55,
+        0x66, 0x77, 0x88, 0x99, 0xAA,
+        0x11, 0x22, 0x33, 0x44, 0x55,
+        0x66, 0x77, 0x88, 0x99, 0xAA
+    };
+
+        TRX_DRIVER_CONFIGURATION configuration_01 = {
+            .module = {
+                .spi = {
+                    .data_order = 0,
+                    .mode = DRIVER_SPI_MODE_3,
+                    .clk_divider = DRIVER_SPI_CLK_DEVIDER_128,
+                    .is_master = COM_DRIVER_IS_MASTER
+                }
+            }
+        };
+
+        spi0_driver_configure(&configuration_01);
+
+        MAIN_TIMER_start();
+
     for (;;) {
 
         mcu_task_controller_schedule();
         task_yield();
         watchdog();
+
+        // if (MAIN_TIMER_is_up(2500)) {
+        //     MAIN_TIMER_start();
+
+        //     //spi0_driver_start_tx();
+        //     //spi0_driver_set_N_bytes(sizeof(spi_tx_buffer), spi_tx_buffer);
+
+        //     spi0_driver_start_rx(50);
+        //     spi0_driver_stop_rx();
+        //     spi0_driver_clear_rx_buffer();
+        // }
+
+        if (movement_detected) {
+            movement_detected = 0;
+            SIGNAL_LCD_LINE_send("    MOVEMENT    ");
+            SIGNAL_LCD_LINE_send("                ");
+            MAIN_TIMER_start();
+        }
+
+        if (MAIN_TIMER_is_active()) {
+            if (MAIN_TIMER_is_up(2500)) {
+                MAIN_TIMER_stop();
+                SIGNAL_LCD_LINE_send("                ");
+                SIGNAL_LCD_LINE_send("                ");
+            }
+        } 
     }
 }
 
