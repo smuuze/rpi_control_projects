@@ -36,7 +36,7 @@ CSRCS += main_rpi_weather_station.c
 COMMON_MODULES = 
 COMMON_MODULES += QEUE
 #COMMON_MODULES += DATETIME
-#COMMON_MODULES += STRING
+COMMON_MODULES += STRING
 
 #-----------------------------------------------------------------------------
 
@@ -46,7 +46,6 @@ APP_TASK_CFG +=
 #APP_TASK_CFG += IR_REMOTE
 #APP_TASK_CFG += EVENT
 APP_TASK_CFG += KEYPAD_2_LCD
-APP_TASK_CFG += LED_BLINKER
 
 #-----------------------------------------------------------------------------
 
@@ -64,10 +63,10 @@ EXPANSION_BOARD_CFG =
 #-----------------------------------------------------------------------------
 
 DRIVER_MODULE_CFG =
-DRIVER_MODULE_CFG += GPIO
+DRIVER_MODULE_CFG += GPIO_LINUX
 DRIVER_MODULE_CFG += RTC
 DRIVER_MODULE_CFG += CLK
-DRIVER_MODULE_CFG += IRQ
+#DRIVER_MODULE_CFG += IRQ
 #DRIVER_MODULE_CFG += TIMER0
 #DRIVER_MODULE_CFG += TIMER1
 #DRIVER_MODULE_CFG += I2C0
@@ -76,11 +75,14 @@ DRIVER_MODULE_CFG += SPI0
 #DRIVER_MODULE_CFG += USART1
 DRIVER_MODULE_CFG += KEYPAD_3x4
 DRIVER_MODULE_CFG += THE_PI_HUT_PIR
+DRIVER_MODULE_CFG += DEVICE_NAME_SUPPORT
 
 #-----------------------------------------------------------------------------
 
 PROTOCOL_CFG =
 #PROTOCOL_CFG += RPI_PROTOCOL_I2C
+PROTOCOL_CFG += MQTT_PROTOCOL
+PROTOCOL_CFG += JSON_PARSER
 
 #-----------------------------------------------------------------------------
 
@@ -107,11 +109,11 @@ COMMAND_INTERFACE_CFG =
 #-----------------------------------------------------------------------------
 
 USER_INTERFACE_CFG =
-# USER_INTERFACE_CFG += CFG_FILE_PARSER
-# USER_INTERFACE_CFG += CLI_ARG_DEVICE
+USER_INTERFACE_CFG += CFG_FILE_PARSER
+USER_INTERFACE_CFG += CLI_ARG_DEVICE
 # USER_INTERFACE_CFG += CLI_ARG_COMMAND
 # USER_INTERFACE_CFG += CONSOLE
-# USER_INTERFACE_CFG += FILE_INTERFACE
+USER_INTERFACE_CFG += FILE_INTERFACE
 # USER_INTERFACE_CFG += LOG_INTERFACE
 
 #-----------------------------------------------------------------------------
