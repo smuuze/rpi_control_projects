@@ -79,7 +79,7 @@ void task_yield(void) {
  * After this welcome screen has been printed on the LCD
  * we will configure th lcd-controller to not use any smooth update mode.
  */
-static void main_LCD_UPDATED_SLOT_CALLBACK(void* p_argument) {
+static void main_LCD_UPDATED_SLOT_CALLBACK(const void* p_argument) {
     (void) p_argument;
 
     static u8 configured = 0;
@@ -112,7 +112,7 @@ SIGNAL_SLOT_INTERFACE_CREATE_SLOT(
  */
 static u8 movement_detected = 0;
 
-static void main_MOVEMENT_DETECTED_SLOT_CALLBACK(void* p_argument) {
+static void main_MOVEMENT_DETECTED_SLOT_CALLBACK(const void* p_argument) {
     (void) p_argument;
     movement_detected = 1;
 }
