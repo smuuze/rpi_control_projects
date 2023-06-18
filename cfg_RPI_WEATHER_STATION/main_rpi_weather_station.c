@@ -206,17 +206,3 @@ int main( void ) {
 }
 
 // --------------------------------------------------------------------------------
-
-
-/**
- * @brief We only need the strlen functionality of the common-tools-string module.
- * The common-tools-string module occupies more pogram memory then neded.
- * So, we implement this function here.
- * 
- * @see common_tools_string#common_tools_string_length
- */
-u16 common_tools_string_length(const char* p_string) {
-    return strlen(p_string);
-}
-
-// --------------------------------------------------------------------------------
