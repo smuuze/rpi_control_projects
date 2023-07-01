@@ -135,7 +135,7 @@ void main_init(void) {
     DEBUG_PASS("main_init() - Initialization done");
 }
 
-int main( void ) {
+int main( int argc, char* argv[] ) {
 
     main_init();
     DEBUG_PASS(config_DEBUG_WELCOME_MESSAGE);
@@ -143,20 +143,15 @@ int main( void ) {
     MAIN_LCD_UPDATED_SLOT_connect();
     MAIN_MOVEMENT_DETECTED_SLOT_connect();
 
+    command_line_interface(argc, argv);
+
     lcd_set_enabled(LCD_ENABLE);
     SIGNAL_LCD_LINE_send("                ");
     SIGNAL_LCD_LINE_send("   Welcome to   ");
-    SIGNAL_LCD_LINE_send("  PICO Weather  ");
+    SIGNAL_LCD_LINE_send("  RPi  Weather  ");
     SIGNAL_LCD_LINE_send("  Station  1.0  ");
 
-    // u8 spi_tx_buffer [] = {
-    //     0x11, 0x22, 0x33, 0x44, 0x55,
-    //     0x66, 0x77, 0x88, 0x99, 0xAA,
-    //     0x11, 0x22, 0x33, 0x44, 0x55,
-    //     0x66, 0x77, 0x88, 0x99, 0xAA
-    // };
-
-        TRX_DRIVER_CONFIGURATION configuration_01 = {
+    TRX_DRIVER_CONFIGURATION configuration_01 = {
             .module = {
                 .spi = {
                     .data_order = 0,
@@ -165,28 +160,17 @@ int main( void ) {
                     .is_master = COM_DRIVER_IS_MASTER
                 }
             }
-        };
+    };
 
-        spi0_driver_configure(&configuration_01);
+    spi0_driver_configure(&configuration_01);
 
-        MAIN_TIMER_start();
+    MAIN_TIMER_start();
 
     for (;;) {
 
         mcu_task_controller_schedule();
         task_yield();
         watchdog();
-
-        // if (MAIN_TIMER_is_up(2500)) {
-        //     MAIN_TIMER_start();
-
-        //     //spi0_driver_start_tx();
-        //     //spi0_driver_set_N_bytes(sizeof(spi_tx_buffer), spi_tx_buffer);
-
-        //     spi0_driver_start_rx(50);
-        //     spi0_driver_stop_rx();
-        //     spi0_driver_clear_rx_buffer();
-        // }
 
         if (movement_detected) {
             movement_detected = 0;
