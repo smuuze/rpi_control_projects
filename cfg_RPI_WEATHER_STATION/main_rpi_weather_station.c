@@ -57,6 +57,8 @@
 #include "modules/lcd/lcd_interface.h"
 #include "signal_slot_interface.h"
 
+#include "ui/command_line/command_line_interface.h"
+
 #include "driver/cfg_driver_interface.h"
 #include "driver/communication/spi/spi0_driver.h"
 
