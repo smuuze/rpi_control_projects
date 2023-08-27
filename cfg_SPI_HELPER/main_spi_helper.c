@@ -246,6 +246,7 @@ static void main_CLI_INVALID_PARAMETER_SLOT_CALLBACK(const void* p_argument) {
  * @param p_argument 
  */
 static void main_CLI_LCD_ACTIVATED_SLOT_CALLBACK(const void* p_argument) {
+    (void) p_argument;
 
     DEBUG_PASS("main_CLI_LCD_ACTIVATED_SLOT_CALLBACK()");
     lcd_set_enabled(LCD_ENABLE);

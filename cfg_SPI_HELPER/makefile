@@ -75,6 +75,12 @@ DRIVER_MODULE_CFG += CLK
 #DRIVER_MODULE_CFG += I2C0
 DRIVER_MODULE_CFG += SPI0
 DRIVER_MODULE_CFG += DEVICE_NAME_SUPPORT
+DRIVER_MODULE_CFG += KEYPAD_3x4
+
+#-----------------------------------------------------------------------------
+
+MODULES_CFG = 
+MODULES_CFG += LCD_16X2
 
 #-----------------------------------------------------------------------------
 
