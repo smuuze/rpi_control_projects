@@ -49,7 +49,7 @@
 #include "mcu_task_management/mcu_task_controller.h"
 #include "ui/command_line/command_line_interface.h"
 #include "ui/console/ui_console.h"
-#include "ui/lcd/ui_lcd_interface.h"
+#include "modules/lcd/lcd_interface.h"
 #include "ui/cfg_file_parser/cfg_file_parser.h"
 
 // --------------------------------------------------------------------------------
@@ -141,8 +141,8 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    lcd_write_line("SPI-Helper");
-    lcd_write_line("... started");
+    SIGNAL_LCD_LINE_send("SPI-Helper");
+    SIGNAL_LCD_LINE_send("... started");
 
     for (;;) {
 
@@ -193,8 +193,8 @@ static void main_RPI_HOST_RESPONSE_RECEIVED_SLOT_CALLBACK(const void* p_argument
     console_write_line("Response:");
     console_hex_dump(p_buffer->length + 1, t_buffer);
 
-    lcd_write_line("SPI-Helper");
-    lcd_write_line("- response OK");
+    SIGNAL_LCD_LINE_send("SPI-Helper");
+    SIGNAL_LCD_LINE_send("- response OK");
 
     exit_program = 1;
 }
@@ -213,8 +213,8 @@ static void main_RPI_HOST_COMMAND_RECEIVED_SLOT_CALLBACK(const void* p_argument)
     console_write_line("Command:");
     console_hex_dump(p_buffer->length, p_buffer->data);
 
-    lcd_write_line("SPI-Helper");
-    lcd_write_line("- command OK");
+    SIGNAL_LCD_LINE_send("SPI-Helper");
+    SIGNAL_LCD_LINE_send("- command OK");
 }
 
 // --------------------------------------------------------------------------------
@@ -234,8 +234,8 @@ static void main_CLI_INVALID_PARAMETER_SLOT_CALLBACK(const void* p_argument) {
         console_write_line("Invalid parameter given, check your input!");
     }
     
-    lcd_write_line("SPI-Helper");
-    lcd_write_line("- inv parameter");
+    SIGNAL_LCD_LINE_send("SPI-Helper");
+    SIGNAL_LCD_LINE_send("- inv parameter");
 
     main_CLI_HELP_REQUESTED_SLOT_CALLBACK(NULL);
 }
@@ -248,9 +248,7 @@ static void main_CLI_INVALID_PARAMETER_SLOT_CALLBACK(const void* p_argument) {
 static void main_CLI_LCD_ACTIVATED_SLOT_CALLBACK(const void* p_argument) {
 
     DEBUG_PASS("main_CLI_LCD_ACTIVATED_SLOT_CALLBACK()");
-
-    lcd_init();
-    lcd_set_enabled(1);
+    lcd_set_enabled(LCD_ENABLE);
 }
 
 /**
