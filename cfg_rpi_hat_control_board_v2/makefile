@@ -42,7 +42,6 @@ APP_TASK_CFG += COPRO_ROUTING
 #-----------------------------------------------------------------------------
 
 EXPANSION_BOARD_CFG = 
-EXPANSION_BOARD_CFG += SENSOR_SHT31_ADS1115
 EXPANSION_BOARD_CFG += GPIO_PCA9670
 
 #-----------------------------------------------------------------------------
@@ -63,7 +62,9 @@ PROTOCOL_CFG += RPI_PROTOCOL_CLIENT
 #-----------------------------------------------------------------------------
 
 SENSOR_MODULE_CFG =
-SENSOR_MODULE_CFG += LIGHT_SENSOR_GM5528
+SENSOR_MODULE_CFG += SENSOR_ADS1115
+SENSOR_MODULE_CFG += SENSOR_SHT31
+SENSOR_MODULE_CFG += SENSOR_GM5528
 
 #-----------------------------------------------------------------------------
 
