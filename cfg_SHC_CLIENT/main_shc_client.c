@@ -155,7 +155,7 @@ static void main_CLI_LCD_ACTIVATED_SLOT_CALLBACK(const void* p_argument) {
     log_message("LCD activated");
 
     lcd_controller_init();
-    lcd_controller_set_enabled(LCD_EABLE);
+    lcd_controller_set_enabled(LCD_ENABLE);
 }
 
 /**
