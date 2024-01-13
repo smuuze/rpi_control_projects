@@ -131,8 +131,8 @@ static void main_CLI_INVALID_PARAMETER_SLOT_CALLBACK(const void* p_argument) {
 
     }
     
-    lcd_write_line("SHC");
-    lcd_write_line("- inv parameter");
+    LCD_PRINT("SHC");
+    LCD_PRINT("- inv parameter");
 
     main_CLI_HELP_REQUESTED_SLOT_CALLBACK(NULL);
 }
@@ -154,8 +154,8 @@ static void main_CLI_LCD_ACTIVATED_SLOT_CALLBACK(const void* p_argument) {
     
     log_message("LCD activated");
 
-    lcd_controller_init();
-    lcd_controller_set_enabled(LCD_ENABLE);
+    lcd_init();
+    lcd_set_enabled(LCD_ENABLE);
 }
 
 /**
@@ -625,8 +625,8 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    lcd_write_line("SHC");
-    lcd_write_line("... started");
+    LCD_PRINT("SHC");
+    LCD_PRINT("... started");
 
     for (;;) {
 
