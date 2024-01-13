@@ -77,7 +77,7 @@ PROTOCOL_CFG += JSON_PARSER
 #-----------------------------------------------------------------------------
 
 MODULES_CFG = 
-#MODULES_CFG += LCD_16X2
+MODULES_CFG += LCD_16X2
 # MODULES_CFG += KEYPAD_3X4
 # MODULES_CFG += MOVEMENT_DETECTION_MQTT
 MODULES_CFG += MCU_TOP
