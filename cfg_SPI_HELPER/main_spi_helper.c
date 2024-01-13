@@ -50,7 +50,7 @@
 #include "ui/command_line/command_line_interface.h"
 #include "ui/console/ui_console.h"
 #include "modules/lcd/lcd_interface.h"
-#include "ui/cfg_file_parser/cfg_file_parser.h"
+#include "modules/cfg_file_parser/cfg_file_parser.h"
 
 // --------------------------------------------------------------------------------
 

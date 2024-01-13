@@ -52,7 +52,7 @@
 #include "ui/command_line/command_line_interface.h"
 #include "ui/console/ui_console.h"
 #include "ui/lcd/ui_lcd_interface.h"
-#include "ui/cfg_file_parser/cfg_file_parser.h"
+#include "modules/cfg_file_parser/cfg_file_parser.h"
 #include "ui/log_interface/log_interface.h"
 
 // --------------------------------------------------------------------------------
@@ -154,8 +154,8 @@ static void main_CLI_LCD_ACTIVATED_SLOT_CALLBACK(const void* p_argument) {
     
     log_message("LCD activated");
 
-    lcd_init();
-    lcd_set_enabled(1);
+    lcd_controller_init();
+    lcd_controller_set_enabled(LCD_EABLE);
 }
 
 /**
