@@ -51,7 +51,7 @@
 
 #include "ui/command_line/command_line_interface.h"
 #include "ui/console/ui_console.h"
-#include "ui/lcd/ui_lcd_interface.h"
+#include "modules/lcd/lcd_interface.h"
 #include "modules/cfg_file_parser/cfg_file_parser.h"
 #include "ui/log_interface/log_interface.h"
 

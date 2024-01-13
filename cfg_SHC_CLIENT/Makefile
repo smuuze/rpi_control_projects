@@ -75,6 +75,14 @@ PROTOCOL_CFG += JSON_PARSER
 
 #-----------------------------------------------------------------------------
 
+MODULES_CFG = 
+#MODULES_CFG += LCD_16X2
+# MODULES_CFG += KEYPAD_3X4
+# MODULES_CFG += MOVEMENT_DETECTION_MQTT
+MODULES_CFG += MCU_TOP
+
+#-----------------------------------------------------------------------------
+
 SENSOR_MODULE_CFG =
 #SENSOR_MODULE_CFG += LIGHT_SENSOR_GM5528
 
