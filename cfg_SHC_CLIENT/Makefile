@@ -65,6 +65,7 @@ DRIVER_MODULE_CFG += CLK
 #DRIVER_MODULE_CFG += USART0
 #DRIVER_MODULE_CFG += I2C0
 DRIVER_MODULE_CFG += SPI0
+DRIVER_MODULE_CFG += DEVICE_NAME_SUPPORT
 
 #-----------------------------------------------------------------------------
 
